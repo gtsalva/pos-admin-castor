@@ -1,0 +1,194 @@
+// =============================================
+// pos-admin — Brand Theme (Desktop)
+// Derived from logo.jpeg — Muebles Castro
+// =============================================
+
+// --- NG Zorro CSS Variable Overrides ---
+:root {
+  // Primary: Terracotta (tagline color)
+  --ant-primary-color:         #C85A1A;
+  --ant-primary-color-hover:   #A84A14;
+  --ant-primary-color-active:  #8A3A0E;
+  --ant-primary-color-outline: rgba(200, 90, 26, 0.2);
+
+  // Semantic
+  --ant-success-color:         #389E0D;
+  --ant-success-color-hover:   #52C41A;
+  --ant-warning-color:         #FA8C16;
+  --ant-warning-color-hover:   #FFAD3B;
+  --ant-error-color:           #CF1322;
+  --ant-error-color-hover:     #FF4D4F;
+  --ant-info-color:            #1677FF;
+}
+
+// --- Global Page ---
+body {
+  background-color: #FAF7F5;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  color: #3D3432;
+  -webkit-font-smoothing: antialiased;
+}
+
+// --- Buttons ---
+.ant-btn {
+  border-radius: 6px;
+}
+
+// --- Inputs ---
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-input-number,
+.ant-select-selector,
+.ant-picker {
+  border-radius: 6px;
+  border-color: #E8D5C4;
+
+  &:hover {
+    border-color: #C85A1A;
+  }
+
+  &:focus,
+  &-focused {
+    border-color: #C85A1A;
+    box-shadow: 0 0 0 2px rgba(200, 90, 26, 0.2);
+  }
+}
+
+// --- Cards ---
+.ant-card {
+  border-radius: 8px;
+  border-color: #E8D5C4;
+}
+
+// --- Layout: Admin Shell ---
+.ant-layout {
+  background-color: #FAF7F5;
+}
+
+// Sidebar (Sider)
+.ant-layout-sider {
+  background-color: #F5E6D3 !important;
+
+  .ant-layout-sider-children {
+    background-color: #F5E6D3;
+  }
+
+  .ant-menu {
+    background-color: transparent;
+    color: #3D3432;
+    border-right: none;
+
+    .ant-menu-item {
+      color: #3D3432;
+      border-radius: 6px;
+
+      &:hover {
+        background-color: rgba(200, 90, 26, 0.1);
+        color: #C85A1A;
+      }
+
+      &.ant-menu-item-selected {
+        background-color: rgba(200, 90, 26, 0.15);
+        color: #C85A1A;
+        font-weight: 600;
+
+        &::after {
+          border-right-color: #C85A1A;
+        }
+      }
+    }
+
+    .ant-menu-item-icon {
+      color: inherit;
+    }
+  }
+}
+
+// Header
+.ant-layout-header {
+  background-color: #3D3432 !important;
+  color: #F5E6D3;
+  line-height: 64px;
+  padding: 0 24px;
+}
+
+// --- Tables ---
+.ant-table {
+  border-radius: 8px;
+
+  .ant-table-thead > tr > th {
+    background-color: #F5E6D3;
+    color: #3D3432;
+    font-weight: 600;
+    border-bottom-color: #E8D5C4;
+  }
+
+  .ant-table-tbody > tr {
+    &:hover > td {
+      background-color: rgba(200, 90, 26, 0.04);
+    }
+  }
+
+  .ant-table-row-selected > td {
+    background-color: rgba(200, 90, 26, 0.08) !important;
+  }
+}
+
+.ant-pagination-item-active {
+  border-color: #C85A1A;
+
+  a {
+    color: #C85A1A;
+  }
+}
+
+// --- Tags ---
+.ant-tag {
+  border-radius: 4px;
+}
+
+// --- Statistic (dashboard metrics) ---
+.ant-statistic-content-value {
+  color: #3D3432;
+}
+
+// --- Steps ---
+.ant-steps-item-process .ant-steps-item-icon {
+  background-color: #C85A1A;
+  border-color: #C85A1A;
+}
+
+// --- Progress ---
+.ant-progress-bg {
+  background-color: #C85A1A;
+}
+
+// --- Badge ---
+.ant-badge-count {
+  background-color: #C85A1A;
+}
+
+// --- Tabs ---
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #C85A1A;
+}
+
+.ant-tabs-ink-bar {
+  background-color: #C85A1A;
+}
+
+// --- Drawer ---
+.ant-drawer-header {
+  border-bottom-color: #E8D5C4;
+}
+
+// --- Modal ---
+.ant-modal-content {
+  border-radius: 12px;
+}
+
+// --- Notification ---
+.ant-notification-notice {
+  border-radius: 8px;
+}
