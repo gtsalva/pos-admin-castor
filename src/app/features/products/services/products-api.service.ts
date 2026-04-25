@@ -6,11 +6,8 @@ import { environment } from '../../../../environments/environment';
 import { Product } from '../../../shared/models/product.model';
 import { PaginatedResult, TableParams } from '../../../shared/models/pagination.model';
 
-interface ApiListResponse<T> {
-  data: T[];
-  total: number;
-  page: number;
-  limit: number;
+interface ApiPaginatedResponse<T> {
+  data: PaginatedResult<T>;
   message: string;
   statusCode: number;
 }
@@ -28,9 +25,7 @@ export class ProductsApiService {
     if (params.category_id) httpParams = httpParams.set('category_id', params.category_id);
 
     return this.http
-      .get<ApiListResponse<Product>>(`${environment.apiUrl}/products`, { params: httpParams })
-      .pipe(
-        map(res => ({ data: res.data, total: res.total, page: res.page, limit: res.limit }))
-      );
+      .get<ApiPaginatedResponse<Product>>(`${environment.apiUrl}/products`, { params: httpParams })
+      .pipe(map(res => res.data));
   }
 }
