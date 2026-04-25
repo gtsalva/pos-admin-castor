@@ -1,0 +1,33 @@
+<nz-layout class="shell-layout">
+  <nz-sider [nzWidth]="240" class="shell-sider">
+    <div class="shell-brand">
+      <span class="brand-name">El Castor</span>
+    </div>
+    <app-sidebar [navItems]="navItems" />
+  </nz-sider>
+
+  <nz-layout>
+    <nz-header class="shell-header">
+      <div class="header-spacer"></div>
+      <div class="header-user" nz-dropdown [nzDropdownMenu]="userMenu" nzPlacement="bottomRight">
+        <nz-avatar nzIcon="user" nzSize="small" />
+        <span class="header-username">{{ currentUser()?.full_name }}</span>
+        <span nz-icon nzType="down"></span>
+      </div>
+      <nz-dropdown-menu #userMenu="nzDropdownMenu">
+        <ul nz-menu>
+          <li nz-menu-item disabled>{{ currentUser()?.email }}</li>
+          <li nz-menu-divider></li>
+          <li nz-menu-item (click)="logout()">
+            <span nz-icon nzType="logout"></span>
+            Cerrar sesión
+          </li>
+        </ul>
+      </nz-dropdown-menu>
+    </nz-header>
+
+    <nz-content class="shell-content">
+      <router-outlet />
+    </nz-content>
+  </nz-layout>
+</nz-layout>

@@ -1,0 +1,51 @@
+<div class="product-list-header">
+  <h3>Productos</h3>
+  <nz-input-group [nzSuffix]="searchIcon" class="search-input">
+    <input nz-input placeholder="Buscar por nombre o SKU..."
+      (input)="onSearch($any($event.target).value)" />
+  </nz-input-group>
+  <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+</div>
+
+<nz-table
+  [nzData]="items()"
+  [nzTotal]="total()"
+  [nzPageSize]="pageSize()"
+  [nzPageIndex]="pageIndex()"
+  [nzLoading]="isLoading()"
+  nzShowSizeChanger
+  [nzPageSizeOptions]="[10, 20, 50]"
+  nzFrontPagination="false"
+  (nzPageIndexChange)="pageChange.emit($event)"
+  (nzPageSizeChange)="pageSizeChange.emit($event)">
+  <thead>
+    <tr>
+      <th>SKU</th>
+      <th>Nombre</th>
+      <th>Categoría</th>
+      <th>Precio</th>
+      <th>Stock</th>
+      <th>Estado</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (row of items(); track row.product_id) {
+      <tr>
+        <td><code>{{ row.sku }}</code></td>
+        <td>{{ row.name }}</td>
+        <td>{{ row.category?.name ?? '—' }}</td>
+        <td>{{ row.unit_price | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</td>
+        <td>
+          <nz-tag [nzColor]="row.stock <= row.min_stock ? 'red' : 'green'">
+            {{ row.stock }}
+          </nz-tag>
+        </td>
+        <td>
+          <nz-tag [nzColor]="row.is_active ? 'blue' : 'default'">
+            {{ row.is_active ? 'Activo' : 'Inactivo' }}
+          </nz-tag>
+        </td>
+      </tr>
+    }
+  </tbody>
+</nz-table>

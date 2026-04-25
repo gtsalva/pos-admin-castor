@@ -1,0 +1,56 @@
+.shell-layout {
+  min-height: 100vh;
+}
+
+.shell-sider {
+  background: #f5e6d3 !important;
+  border-right: 1px solid #e8d5bf;
+}
+
+.shell-brand {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  background: #3d3432;
+
+  .brand-name {
+    color: #f5e6d3;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+}
+
+.shell-header {
+  background: #3d3432 !important;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  height: 64px;
+}
+
+.header-spacer {
+  flex: 1;
+}
+
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #f5e6d3;
+
+  &:hover {
+    color: #fff;
+  }
+}
+
+.header-username {
+  font-size: 14px;
+}
+
+.shell-content {
+  background: #faf7f5;
+  min-height: calc(100vh - 64px);
+}
