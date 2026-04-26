@@ -403,7 +403,7 @@ export const inventoryRoutes: Routes = [{
 
 ### Prerequisitos
 - Node 20 LTS (`node -v` → `v20.x.x`)
-- Angular CLI 18: `npm install -g @angular/cli@18`
+- Angular CLI 19: `npm install -g @angular/cli@19`
 
 ### Crear el proyecto (solo primera vez)
 ```bash
@@ -418,9 +418,9 @@ ng new pos-admin \
 cd pos-admin
 ```
 
-### Instalar NG Zorro 18
+### Instalar NG Zorro 19
 ```bash
-ng add ng-zorro-antd@18
+ng add ng-zorro-antd@19
 # Cuando pregunte:
 #   Icon style?           → outline
 #   Set up custom theme?  → Yes
@@ -549,7 +549,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 ```typescript
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000/api',
+  apiUrl: 'http://localhost:3001/api',
 };
 ```
 
@@ -566,9 +566,19 @@ export const environment = {
 ng serve --port 4201   # http://localhost:4201
 ```
 
+---
+
+## Gotchas Conocidos
+
+| # | Gotcha | Fix |
+|---|--------|-----|
+| 1 | **TransformInterceptor double-wrap** — Respuestas paginadas llegan como `{ data: { data: T[], total, page, limit }, message, statusCode }`. El `total` NO está en la raíz. | Usar `ApiPaginatedResponse<T>` con `data: PaginatedResult<T>` y mapear `res.data`. |
+| 2 | **JWT sin `name`** — Si el backend no incluye `name` en el payload, `restoreUserFromToken()` no puede reconstruir `full_name` en refresh de página. | `JwtStrategy.validate()` debe retornar `name: user.full_name`. |
+| 3 | **Puerto 3000 ocupado** — `kama-platform-backend` corre en Docker en el 3000. `pos-api` usa el 3001. | `environment.ts` y `.env` deben apuntar a `localhost:3001`. |
+
 ### Git (repositorio propio de pos-admin)
 ```bash
 git init
 git add .
-git commit -m "chore: initial Angular 18 scaffold"
+git commit -m "chore: initial Angular 19 scaffold"
 ```
