@@ -1,0 +1,44 @@
+<div style="padding: 24px;">
+  <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+    <h2 style="margin:0;">Clientes</h2>
+    <button nz-button nzType="primary" (click)="newClient.emit()">
+      <span nz-icon nzType="plus"></span> Nuevo cliente
+    </button>
+  </div>
+  <div style="margin-bottom:16px;">
+    <nz-input-group [nzSuffix]="searchIcon" style="max-width:320px;">
+      <input nz-input placeholder="Buscar por nombre, NIT o razón social…" [(ngModel)]="searchText" (keydown.enter)="onSearch()" />
+    </nz-input-group>
+    <ng-template #searchIcon>
+      <span nz-icon nzType="search" (click)="onSearch()" style="cursor:pointer;"></span>
+    </ng-template>
+  </div>
+  <nz-table #table [nzData]="clients" [nzTotal]="total" [nzPageIndex]="page" [nzPageSize]="limit" [nzLoading]="loading" nzShowSizeChanger nzFrontPagination="false" (nzPageIndexChange)="pageChanged.emit($event)">
+    <thead>
+      <tr>
+        <th>Nombre / Razón Social</th>
+        <th>NIT</th>
+        <th>Teléfono</th>
+        <th>Ciudad</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (c of table.data; track c.client_id) {
+        <tr>
+          <td><strong>{{ c.full_name }}</strong>@if (c.business_name) {<br /><small style="color:#888;">{{ c.business_name }}</small>}</td>
+          <td>{{ c.nit ?? 'CF' }}</td>
+          <td>{{ c.phone ?? '—' }}</td>
+          <td>{{ c.billing_city ?? '—' }}</td>
+          <td><nz-tag [nzColor]="c.is_active ? 'green' : 'default'">{{ c.is_active ? 'Activo' : 'Inactivo' }}</nz-tag></td>
+          <td>
+            <button nz-button nzType="link" (click)="editClient.emit(c)">Editar</button>
+            <nz-divider nzType="vertical" />
+            <button nz-button nzType="link" nzDanger nz-popconfirm nzPopconfirmTitle="¿Desactivar este cliente?" nzPopconfirmPlacement="left" (nzOnConfirm)="deactivateClient.emit(c)">Desactivar</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </nz-table>
+</div>

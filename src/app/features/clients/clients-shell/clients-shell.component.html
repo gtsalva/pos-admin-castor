@@ -1,0 +1,12 @@
+<app-client-list
+  [clients]="clients()"
+  [total]="total()"
+  [page]="page()"
+  [limit]="limit()"
+  [loading]="loading()"
+  (searched)="onSearch($event)"
+  (pageChanged)="onPageChange($event)"
+  (newClient)="onNew()"
+  (editClient)="onEdit($event)"
+  (deactivateClient)="onDeactivate($event)"
+/>

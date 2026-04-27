@@ -32,6 +32,7 @@ export class AdminShellComponent {
   readonly navItems: NavItem[] = [
     { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
     { label: 'Productos', icon: 'shopping', route: '/productos' },
+    { label: 'Clientes', icon: 'team', route: '/clientes' },
     { label: 'Ventas', icon: 'transaction', route: '/ventas' },
     { label: 'Inventario', icon: 'database', route: '/inventario' },
   ];
