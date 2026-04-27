@@ -1,0 +1,56 @@
+<div class="inventory-list-page">
+  <h2 class="page-title">Control de Inventario</h2>
+
+  <div class="filter-bar">
+    <nz-space>
+      <label *nzSpaceItem>Solo stock bajo:</label>
+      <nz-switch *nzSpaceItem [formControl]="lowStockControl" />
+    </nz-space>
+  </div>
+
+  <nz-table
+    #invTable
+    [nzData]="state.items()"
+    [nzTotal]="state.total()"
+    [nzPageIndex]="state.query().page ?? 1"
+    [nzPageSize]="state.query().limit ?? 20"
+    [nzLoading]="state.isLoading()"
+    nzShowSizeChanger
+    [nzPageSizeOptions]="[20, 50, 100]"
+    (nzPageIndexChange)="state.setPage($event)"
+    nzFrontPagination="false"
+  >
+    <thead>
+      <tr>
+        <th>SKU</th>
+        <th>Producto</th>
+        <th>Categoría</th>
+        <th nzAlign="right">Stock</th>
+        <th nzAlign="right">Mínimo</th>
+        <th nzAlign="right">Precio</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of invTable.data; track item.product_id) {
+        <tr>
+          <td>{{ item.sku }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.category?.name ?? '—' }}</td>
+          <td nzAlign="right">{{ item.stock }}</td>
+          <td nzAlign="right">{{ item.min_stock }}</td>
+          <td nzAlign="right">{{ item.unit_price | currency:'Q ':'symbol':'1.2-2':'es-GT' }}</td>
+          <td>
+            <nz-tag [nzColor]="stockTagColor(item)">{{ stockLabel(item) }}</nz-tag>
+          </td>
+          <td>
+            <button nz-button nzType="link" nzSize="small" (click)="viewDetail(item)">
+              Ver detalle
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </nz-table>
+</div>

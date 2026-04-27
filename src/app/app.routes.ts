@@ -25,6 +25,16 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/products/products.routes').then(m => m.productRoutes),
       },
+      {
+        path: 'ventas',
+        loadChildren: () =>
+          import('./features/sales/sales.routes').then(m => m.salesRoutes),
+      },
+      {
+        path: 'inventario',
+        loadChildren: () =>
+          import('./features/inventory/inventory.routes').then(m => m.inventoryRoutes),
+      },
     ],
   },
   { path: '**', redirectTo: 'dashboard' },
