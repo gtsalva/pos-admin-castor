@@ -8,7 +8,8 @@
     <div class="loading-center">
       <nz-spin nzTip="Cargando..." />
     </div>
-  } @else if (sale(); as s) {
+  } @else {
+    @if (sale(); as s) {
     <div class="sale-header">
       <h2>{{ s.sale_number }}</h2>
       <nz-tag [nzColor]="s.status === 'COMPLETED' ? 'success' : 'error'" style="font-size: 14px">
@@ -81,6 +82,7 @@
           Anular venta
         </button>
       </div>
+    }
     }
   }
 </div>
