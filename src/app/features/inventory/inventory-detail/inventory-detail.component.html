@@ -6,7 +6,8 @@
 
   @if (isLoadingProduct()) {
     <div class="loading-center"><nz-spin nzTip="Cargando..." /></div>
-  } @else if (product(); as p) {
+  } @else {
+    @if (product(); as p) {
 
     <h2 class="product-title">{{ p.name }}</h2>
 
@@ -108,5 +109,6 @@
         }
       </tbody>
     </nz-table>
+    }
   }
 </div>
