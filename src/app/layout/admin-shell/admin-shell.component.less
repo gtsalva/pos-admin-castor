@@ -3,31 +3,56 @@
 }
 
 .shell-sider {
-  background: #f5e6d3 !important;
-  border-right: 1px solid #e8d5bf;
+  background: #F8F2EC !important;
+  border-right: 1px solid #E8D5C4;
 }
 
+// Brand strip — bold terracotta at the top of the sidebar
 .shell-brand {
   height: 64px;
   display: flex;
   align-items: center;
-  padding: 0 24px;
-  background: #3d3432;
+  padding: 0 20px;
+  background: #C85A1A;
+  gap: 10px;
+
+  .brand-icon {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.22);
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    span {
+      color: #fff;
+      font-size: 14px;
+  
+      font-weight: 700;
+      line-height: 1;
+    }
+  }
 
   .brand-name {
-    color: #f5e6d3;
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.95);
+
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
   }
 }
 
+// Header — white, clean
 .shell-header {
-  background: #3d3432 !important;
+  background: #FFFFFF !important;
   display: flex;
   align-items: center;
-  padding: 0 24px;
+  padding: 0 28px;
   height: 64px;
+  border-bottom: 1px solid #E8D5C4;
+  box-shadow: 0 1px 3px rgba(58, 40, 32, 0.05);
 }
 
 .header-spacer {
@@ -37,20 +62,32 @@
 .header-user {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   cursor: pointer;
-  color: #f5e6d3;
+  color: #6B5347;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
 
   &:hover {
-    color: #fff;
+    background: rgba(200, 90, 26, 0.07);
+    color: #3A2820;
+  }
+
+  // Avatar — terracotta on light header
+  :global(.ant-avatar) {
+    background: rgba(200, 90, 26, 0.15) !important;
+    color: #C85A1A !important;
   }
 }
 
 .header-username {
   font-size: 14px;
+  font-weight: 500;
+  color: #3A2820;
 }
 
 .shell-content {
-  background: #faf7f5;
+  background: #F7F3EF;
   min-height: calc(100vh - 64px);
 }

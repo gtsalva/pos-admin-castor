@@ -13,6 +13,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { Sale } from '../../../shared/models/sale.model';
 import { SalesApiService } from '../services/sales-api.service';
 
@@ -34,6 +35,7 @@ import { SalesApiService } from '../services/sales-api.service';
     NzSpinModule,
     NzTableModule,
     NzBreadCrumbModule,
+    NzIconModule,
   ],
   templateUrl: './sale-detail.component.html',
   styleUrl: './sale-detail.component.less',

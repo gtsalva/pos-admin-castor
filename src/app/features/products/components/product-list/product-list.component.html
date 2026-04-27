@@ -34,7 +34,7 @@
         <td><code>{{ row.sku }}</code></td>
         <td>{{ row.name }}</td>
         <td>{{ row.category?.name ?? '—' }}</td>
-        <td>{{ row.unit_price | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</td>
+        <td>{{ row.unit_price | currency:'Q ':'symbol':'1.2-2':'en-US' }}</td>
         <td>
           <nz-tag [nzColor]="row.stock <= row.min_stock ? 'red' : 'green'">
             {{ row.stock }}

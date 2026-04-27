@@ -2,10 +2,8 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
@@ -13,7 +11,6 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { InventoryItem, InventoryMovement, MovementType } from '../../../shared/models/inventory.model';
 import { PaginatedResult } from '../../../shared/models/pagination.model';
@@ -27,10 +24,8 @@ import { InventoryApiService } from '../services/inventory-api.service';
     ReactiveFormsModule,
     CurrencyPipe,
     DatePipe,
-    NzDescriptionsModule,
     NzTagModule,
     NzButtonModule,
-    NzDividerModule,
     NzFormModule,
     NzInputModule,
     NzInputNumberModule,
@@ -38,7 +33,6 @@ import { InventoryApiService } from '../services/inventory-api.service';
     NzTableModule,
     NzBreadCrumbModule,
     NzSpinModule,
-    NzCardModule,
   ],
   templateUrl: './inventory-detail.component.html',
   styleUrl: './inventory-detail.component.less',

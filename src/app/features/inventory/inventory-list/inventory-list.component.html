@@ -40,7 +40,7 @@
           <td>{{ item.category?.name ?? '—' }}</td>
           <td nzAlign="right">{{ item.stock }}</td>
           <td nzAlign="right">{{ item.min_stock }}</td>
-          <td nzAlign="right">{{ item.unit_price | currency:'Q ':'symbol':'1.2-2':'es-GT' }}</td>
+          <td nzAlign="right">{{ item.unit_price | currency:'Q ':'symbol':'1.2-2':'en-US' }}</td>
           <td>
             <nz-tag [nzColor]="stockTagColor(item)">{{ stockLabel(item) }}</nz-tag>
           </td>

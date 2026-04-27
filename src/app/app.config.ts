@@ -5,13 +5,39 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { NZ_I18N, es_ES } from 'ng-zorro-antd/i18n';
 import { NzMessageModule } from 'ng-zorro-antd/message';
 import { NzNotificationModule } from 'ng-zorro-antd/notification';
+import { provideNzIcons } from 'ng-zorro-antd/icon';
+import {
+  CheckCircleFill,
+  CheckCircleOutline,
+  CloseCircleFill,
+  CloseCircleOutline,
+  CloseOutline,
+  DashboardOutline,
+  DatabaseOutline,
+  DeleteOutline,
+  DownOutline,
+  EditOutline,
+  ExclamationCircleFill,
+  InfoCircleFill,
+  LoadingOutline,
+  LockOutline,
+  LogoutOutline,
+  MailOutline,
+  PlusOutline,
+  SearchOutline,
+  ShoppingOutline,
+  TransactionOutline,
+  UpOutline,
+  UserOutline,
+  WarningFill,
+} from '@ant-design/icons-angular/icons';
 import { registerLocaleData } from '@angular/common';
-import es from '@angular/common/locales/es';
+import en from '@angular/common/locales/en';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 
-registerLocaleData(es);
+registerLocaleData(en);
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,7 +45,32 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
     provideAnimationsAsync(),
     importProvidersFrom(NzMessageModule, NzNotificationModule),
+    provideNzIcons([
+      CheckCircleFill,
+      CheckCircleOutline,
+      CloseCircleFill,
+      CloseCircleOutline,
+      CloseOutline,
+      DashboardOutline,
+      DatabaseOutline,
+      DeleteOutline,
+      DownOutline,
+      EditOutline,
+      ExclamationCircleFill,
+      InfoCircleFill,
+      LoadingOutline,
+      LockOutline,
+      LogoutOutline,
+      MailOutline,
+      PlusOutline,
+      SearchOutline,
+      ShoppingOutline,
+      TransactionOutline,
+      UpOutline,
+      UserOutline,
+      WarningFill,
+    ]),
     { provide: NZ_I18N, useValue: es_ES },
-    { provide: LOCALE_ID, useValue: 'es-GT' },
+    { provide: LOCALE_ID, useValue: 'en-US' },
   ],
 };

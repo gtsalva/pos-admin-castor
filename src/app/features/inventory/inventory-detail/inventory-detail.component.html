@@ -1,114 +1,130 @@
 <div class="inventory-detail-page">
   <nz-breadcrumb>
     <nz-breadcrumb-item><a routerLink="/inventario">Inventario</a></nz-breadcrumb-item>
-    <nz-breadcrumb-item>{{ product()?.name ?? '...' }}</nz-breadcrumb-item>
+    <nz-breadcrumb-item>{{ product()?.name ?? '…' }}</nz-breadcrumb-item>
   </nz-breadcrumb>
 
   @if (isLoadingProduct()) {
-    <div class="loading-center"><nz-spin nzTip="Cargando..." /></div>
+    <div class="loading-center"><nz-spin nzTip="Cargando…" /></div>
   } @else {
     @if (product(); as p) {
 
-    <h2 class="product-title">{{ p.name }}</h2>
+      <!-- ── Product header ────────────────────────────────── -->
+      <div class="product-header">
+        <div>
+          <h2 class="product-title">{{ p.name }}</h2>
+          <span class="product-category">{{ p.category?.name ?? 'Sin categoría' }}</span>
+        </div>
+        <nz-tag [nzColor]="stockTagColor(p)" class="stock-badge-large">
+          {{ p.stock }} en stock
+        </nz-tag>
+      </div>
 
-    <nz-descriptions nzBordered [nzColumn]="3" class="product-info">
-      <nz-descriptions-item nzTitle="SKU">{{ p.sku }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Categoría">{{ p.category?.name ?? '—' }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Precio">
-        {{ p.unit_price | currency:'Q ':'symbol':'1.2-2':'es-GT' }}
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Stock actual">
-        <nz-tag [nzColor]="stockTagColor(p)">{{ p.stock }}</nz-tag>
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Stock mínimo">{{ p.min_stock }}</nz-descriptions-item>
-    </nz-descriptions>
+      <!-- ── Stat cards ────────────────────────────────────── -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">SKU</div>
+          <div class="stat-value mono">{{ p.sku }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Precio unitario</div>
+          <div class="stat-value price">{{ p.unit_price | currency:'Q ':'symbol':'1.2-2':'en-US' }}</div>
+        </div>
+        <div class="stat-card" [class.stat-card--alert]="p.stock <= p.min_stock">
+          <div class="stat-label">Stock actual</div>
+          <div class="stat-value">
+            {{ p.stock }}
+            @if (p.stock <= p.min_stock) {
+              <span class="alert-hint">⚠ bajo mínimo</span>
+            }
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Stock mínimo</div>
+          <div class="stat-value">{{ p.min_stock }}</div>
+        </div>
+      </div>
 
-    <nz-divider nzText="Ajustar Stock" />
-
-    <nz-card class="adjust-card">
-      <form [formGroup]="adjustForm" (ngSubmit)="submitAdjust()" class="adjust-form">
-        <nz-form-item>
-          <nz-form-label [nzSpan]="6" nzRequired>Tipo</nz-form-label>
-          <nz-form-control [nzSpan]="18">
-            <nz-select formControlName="movement_type" style="width: 100%">
-              @for (opt of movementOptions; track opt.value) {
-                <nz-option [nzValue]="opt.value" [nzLabel]="opt.label" />
+      <!-- ── Adjust stock ──────────────────────────────────── -->
+      <div class="section-block">
+        <div class="section-title">Ajustar stock</div>
+        <form [formGroup]="adjustForm" (ngSubmit)="submitAdjust()" class="adjust-form">
+          <div class="form-row">
+            <div class="form-field">
+              <label class="field-label required">Tipo de movimiento</label>
+              <nz-select formControlName="movement_type" style="width: 100%">
+                @for (opt of movementOptions; track opt.value) {
+                  <nz-option [nzValue]="opt.value" [nzLabel]="opt.label" />
+                }
+              </nz-select>
+            </div>
+            <div class="form-field form-field--sm">
+              <label class="field-label required">Cantidad</label>
+              <nz-input-number formControlName="quantity" [nzMin]="1" [nzStep]="1" style="width: 100%" />
+              @if (adjustForm.get('quantity')?.invalid && adjustForm.get('quantity')?.touched) {
+                <div class="field-error">Mínimo 1</div>
               }
-            </nz-select>
-          </nz-form-control>
-        </nz-form-item>
-
-        <nz-form-item>
-          <nz-form-label [nzSpan]="6" nzRequired>Cantidad</nz-form-label>
-          <nz-form-control [nzSpan]="18" nzErrorTip="Mínimo 1">
-            <nz-input-number
-              formControlName="quantity"
-              [nzMin]="1"
-              [nzStep]="1"
-              style="width: 100%"
-            />
-          </nz-form-control>
-        </nz-form-item>
-
-        <nz-form-item>
-          <nz-form-label [nzSpan]="6">Notas</nz-form-label>
-          <nz-form-control [nzSpan]="18">
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="field-label">Notas</label>
             <textarea
               nz-input
               formControlName="notes"
               [nzAutosize]="{ minRows: 2, maxRows: 3 }"
-              placeholder="Descripción del ajuste..."
+              placeholder="Descripción del ajuste…"
             ></textarea>
-          </nz-form-control>
-        </nz-form-item>
+          </div>
+          <div class="form-actions">
+            <button nz-button nzType="primary" type="submit" [nzLoading]="submitting()" [disabled]="adjustForm.invalid">
+              Registrar ajuste
+            </button>
+          </div>
+        </form>
+      </div>
 
-        <div class="form-actions">
-          <button nz-button nzType="primary" type="submit" [nzLoading]="submitting()" [disabled]="adjustForm.invalid">
-            Registrar ajuste
-          </button>
-        </div>
-      </form>
-    </nz-card>
+      <!-- ── Movements ─────────────────────────────────────── -->
+      <div class="section-block">
+        <div class="section-title">Historial de movimientos</div>
+        <nz-table
+          [nzData]="movements()"
+          [nzTotal]="movementsTotal()"
+          [nzPageIndex]="movementsPage()"
+          [nzLoading]="isLoadingMovements()"
+          (nzPageIndexChange)="onMovementsPageChange($event)"
+          nzFrontPagination="false"
+          nzSize="middle"
+          class="movements-table"
+        >
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th nzAlign="right">Cantidad</th>
+              <th>Usuario</th>
+              <th>Notas</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (m of movements(); track m.movement_id) {
+              <tr>
+                <td>
+                  <nz-tag [nzColor]="movementColors[m.movement_type]">
+                    {{ movementLabels[m.movement_type] }}
+                  </nz-tag>
+                </td>
+                <td nzAlign="right" [class.qty-in]="m.movement_type !== 'OUT'" [class.qty-out]="m.movement_type === 'OUT'">
+                  {{ m.movement_type === 'OUT' ? '−' : '+' }}{{ m.quantity }}
+                </td>
+                <td>{{ m.user.full_name }}</td>
+                <td class="notes-cell">{{ m.notes ?? '—' }}</td>
+                <td class="date-cell">{{ m.created_at | date:'dd/MM/yyyy HH:mm' }}</td>
+              </tr>
+            }
+          </tbody>
+        </nz-table>
+      </div>
 
-    <nz-divider nzText="Historial de Movimientos" />
-
-    <nz-table
-      [nzData]="movements()"
-      [nzTotal]="movementsTotal()"
-      [nzPageIndex]="movementsPage()"
-      [nzLoading]="isLoadingMovements()"
-      (nzPageIndexChange)="onMovementsPageChange($event)"
-      nzFrontPagination="false"
-      nzBordered
-      nzSize="small"
-    >
-      <thead>
-        <tr>
-          <th>Tipo</th>
-          <th nzAlign="right">Cantidad</th>
-          <th>Usuario</th>
-          <th>Notas</th>
-          <th>Fecha</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (m of movements(); track m.movement_id) {
-          <tr>
-            <td>
-              <nz-tag [nzColor]="movementColors[m.movement_type]">
-                {{ movementLabels[m.movement_type] }}
-              </nz-tag>
-            </td>
-            <td nzAlign="right">
-              {{ m.movement_type === 'OUT' ? '-' : '+' }}{{ m.quantity }}
-            </td>
-            <td>{{ m.user.full_name }}</td>
-            <td>{{ m.notes ?? '—' }}</td>
-            <td>{{ m.created_at | date:'dd/MM/yyyy HH:mm' }}</td>
-          </tr>
-        }
-      </tbody>
-    </nz-table>
     }
   }
 </div>

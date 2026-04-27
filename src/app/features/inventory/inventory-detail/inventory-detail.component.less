@@ -1,30 +1,198 @@
+@terracotta: #C85A1A;
+@text:        #1A1614;
+@muted:       #8C7B75;
+@border:      #EDE0D4;
+@bg-card:     #FFFFFF;
+
 .inventory-detail-page {
-  padding: 24px;
+  padding: 28px 32px;
+  max-width: 960px;
+}
 
-  .loading-center {
-    display: flex;
-    justify-content: center;
-    padding: 64px 0;
+.loading-center {
+  display: flex;
+  justify-content: center;
+  padding: 80px 0;
+}
+
+// ── Header ────────────────────────────────────────────────
+.product-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin: 20px 0 20px;
+}
+
+.product-title {
+
+  font-size: 24px;
+  font-weight: 600;
+  color: @text;
+  letter-spacing: -0.3px;
+  margin: 0 0 4px;
+}
+
+.product-category {
+  font-size: 13px;
+  color: @muted;
+}
+
+.stock-badge-large {
+  font-size: 13px;
+  padding: 4px 14px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+// ── Stat cards ────────────────────────────────────────────
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: @bg-card;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  border-top: 3px solid @border;
+
+  &--alert {
+    border-top-color: #CF1322;
+    background: rgba(207, 19, 34, 0.02);
   }
 
-  .product-title {
-    margin: 16px 0 20px;
-    color: #3d3432;
+  .stat-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: @muted;
+    margin-bottom: 6px;
   }
 
-  .product-info {
-    margin-bottom: 24px;
-  }
+  .stat-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: @text;
 
-  .adjust-card {
-    margin-bottom: 24px;
-    max-width: 640px;
+    &.mono {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 14px;
+      color: @muted;
+      font-weight: 500;
+    }
 
-    .adjust-form {
-      .form-actions {
-        display: flex;
-        justify-content: flex-end;
-      }
+    &.price {
+      color: @terracotta;
+
     }
   }
+
+  .alert-hint {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: #CF1322;
+    margin-top: 3px;
+    font-family: 'DM Sans', sans-serif;
+  }
+}
+
+// ── Section blocks ────────────────────────────────────────
+.section-block {
+  background: @bg-card;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: @text;
+  padding: 18px 24px 0;
+  margin-bottom: 16px;
+}
+
+// ── Adjust form ───────────────────────────────────────────
+.adjust-form {
+  padding: 0 24px 24px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 160px;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+
+  &:last-of-type { margin-bottom: 0; }
+
+  &--sm { margin-bottom: 0; }
+}
+
+.field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: @muted;
+  letter-spacing: 0.01em;
+
+  &.required::before {
+    content: '* ';
+    color: @terracotta;
+  }
+}
+
+.field-error {
+  font-size: 11px;
+  color: #CF1322;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+// ── Movements table ───────────────────────────────────────
+.movements-table {
+  :global {
+    .ant-table-thead > tr > th {
+      padding-left: 24px;
+      &:first-child { padding-left: 24px; }
+      &:last-child  { padding-right: 24px; }
+    }
+    .ant-table-tbody > tr > td {
+      padding-left: 24px;
+      &:first-child { padding-left: 24px; }
+      &:last-child  { padding-right: 24px; }
+    }
+  }
+}
+
+.qty-in  { color: #389E0D; font-weight: 600; }
+.qty-out { color: #CF1322; font-weight: 600; }
+
+.notes-cell {
+  color: @muted;
+  font-size: 13px;
+  max-width: 240px;
+}
+
+.date-cell {
+  color: @muted;
+  font-size: 13px;
+  white-space: nowrap;
 }
