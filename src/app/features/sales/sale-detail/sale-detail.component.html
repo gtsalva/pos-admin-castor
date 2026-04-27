@@ -1,0 +1,115 @@
+<div class="sale-detail-page">
+  <nz-breadcrumb>
+    <nz-breadcrumb-item><a routerLink="/ventas">Ventas</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item>{{ sale()?.sale_number ?? '...' }}</nz-breadcrumb-item>
+  </nz-breadcrumb>
+
+  @if (isLoading()) {
+    <div class="loading-center">
+      <nz-spin nzTip="Cargando..." />
+    </div>
+  } @else if (sale(); as s) {
+    <div class="sale-header">
+      <h2>{{ s.sale_number }}</h2>
+      <nz-tag [nzColor]="s.status === 'COMPLETED' ? 'success' : 'error'" style="font-size: 14px">
+        {{ s.status === 'COMPLETED' ? 'Completada' : 'Anulada' }}
+      </nz-tag>
+    </div>
+
+    <nz-descriptions nzBordered [nzColumn]="2" class="sale-info">
+      <nz-descriptions-item nzTitle="Fecha">
+        {{ s.created_at | date:'dd/MM/yyyy HH:mm' }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Método de pago">
+        {{ paymentLabels[s.payment_method] }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Vendedor">
+        {{ s.salesperson.full_name }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Cliente">
+        {{ s.client?.full_name ?? '—' }}
+        @if (s.client?.nit) {
+          <span class="nit-label"> · NIT: {{ s.client!.nit }}</span>
+        }
+      </nz-descriptions-item>
+      @if (s.void_reason) {
+        <nz-descriptions-item nzTitle="Motivo de anulación" [nzSpan]="2">
+          {{ s.void_reason }}
+        </nz-descriptions-item>
+      }
+    </nz-descriptions>
+
+    <nz-divider nzText="Productos" />
+
+    <nz-table
+      [nzData]="s.items"
+      [nzShowPagination]="false"
+      nzBordered
+      nzSize="small"
+      class="items-table"
+    >
+      <thead>
+        <tr>
+          <th>SKU</th>
+          <th>Producto</th>
+          <th nzAlign="right">Precio unit.</th>
+          <th nzAlign="right">Cantidad</th>
+          <th nzAlign="right">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of s.items; track item.sale_item_id) {
+          <tr>
+            <td>{{ item.product_sku }}</td>
+            <td>{{ item.product_name }}</td>
+            <td nzAlign="right">{{ item.unit_price | currency:'Q ':'symbol':'1.2-2':'es-GT' }}</td>
+            <td nzAlign="right">{{ item.quantity }}</td>
+            <td nzAlign="right">{{ item.subtotal | currency:'Q ':'symbol':'1.2-2':'es-GT' }}</td>
+          </tr>
+        }
+      </tbody>
+    </nz-table>
+
+    <div class="total-row">
+      Total: <strong>{{ s.total | currency:'Q ':'symbol':'1.2-2':'es-GT' }}</strong>
+    </div>
+
+    @if (s.status === 'COMPLETED') {
+      <nz-divider />
+      <div class="actions-row">
+        <button nz-button nzType="default" nzDanger (click)="openVoidModal()">
+          Anular venta
+        </button>
+      </div>
+    }
+  }
+</div>
+
+<nz-modal
+  [nzVisible]="voidModalVisible()"
+  nzTitle="Anular venta"
+  [nzOkText]="'Confirmar anulación'"
+  nzOkDanger
+  [nzOkLoading]="voiding()"
+  [nzOkDisabled]="voidForm.invalid"
+  nzCancelText="Cancelar"
+  (nzOnOk)="confirmVoid()"
+  (nzOnCancel)="voidModalVisible.set(false)"
+>
+  <ng-container *nzModalContent>
+    <p>Esta acción no se puede deshacer.</p>
+    <form [formGroup]="voidForm">
+      <nz-form-item>
+        <nz-form-label>Motivo de anulación</nz-form-label>
+        <nz-form-control nzErrorTip="Mínimo 5 caracteres">
+          <textarea
+            nz-input
+            formControlName="void_reason"
+            [nzAutosize]="{ minRows: 2, maxRows: 4 }"
+            placeholder="Describe el motivo de la anulación..."
+          ></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

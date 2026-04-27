@@ -1,0 +1,74 @@
+<div class="sales-list-page">
+  <h2 class="page-title">Historial de Ventas</h2>
+
+  <form [formGroup]="filterForm" class="filter-bar">
+    <nz-space nzWrap>
+      <nz-select *nzSpaceItem formControlName="status" nzPlaceHolder="Estado" nzAllowClear style="width: 140px">
+        <nz-option nzValue="COMPLETED" nzLabel="Completada" />
+        <nz-option nzValue="VOIDED" nzLabel="Anulada" />
+      </nz-select>
+
+      <nz-select *nzSpaceItem formControlName="payment_method" nzPlaceHolder="Pago" nzAllowClear style="width: 140px">
+        <nz-option nzValue="CASH" nzLabel="Efectivo" />
+        <nz-option nzValue="CARD" nzLabel="Tarjeta" />
+        <nz-option nzValue="TRANSFER" nzLabel="Transferencia" />
+      </nz-select>
+
+      <nz-date-picker *nzSpaceItem formControlName="from_date" nzPlaceHolder="Desde" nzFormat="yyyy-MM-dd" />
+      <nz-date-picker *nzSpaceItem formControlName="to_date" nzPlaceHolder="Hasta" nzFormat="yyyy-MM-dd" />
+
+      <button *nzSpaceItem nz-button nzType="primary" (click)="applyFilters()">
+        <span nz-icon nzType="search"></span> Filtrar
+      </button>
+      <button *nzSpaceItem nz-button (click)="clearFilters()">Limpiar</button>
+    </nz-space>
+  </form>
+
+  <nz-table
+    #salesTable
+    [nzData]="state.sales()"
+    [nzTotal]="state.total()"
+    [nzPageIndex]="state.query().page ?? 1"
+    [nzPageSize]="state.query().limit ?? 20"
+    [nzLoading]="state.isLoading()"
+    nzShowSizeChanger
+    [nzPageSizeOptions]="[20, 50, 100]"
+    (nzPageIndexChange)="state.setPage($event)"
+    nzFrontPagination="false"
+  >
+    <thead>
+      <tr>
+        <th>N° Venta</th>
+        <th>Fecha</th>
+        <th>Vendedor</th>
+        <th>Cliente</th>
+        <th nzAlign="right">Total</th>
+        <th>Pago</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (sale of salesTable.data; track sale.sale_id) {
+        <tr>
+          <td>{{ sale.sale_number }}</td>
+          <td>{{ sale.created_at | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>{{ sale.salesperson.full_name }}</td>
+          <td>{{ sale.client?.full_name ?? '—' }}</td>
+          <td nzAlign="right">{{ sale.total | currency:'Q ':'symbol':'1.2-2':'es-GT' }}</td>
+          <td>{{ paymentLabels[sale.payment_method] }}</td>
+          <td>
+            <nz-tag [nzColor]="sale.status === 'COMPLETED' ? 'success' : 'error'">
+              {{ sale.status === 'COMPLETED' ? 'Completada' : 'Anulada' }}
+            </nz-tag>
+          </td>
+          <td>
+            <button nz-button nzType="link" nzSize="small" (click)="viewDetail(sale.sale_id)">
+              Ver detalle
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </nz-table>
+</div>
