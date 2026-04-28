@@ -46,9 +46,9 @@
         </td>
         <td>{{ row.category?.name ?? '—' }}</td>
         <td nzAlign="right">
-          {{ row.cost_price != null ? (row.cost_price | currency:'GTQ':'symbol':'1.2-2':'es-GT') : '—' }}
+          {{ row.cost_price != null ? (row.cost_price | quetzales) : '—' }}
         </td>
-        <td nzAlign="right">{{ row.unit_price | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</td>
+        <td nzAlign="right">{{ row.unit_price | quetzales }}</td>
         <td nzAlign="center">
           <nz-tag [nzColor]="row.stock <= row.min_stock ? 'red' : 'green'">
             {{ row.stock }}

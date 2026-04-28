@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTagModule } from 'ng-zorro-antd/tag';
@@ -9,6 +9,7 @@ import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { QuetzalesPipe } from '../../../shared/pipes/quetzales.pipe';
 import { ProductsApiService } from '../services/products-api.service';
 import { ProductResourcesApiService } from '../services/product-resources-api.service';
 import { Product } from '../../../shared/models/product.model';
@@ -18,7 +19,7 @@ import { ProductResource } from '../../../shared/models/product-resource.model';
   selector: 'app-product-detail',
   standalone: true,
   imports: [
-    RouterLink, CurrencyPipe, DatePipe,
+    RouterLink, DatePipe, QuetzalesPipe,
     NzBreadCrumbModule, NzButtonModule, NzTagModule,
     NzSpinModule, NzDescriptionsModule, NzIconModule, NzPopconfirmModule,
   ],
