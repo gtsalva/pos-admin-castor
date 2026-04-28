@@ -5,7 +5,8 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
+import { QuetzalesPipe } from '../../../shared/pipes/quetzales.pipe';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PurchasesStateService } from '../services/purchases-state.service';
 import { PurchaseStatus } from '../models/purchase.model';
@@ -25,7 +26,7 @@ const STATUS_LABEL: Record<PurchaseStatus, string> = {
 @Component({
   selector: 'app-purchases-list',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule, NzTableModule, NzButtonModule, NzTagModule, NzSelectModule, CurrencyPipe, DatePipe],
+  imports: [RouterLink, ReactiveFormsModule, NzTableModule, NzButtonModule, NzTagModule, NzSelectModule, QuetzalesPipe, DatePipe],
   template: `
     <div style="padding:24px">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
@@ -68,7 +69,7 @@ const STATUS_LABEL: Record<PurchaseStatus, string> = {
               <td>
                 <nz-tag [nzColor]="statusColor(row.status)">{{ statusLabel(row.status) }}</nz-tag>
               </td>
-              <td>{{ row.total_cost | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</td>
+              <td>{{ row.total_cost | quetzales }}</td>
               <td>{{ row.ordered_by_user?.name }}</td>
               <td>{{ row.created_at | date:'dd/MM/yyyy' }}</td>
               <td>

@@ -12,7 +12,7 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzAutocompleteOptionComponent } from 'ng-zorro-antd/auto-complete';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { CurrencyPipe } from '@angular/common';
+import { QuetzalesPipe } from '../../../shared/pipes/quetzales.pipe';
 import { debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SuppliersApiService } from '../../suppliers/services/suppliers-api.service';
@@ -48,7 +48,7 @@ function isProductOption(value: unknown): value is ProductOption {
     NzStepsModule, NzFormModule, NzSelectModule,
     NzInputModule, NzButtonModule, NzInputNumberModule,
     NzTableModule, NzDividerModule, NzAutocompleteModule,
-    CurrencyPipe,
+    QuetzalesPipe,
   ],
   template: `
     <div style="padding:24px; max-width:900px">
@@ -141,10 +141,10 @@ function isProductOption(value: unknown): value is ProductOption {
                   <td>{{ row.product_sku }}</td>
                   <td>{{ row.product_name }}</td>
                   <td>{{ row.quantity_ordered }}</td>
-                  <td>{{ row.unit_cost | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</td>
-                  <td>{{ row.min_sale_price != null ? (row.min_sale_price | currency:'GTQ':'symbol':'1.2-2':'es-GT') : '—' }}</td>
-                  <td>{{ row.unit_price != null ? (row.unit_price | currency:'GTQ':'symbol':'1.2-2':'es-GT') : '—' }}</td>
-                  <td>{{ row.quantity_ordered * row.unit_cost | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</td>
+                  <td>{{ row.unit_cost | quetzales }}</td>
+                  <td>{{ row.min_sale_price != null ? (row.min_sale_price | quetzales) : '—' }}</td>
+                  <td>{{ row.unit_price != null ? (row.unit_price | quetzales) : '—' }}</td>
+                  <td>{{ row.quantity_ordered * row.unit_cost | quetzales }}</td>
                   <td><button nz-button nzType="link" nzDanger (click)="removeRow(i)">Quitar</button></td>
                 </tr>
               }
@@ -153,7 +153,7 @@ function isProductOption(value: unknown): value is ProductOption {
 
           <nz-divider></nz-divider>
           <div style="display:flex; justify-content:space-between; align-items:center">
-            <strong>Total: {{ totalCost() | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</strong>
+            <strong>Total: {{ totalCost() | quetzales }}</strong>
             <div style="display:flex; gap:8px">
               <button nz-button (click)="prevStep()">← Anterior</button>
               <button nz-button nzType="primary" [disabled]="rows().length === 0" (click)="nextStep()">Siguiente →</button>
@@ -180,15 +180,15 @@ function isProductOption(value: unknown): value is ProductOption {
                   <td>{{ row.product_sku }}</td>
                   <td>{{ row.product_name }}</td>
                   <td>{{ row.quantity_ordered }}</td>
-                  <td>{{ row.unit_cost | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</td>
-                  <td>{{ row.min_sale_price != null ? (row.min_sale_price | currency:'GTQ':'symbol':'1.2-2':'es-GT') : '—' }}</td>
-                  <td>{{ row.unit_price != null ? (row.unit_price | currency:'GTQ':'symbol':'1.2-2':'es-GT') : '—' }}</td>
-                  <td>{{ row.quantity_ordered * row.unit_cost | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</td>
+                  <td>{{ row.unit_cost | quetzales }}</td>
+                  <td>{{ row.min_sale_price != null ? (row.min_sale_price | quetzales) : '—' }}</td>
+                  <td>{{ row.unit_price != null ? (row.unit_price | quetzales) : '—' }}</td>
+                  <td>{{ row.quantity_ordered * row.unit_cost | quetzales }}</td>
                 </tr>
               }
             </tbody>
           </nz-table>
-          <p><strong>Total de la orden: {{ totalCost() | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</strong></p>
+          <p><strong>Total de la orden: {{ totalCost() | quetzales }}</strong></p>
           <div style="display:flex; gap:8px">
             <button nz-button (click)="prevStep()">← Anterior</button>
             <button nz-button nzType="primary" [nzLoading]="isSaving()" (click)="submit()">

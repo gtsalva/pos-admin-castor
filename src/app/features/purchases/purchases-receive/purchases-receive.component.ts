@@ -7,14 +7,14 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { CurrencyPipe } from '@angular/common';
+import { QuetzalesPipe } from '../../../shared/pipes/quetzales.pipe';
 import { PurchasesApiService } from '../services/purchases-api.service';
 import { PurchaseOrder, PurchaseOrderItem } from '../models/purchase.model';
 
 @Component({
   selector: 'app-purchases-receive',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule, NzTableModule, NzButtonModule, NzInputNumberModule, NzAlertModule, NzSpinModule, CurrencyPipe],
+  imports: [RouterLink, ReactiveFormsModule, NzTableModule, NzButtonModule, NzInputNumberModule, NzAlertModule, NzSpinModule, QuetzalesPipe],
   template: `
     <div style="padding:24px; max-width:900px">
       @if (isLoading()) {
@@ -52,8 +52,8 @@ import { PurchaseOrder, PurchaseOrderItem } from '../models/purchase.model';
                     style="width:90px">
                   </nz-input-number>
                 </td>
-                <td>{{ row.unit_cost | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</td>
-                <td>{{ getQtyControl(i).value * row.unit_cost | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</td>
+                <td>{{ row.unit_cost | quetzales }}</td>
+                <td>{{ getQtyControl(i).value * row.unit_cost | quetzales }}</td>
               </tr>
             }
           </tbody>

@@ -11,7 +11,8 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzFormModule } from 'ng-zorro-antd/form';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
+import { QuetzalesPipe } from '../../../shared/pipes/quetzales.pipe';
 import { PurchasesApiService } from '../services/purchases-api.service';
 import { PurchaseOrder, PurchaseStatus } from '../models/purchase.model';
 
@@ -30,7 +31,7 @@ const STATUS_LABEL: Record<PurchaseStatus, string> = {
     ReactiveFormsModule,
     NzDescriptionsModule, NzTableModule, NzTagModule,
     NzButtonModule, NzSpinModule, NzPopconfirmModule, NzInputModule, NzFormModule,
-    CurrencyPipe, DatePipe,
+    QuetzalesPipe, DatePipe,
   ],
   template: `
     <div style="padding:24px">
@@ -62,7 +63,7 @@ const STATUS_LABEL: Record<PurchaseStatus, string> = {
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Proveedor">{{ po()!.supplier?.name }}</nz-descriptions-item>
           <nz-descriptions-item nzTitle="Total">
-            <strong>{{ po()!.total_cost | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</strong>
+            <strong>{{ po()!.total_cost | quetzales }}</strong>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Creada por">{{ po()!.ordered_by_user?.name }}</nz-descriptions-item>
           <nz-descriptions-item nzTitle="Fecha de creación">{{ po()!.created_at | date:'dd/MM/yyyy HH:mm' }}</nz-descriptions-item>
@@ -96,8 +97,8 @@ const STATUS_LABEL: Record<PurchaseStatus, string> = {
                 <td>{{ item.product_name }}</td>
                 <td>{{ item.quantity_ordered }}</td>
                 <td>{{ item.quantity_received ?? '—' }}</td>
-                <td>{{ item.unit_cost | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</td>
-                <td>{{ item.subtotal | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</td>
+                <td>{{ item.unit_cost | quetzales }}</td>
+                <td>{{ item.subtotal | quetzales }}</td>
               </tr>
             }
           </tbody>
