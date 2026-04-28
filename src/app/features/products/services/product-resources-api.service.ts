@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
-import { ProductResource } from '../../../shared/models/product-resource.model';
+import { ProductResource, ResourceType } from '../../../shared/models/product-resource.model';
 
 interface ApiResponse<T> {
   data: T;
@@ -13,13 +13,13 @@ interface ApiResponse<T> {
 
 export interface UploadResult {
   url: string;
-  resource_type: 'image' | 'pdf';
+  resource_type: ResourceType;
 }
 
 @Injectable({ providedIn: 'root' })
 export class ProductResourcesApiService {
   private readonly http = inject(HttpClient);
-  private readonly base = `${environment.apiUrl}`;
+  private readonly base = environment.apiUrl;
 
   uploadFile(file: File): Observable<UploadResult> {
     const form = new FormData();
@@ -35,7 +35,7 @@ export class ProductResourcesApiService {
       .pipe(map(res => res.data));
   }
 
-  add(product_id: string, url: string, resource_type: 'image' | 'pdf'): Observable<ProductResource> {
+  add(product_id: string, url: string, resource_type: ResourceType): Observable<ProductResource> {
     return this.http
       .post<ApiResponse<ProductResource>>(`${this.base}/products/${product_id}/resources`, {
         url,
