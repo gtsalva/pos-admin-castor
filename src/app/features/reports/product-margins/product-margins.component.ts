@@ -111,16 +111,20 @@ Chart.register(...registerables);
                 </td>
                 <td nzAlign="right">
                   @if (row.cost_price !== null) {
-                    ${{ row.cost_price | number:'1.0-2' }}
+                    <span>
+                      {{ formatCurrency(row.cost_price) }}
+                    </span>
                   } @else {
                     <span nz-tooltip nzTooltipTitle="Sin precio de costo registrado" style="color:#C4B0A3">—</span>
                   }
                 </td>
-                <td nzAlign="right">${{ row.sale_price | number:'1.0-2' }}</td>
+                <td nzAlign="right">
+                  <span>{{ formatCurrency(row.sale_price) }}</span>
+                </td>
                 <td nzAlign="right">
                   @if (row.margin_amount !== null) {
                     <span [style.color]="row.margin_amount >= 0 ? '#7BA05B' : '#CF1322'" style="font-weight:600">
-                      ${{ row.margin_amount | number:'1.0-2' }}
+                      <span>{{ formatCurrency(row.margin_amount) }}</span>
                     </span>
                   } @else { <span style="color:#C4B0A3">—</span> }
                 </td>
@@ -193,16 +197,20 @@ export class ProductMarginsComponent implements OnInit {
     },
   };
 
-  sortByCost: NzTableSortFn<ProductMarginRow> = (a, b) => (a.cost_price ?? 0) - (b.cost_price ?? 0);
-  sortByPrice: NzTableSortFn<ProductMarginRow> = (a, b) => a.sale_price - b.sale_price;
-  sortByMarginAmt: NzTableSortFn<ProductMarginRow> = (a, b) => (a.margin_amount ?? -Infinity) - (b.margin_amount ?? -Infinity);
-  sortByMarginPct: NzTableSortFn<ProductMarginRow> = (a, b) => (a.margin_pct ?? -Infinity) - (b.margin_pct ?? -Infinity);
+  readonly sortByCost: NzTableSortFn<ProductMarginRow> = (a: ProductMarginRow, b: ProductMarginRow): number => (a.cost_price ?? 0) - (b.cost_price ?? 0);
+  readonly sortByPrice: NzTableSortFn<ProductMarginRow> = (a: ProductMarginRow, b: ProductMarginRow): number => a.sale_price - b.sale_price;
+  readonly sortByMarginAmt: NzTableSortFn<ProductMarginRow> = (a: ProductMarginRow, b: ProductMarginRow): number => (a.margin_amount ?? -Infinity) - (b.margin_amount ?? -Infinity);
+  readonly sortByMarginPct: NzTableSortFn<ProductMarginRow> = (a: ProductMarginRow, b: ProductMarginRow): number => (a.margin_pct ?? -Infinity) - (b.margin_pct ?? -Infinity);
 
   marginColor(pct: number): string {
     if (pct >= 50) return 'green';
     if (pct >= 20) return 'gold';
     if (pct >= 0) return 'orange';
     return 'red';
+  }
+
+  formatCurrency(value: number): string {
+    return '$' + (value | 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   ngOnInit(): void { this.load({}); }
@@ -218,7 +226,7 @@ export class ProductMarginsComponent implements OnInit {
   }
 
   exportCsv(): void {
-    const headers = 'Producto,SKU,Categoría,Costo,Precio,Margen $,Margen %,Unidades';
+    const headers = 'Producto,SKU,Categoría,Costo,Precio,Margen Dollar,Margen Pct,Unidades';
     const rows = this.data().map((r) =>
       `"${r.product_name}",${r.product_sku},"${r.category_name ?? ''}",` +
       `${r.cost_price ?? ''},${r.sale_price},${r.margin_amount ?? ''},${r.margin_pct ?? ''},${r.units_sold}`
