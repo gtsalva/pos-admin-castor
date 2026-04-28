@@ -35,6 +35,8 @@ export class AdminShellComponent {
     { label: 'Clientes', icon: 'team', route: '/clientes' },
     { label: 'Ventas', icon: 'transaction', route: '/ventas' },
     { label: 'Inventario', icon: 'database', route: '/inventario' },
+    { label: 'Compras', icon: 'shopping-cart', route: '/compras' },
+    { label: 'Proveedores', icon: 'team', route: '/proveedores' },
   ];
 
   logout(): void {
