@@ -1,4 +1,5 @@
 import { ApplicationConfig, LOCALE_ID, importProvidersFrom } from '@angular/core';
+import { DATE_PIPE_DEFAULT_TIMEZONE } from '@angular/common';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -9,6 +10,7 @@ import { NzNotificationModule } from 'ng-zorro-antd/notification';
 import { provideNzIcons } from 'ng-zorro-antd/icon';
 import {
   AppstoreOutline,
+  BarChartOutline,
   CheckCircleFill,
   CheckCircleOutline,
   CloseCircleFill,
@@ -36,16 +38,22 @@ import {
   ShoppingOutline,
   TeamOutline,
   TransactionOutline,
+  TrophyOutline,
   UpOutline,
   UserOutline,
   WarningFill,
+  UnlockOutline,
+  ArrowLeftOutline,
+
 } from '@ant-design/icons-angular/icons';
 import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
 import localeEsGT from '@angular/common/locales/es-GT';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 
+registerLocaleData(localeEs);
 registerLocaleData(localeEsGT);
 
 export const appConfig: ApplicationConfig = {
@@ -56,6 +64,7 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(NzMessageModule, NzModalModule, NzNotificationModule),
     provideNzIcons([
       AppstoreOutline,
+      BarChartOutline,
       CheckCircleFill,
       CheckCircleOutline,
       CloseCircleFill,
@@ -83,11 +92,15 @@ export const appConfig: ApplicationConfig = {
       StarOutline,
       TeamOutline,
       TransactionOutline,
+      TrophyOutline,
       UpOutline,
       UserOutline,
       WarningFill,
+      UnlockOutline,
+      ArrowLeftOutline
     ]),
     { provide: NZ_I18N, useValue: es_ES },
     { provide: LOCALE_ID, useValue: 'es-GT' },
+    { provide: DATE_PIPE_DEFAULT_TIMEZONE, useValue: 'America/Guatemala' },
   ],
 };

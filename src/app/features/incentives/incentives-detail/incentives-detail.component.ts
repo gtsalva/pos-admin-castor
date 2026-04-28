@@ -24,6 +24,61 @@ import { PeriodPerformance, SalespersonPerformance } from '../models/incentive.m
     NzPopconfirmModule, NzSpinModule, DecimalPipe, DatePipe,
   ],
   templateUrl: './incentives-detail.component.html',
+  styles: [`
+    .page-container {
+      padding: 36px 40px 48px;
+      max-width: 1400px;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: #C85A1A;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      padding: 0;
+      margin-bottom: 12px;
+    }
+
+    .period-title {
+      margin: 0 0 8px !important;
+      font-size: 28px;
+      font-weight: 700;
+      color: #2c2420;
+      line-height: 1.2;
+    }
+
+    .period-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #888;
+      font-size: 13px;
+    }
+
+    .stats-row {
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      border-radius: 10px;
+      border: 1px solid rgba(200, 90, 26, 0.12);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+
+    .table-section {
+      background: #fff;
+      border-radius: 10px;
+      border: 1px solid #f0ebe6;
+      overflow: hidden;
+    }
+  `],
 })
 export class IncentivesDetailComponent implements OnInit {
   private readonly api = inject(IncentivesApiService);

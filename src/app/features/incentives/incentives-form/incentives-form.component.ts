@@ -36,8 +36,10 @@ export class IncentivesFormComponent implements OnChanges {
     is_active: [true],
   });
 
-  readonly formatQ = (v: number) => `Q ${v}`;
+  readonly formatQ   = (v: number) => `Q ${v}`;
+  readonly parseQ    = (v: string) => parseFloat(v.replace(/Q\s?|,/g, '')) || 0;
   readonly formatPct = (v: number) => `${v}%`;
+  readonly parsePct  = (v: string) => parseFloat(v.replace(/%/g, '')) || 0;
 
   get isEdit(): boolean { return !!this.period(); }
 

@@ -1,31 +1,31 @@
 <div class="page-container">
   @if (loading()) {
-    <div style="text-align:center;padding:48px">
+    <div style="text-align:center;padding:64px">
       <nz-spin nzTip="Cargando..." [nzSize]="'large'" />
     </div>
   }
 
   @if (data(); as d) {
     <div class="page-header">
-      <div>
-        <a nz-button nzType="link" routerLink="/incentivos" style="padding-left:0">
-          <span nz-icon nzType="arrow-left"></span> Períodos
-        </a>
-        <h2 style="margin:8px 0 4px">{{ d.period.name }}</h2>
-        <span style="color:#888;font-size:13px">
-          {{ d.period.start_date | date:'dd/MM/yyyy' }} – {{ d.period.end_date | date:'dd/MM/yyyy' }}
-          &nbsp;·&nbsp; Meta: Q {{ d.period.goal_amount | number:'1.2-2' }}
-          &nbsp;·&nbsp; Comisión: {{ d.period.commission_rate }}%
-        </span>
-        <nz-tag [nzColor]="d.period.is_active ? 'success' : 'default'" style="margin-left:8px">
+      <a nz-button nzType="link" routerLink="/incentivos" class="back-link">
+        <span nz-icon nzType="arrow-left"></span> Períodos
+      </a>
+      <h2 class="period-title">{{ d.period.name }}</h2>
+      <div class="period-meta">
+        <span>{{ d.period.start_date | date:'dd/MM/yyyy' }} – {{ d.period.end_date | date:'dd/MM/yyyy' }}</span>
+        <span>·</span>
+        <span>Meta: Q {{ d.period.goal_amount | number:'1.2-2' }}</span>
+        <span>·</span>
+        <span>Comisión: {{ d.period.commission_rate }}%</span>
+        <nz-tag [nzColor]="d.period.is_active ? 'success' : 'default'">
           {{ d.period.is_active ? 'Activo' : 'Cerrado' }}
         </nz-tag>
       </div>
     </div>
 
-    <nz-row [nzGutter]="16" style="margin-bottom:24px">
+    <nz-row [nzGutter]="20" class="stats-row">
       <nz-col [nzSpan]="6">
-        <nz-card>
+        <nz-card class="stat-card">
           <nz-statistic
             nzTitle="Total vendido"
             [nzValue]="totals().total_sold"
@@ -35,7 +35,7 @@
         </nz-card>
       </nz-col>
       <nz-col [nzSpan]="6">
-        <nz-card>
+        <nz-card class="stat-card">
           <nz-statistic
             nzTitle="Comisiones proyectadas"
             [nzValue]="totals().total_commission"
@@ -45,7 +45,7 @@
         </nz-card>
       </nz-col>
       <nz-col [nzSpan]="6">
-        <nz-card>
+        <nz-card class="stat-card">
           <nz-statistic
             nzTitle="Liquidados"
             [nzValue]="totals().liquidated_count"
@@ -54,7 +54,7 @@
         </nz-card>
       </nz-col>
       <nz-col [nzSpan]="6">
-        <nz-card>
+        <nz-card class="stat-card">
           <nz-statistic
             nzTitle="Pendientes"
             [nzValue]="totals().pending_count"
@@ -64,66 +64,68 @@
       </nz-col>
     </nz-row>
 
-    <nz-table
-      [nzData]="d.performance"
-      nzSize="middle"
-      [nzPageSize]="50"
-    >
-      <thead>
-        <tr>
-          <th>Vendedor</th>
-          <th nzAlign="right">Vendido (Q)</th>
-          <th nzAlign="right">Comisión (Q)</th>
-          <th [nzWidth]="'200px'">Progreso a meta</th>
-          <th nzAlign="center">Transacciones</th>
-          <th>Estado</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (perf of d.performance; track perf.salesperson_id) {
+    <div class="table-section">
+      <nz-table
+        [nzData]="d.performance"
+        nzSize="middle"
+        [nzPageSize]="50"
+      >
+        <thead>
           <tr>
-            <td>
-              <strong>{{ perf.full_name }}</strong><br/>
-              <small style="color:#888">{{ perf.email }}</small>
-            </td>
-            <td nzAlign="right">{{ perf.amount_sold | number:'1.2-2' }}</td>
-            <td nzAlign="right">{{ perf.commission_earned | number:'1.2-2' }}</td>
-            <td>
-              <nz-progress
-                [nzPercent]="perf.goal_pct > 100 ? 100 : perf.goal_pct"
-                [nzStrokeColor]="progressColor(perf.goal_pct)"
-                [nzFormat]="formatProgress"
-                nzSize="small"
-              />
-            </td>
-            <td nzAlign="center">{{ perf.transaction_count }}</td>
-            <td>
-              @if (perf.is_liquidated) {
-                <nz-tag nzColor="success">Liquidado</nz-tag>
-                <small style="color:#888;display:block">{{ perf.liquidated_at | date:'dd/MM/yyyy' }}</small>
-              } @else {
-                <nz-tag nzColor="warning">Pendiente</nz-tag>
-              }
-            </td>
-            <td>
-              @if (!perf.is_liquidated) {
-                <button
-                  nz-button nzType="primary" nzSize="small"
-                  nz-popconfirm
-                  [nzPopconfirmTitle]="'¿Liquidar Q ' + (perf.commission_earned | number:'1.2-2') + ' a ' + perf.full_name + '?'"
-                  (nzOnConfirm)="liquidate(perf)"
-                  [nzLoading]="liquidating() === perf.salesperson_id"
-                >
-                  Liquidar
-                </button>
-              } @else {
-                <span style="color:#aaa;font-size:13px">—</span>
-              }
-            </td>
+            <th>Vendedor</th>
+            <th nzAlign="right">Vendido (Q)</th>
+            <th nzAlign="right">Comisión (Q)</th>
+            <th [nzWidth]="'220px'">Progreso a meta</th>
+            <th nzAlign="center">Transacciones</th>
+            <th>Estado</th>
+            <th>Acción</th>
           </tr>
-        }
-      </tbody>
-    </nz-table>
+        </thead>
+        <tbody>
+          @for (perf of d.performance; track perf.salesperson_id) {
+            <tr>
+              <td>
+                <strong>{{ perf.full_name }}</strong><br/>
+                <small style="color:#888">{{ perf.email }}</small>
+              </td>
+              <td nzAlign="right">{{ perf.amount_sold | number:'1.2-2' }}</td>
+              <td nzAlign="right">{{ perf.commission_earned | number:'1.2-2' }}</td>
+              <td>
+                <nz-progress
+                  [nzPercent]="perf.goal_pct > 100 ? 100 : perf.goal_pct"
+                  [nzStrokeColor]="progressColor(perf.goal_pct)"
+                  [nzFormat]="formatProgress"
+                  nzSize="small"
+                />
+              </td>
+              <td nzAlign="center">{{ perf.transaction_count }}</td>
+              <td>
+                @if (perf.is_liquidated) {
+                  <nz-tag nzColor="success">Liquidado</nz-tag>
+                  <small style="color:#888;display:block">{{ perf.liquidated_at | date:'dd/MM/yyyy' }}</small>
+                } @else {
+                  <nz-tag nzColor="warning">Pendiente</nz-tag>
+                }
+              </td>
+              <td>
+                @if (!perf.is_liquidated) {
+                  <button
+                    nz-button nzType="primary" nzSize="small"
+                    nz-popconfirm
+                    [nzPopconfirmTitle]="'¿Liquidar Q ' + (perf.commission_earned | number:'1.2-2') + ' a ' + perf.full_name + '?'"
+                    (nzOnConfirm)="liquidate(perf)"
+                    [nzLoading]="liquidating() === perf.salesperson_id"
+                  >
+                    Liquidar
+                  </button>
+                } @else {
+                  <span style="color:#aaa;font-size:13px">—</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </nz-table>
+    </div>
   }
 </div>
