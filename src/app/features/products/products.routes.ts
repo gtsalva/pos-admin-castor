@@ -6,4 +6,19 @@ export const productRoutes: Routes = [
     loadComponent: () =>
       import('./products-shell/products-shell.component').then(m => m.ProductsShellComponent),
   },
+  {
+    path: 'nuevo',
+    loadComponent: () =>
+      import('./product-form/product-form.component').then(m => m.ProductFormComponent),
+  },
+  {
+    path: ':id',
+    loadComponent: () =>
+      import('./product-detail/product-detail.component').then(m => m.ProductDetailComponent),
+  },
+  {
+    path: ':id/editar',
+    loadComponent: () =>
+      import('./product-form/product-form.component').then(m => m.ProductFormComponent),
+  },
 ];
