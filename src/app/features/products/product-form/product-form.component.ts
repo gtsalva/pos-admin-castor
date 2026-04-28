@@ -60,7 +60,10 @@ export class ProductFormComponent implements OnInit {
     this.productId.set(id);
     this.isEdit.set(!!id);
 
-    this.categoriesApi.getAll().subscribe(cats => this.categories.set(cats));
+    this.categoriesApi.getAll().subscribe({
+      next: cats => this.categories.set(cats),
+      error: () => this.message.error('No se pudieron cargar las categorías'),
+    });
 
     if (id) {
       this.isLoading.set(true);

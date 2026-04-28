@@ -104,6 +104,7 @@
           [nzData]="movements()"
           [nzTotal]="movementsTotal()"
           [nzPageIndex]="movementsPage()"
+          [nzPageSize]="20"
           [nzLoading]="isLoadingMovements()"
           (nzPageIndexChange)="onMovementsPageChange($event)"
           nzFrontPagination="false"

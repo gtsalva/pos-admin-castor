@@ -12,13 +12,13 @@ export const productRoutes: Routes = [
       import('./product-form/product-form.component').then(m => m.ProductFormComponent),
   },
   {
-    path: ':id',
-    loadComponent: () =>
-      import('./product-detail/product-detail.component').then(m => m.ProductDetailComponent),
-  },
-  {
     path: ':id/editar',
     loadComponent: () =>
       import('./product-form/product-form.component').then(m => m.ProductFormComponent),
+  },
+  {
+    path: ':id',
+    loadComponent: () =>
+      import('./product-detail/product-detail.component').then(m => m.ProductDetailComponent),
   },
 ];

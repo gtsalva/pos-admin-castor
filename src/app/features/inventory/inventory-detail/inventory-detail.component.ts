@@ -15,6 +15,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { InventoryItem, InventoryMovement, MovementType } from '../../../shared/models/inventory.model';
 import { PaginatedResult } from '../../../shared/models/pagination.model';
 import { InventoryApiService } from '../services/inventory-api.service';
+import { ProductsApiService } from '../../products/services/products-api.service';
 import { SuppliersApiService } from '../../suppliers/services/suppliers-api.service';
 import { Supplier } from '../../suppliers/models/supplier.model';
 
@@ -43,6 +44,7 @@ export class InventoryDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly api = inject(InventoryApiService);
+  private readonly productsApi = inject(ProductsApiService);
   private readonly suppliersApi = inject(SuppliersApiService);
   private readonly message = inject(NzMessageService);
   private readonly fb = inject(FormBuilder);
@@ -101,12 +103,19 @@ export class InventoryDetailComponent implements OnInit {
 
   private loadProduct(product_id: string): void {
     this.isLoadingProduct.set(true);
-    this.api.getInventory({ limit: 200 }).subscribe({
-      next: res => {
-        const found = res.data.find(p => p.product_id === product_id) ?? null;
-        this.product.set(found);
+    this.productsApi.getOne(product_id).subscribe({
+      next: p => {
+        const item: InventoryItem = {
+          product_id: p.product_id,
+          sku: p.sku,
+          name: p.name,
+          stock: p.stock,
+          min_stock: p.min_stock,
+          unit_price: p.unit_price,
+          category: p.category,
+        };
+        this.product.set(item);
         this.isLoadingProduct.set(false);
-        if (!found) this.router.navigate(['/inventario']);
       },
       error: () => { this.isLoadingProduct.set(false); this.router.navigate(['/inventario']); },
     });
