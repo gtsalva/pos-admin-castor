@@ -48,6 +48,7 @@ export class ProductDetailComponent implements OnInit {
     });
     this.resourcesApi.list(id).subscribe({
       next: res => this.resources.set(res),
+      error: () => this.msg.error('Error al cargar los recursos del producto'),
     });
   }
 
@@ -62,16 +63,22 @@ export class ProductDetailComponent implements OnInit {
   selectImage(idx: number): void { this.selectedImageIdx.set(idx); }
 
   setDefault(resource: ProductResource): void {
-    const pid = this.product()!.product_id;
+    const pid = this.product()?.product_id;
+    if (!pid) return;
     this.resourcesApi.setDefault(pid, resource.resource_id).subscribe({
-      next: updated => this.resources.set(updated),
+      next: updated => {
+        this.resources.set(updated);
+        this.selectedImageIdx.set(0);
+      },
       error: () => this.msg.error('Error al actualizar'),
     });
   }
 
   deleteResource(resource: ProductResource): void {
+    const pid = this.product()?.product_id;
+    if (!pid) return;
     this.deletingId.set(resource.resource_id);
-    this.resourcesApi.delete(this.product()!.product_id, resource.resource_id).subscribe({
+    this.resourcesApi.delete(pid, resource.resource_id).subscribe({
       next: () => {
         this.resources.update(r => r.filter(x => x.resource_id !== resource.resource_id));
         if (this.selectedImageIdx() >= this.images.length) this.selectedImageIdx.set(0);
