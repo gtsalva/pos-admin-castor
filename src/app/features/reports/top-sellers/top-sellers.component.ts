@@ -118,9 +118,9 @@ Chart.register(...registerables);
                 <td style="font-weight:500">{{ row.salesperson_name }}</td>
                 <td nzAlign="right">{{ row.total_sales | number }}</td>
                 <td nzAlign="right" style="color:#C85A1A;font-weight:600">
-                  ${{ row.total_revenue | number:'1.0-2' }}
+                  ${'$'}{{ row.total_revenue | number:'1.0-2' }}
                 </td>
-                <td nzAlign="right">${{ row.avg_sale_value | number:'1.0-2' }}</td>
+                <td nzAlign="right">${'$'}{{ row.avg_sale_value | number:'1.0-2' }}</td>
                 <td nzAlign="center">
                   <span style="color:#E8A857;font-weight:600">
                     {{ totalRevenue() > 0 ? ((row.total_revenue / totalRevenue() * 100) | number:'1.1-1') : '0' }}%
@@ -184,7 +184,7 @@ export class TopSellersComponent implements OnInit {
     plugins: { legend: { display: false } },
     scales: {
       x: { grid: { color: '#F0E6DB' }, ticks: { color: '#8C7B75' } },
-      y: { grid: { display: false }, ticks: { color: '#3A2820', font: { weight: '600' } } },
+      y: { grid: { display: false }, ticks: { color: '#3A2820', font: { weight: 600 } } },
     },
   };
 

@@ -37,6 +37,7 @@ export class AdminShellComponent {
     { label: 'Inventario', icon: 'database', route: '/inventario' },
     { label: 'Compras', icon: 'shopping-cart', route: '/compras' },
     { label: 'Incentivos', icon: 'trophy', route: '/incentivos' },
+    { label: 'Reportes', icon: 'bar-chart', route: '/reportes' },
     { label: 'Proveedores', icon: 'team', route: '/proveedores' },
     { label: 'Categorías', icon: 'appstore', route: '/categorias' },
   ];

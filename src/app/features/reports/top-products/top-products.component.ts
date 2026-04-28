@@ -102,7 +102,7 @@ Chart.register(...registerables);
                   }
                 </td>
                 <td nzAlign="right" style="color:#4E7FA8;font-weight:600">{{ row.units_sold | number }}</td>
-                <td nzAlign="right" style="color:#7BA05B;font-weight:600">${{ row.total_revenue | number:'1.0-2' }}</td>
+                <td nzAlign="right" style="color:#7BA05B;font-weight:600">${'$'}{{ row.total_revenue | number:'1.0-2' }}</td>
               </tr>
             }
           </tbody>
@@ -113,8 +113,7 @@ Chart.register(...registerables);
     <ng-template #segmentedTpl>
       <nz-segmented
         [nzOptions]="['Unidades', 'Ingresos']"
-        [nzValue]="viewMode()"
-        (nzValueChange)="viewMode.set($event)"
+        (nzValueChange)="viewMode.set(+$event)"
       />
     </ng-template>
     <ng-template #chartTitle>Ranking — {{ viewMode() === 0 ? 'por unidades vendidas' : 'por ingresos' }}</ng-template>

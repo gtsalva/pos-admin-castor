@@ -116,7 +116,7 @@ const PM_COLORS: Record<string, string> = {
                       </nz-tag>
                     </td>
                     <td nzAlign="right">{{ row.sales_count | number }}</td>
-                    <td nzAlign="right" style="font-weight:600">${{ row.revenue | number:'1.0-2' }}</td>
+                    <td nzAlign="right" style="font-weight:600">${'$'}{{ row.revenue | number:'1.0-2' }}</td>
                   </tr>
                 }
               </tbody>
@@ -152,7 +152,7 @@ const PM_COLORS: Record<string, string> = {
                   <tr>
                     <td>{{ row.category_name ?? 'Sin categoría' }}</td>
                     <td nzAlign="right">{{ row.units_sold | number }}</td>
-                    <td nzAlign="right" style="font-weight:600">${{ row.revenue | number:'1.0-2' }}</td>
+                    <td nzAlign="right" style="font-weight:600">${'$'}{{ row.revenue | number:'1.0-2' }}</td>
                   </tr>
                 }
               </tbody>
