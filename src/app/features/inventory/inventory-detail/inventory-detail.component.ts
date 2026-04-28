@@ -1,7 +1,8 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
+import { QuetzalesPipe } from '../../../shared/pipes/quetzales.pipe';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -25,8 +26,8 @@ import { Supplier } from '../../suppliers/models/supplier.model';
   imports: [
     RouterLink,
     ReactiveFormsModule,
-    CurrencyPipe,
     DatePipe,
+    QuetzalesPipe,
     NzTagModule,
     NzButtonModule,
     NzFormModule,

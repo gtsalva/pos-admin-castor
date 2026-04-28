@@ -31,7 +31,7 @@
         </div>
         <div class="stat-card">
           <div class="stat-label">Precio unitario</div>
-          <div class="stat-value price">{{ p.unit_price | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</div>
+          <div class="stat-value price">{{ p.unit_price | quetzales }}</div>
         </div>
         <div class="stat-card" [class.stat-card--alert]="p.stock <= p.min_stock">
           <div class="stat-label">Stock actual</div>

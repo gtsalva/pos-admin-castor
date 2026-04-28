@@ -1,5 +1,4 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { CurrencyPipe } from '@angular/common';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzGridModule } from 'ng-zorro-antd/grid';
