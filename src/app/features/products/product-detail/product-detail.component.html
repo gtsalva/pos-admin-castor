@@ -1,0 +1,47 @@
+<div class="product-detail-page" style="padding:24px;max-width:860px">
+  <nz-breadcrumb>
+    <nz-breadcrumb-item><a routerLink="/productos">Productos</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item>{{ product()?.name ?? '…' }}</nz-breadcrumb-item>
+  </nz-breadcrumb>
+
+  @if (isLoading()) {
+    <div style="display:flex;justify-content:center;padding:48px"><nz-spin nzTip="Cargando…" /></div>
+  } @else {
+    @if (product(); as p) {
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 24px">
+        <h2 style="margin:0">{{ p.name }}</h2>
+        <div style="display:flex;gap:8px">
+          <a nz-button [routerLink]="['/inventario', p.product_id]">Ver inventario</a>
+          <a nz-button nzType="primary" [routerLink]="['/productos', p.product_id, 'editar']">Editar</a>
+        </div>
+      </div>
+
+      <nz-descriptions nzBordered [nzColumn]="2" nzSize="middle">
+        <nz-descriptions-item nzTitle="SKU"><code>{{ p.sku }}</code></nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Categoría">{{ p.category?.name ?? '—' }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Estado">
+          <nz-tag [nzColor]="p.is_active ? 'blue' : 'default'">
+            {{ p.is_active ? 'Activo' : 'Inactivo' }}
+          </nz-tag>
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Stock actual">
+          <nz-tag [nzColor]="stockColor(p)">{{ p.stock }} unidades</nz-tag>
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Stock mínimo">{{ p.min_stock }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Descripción" [nzSpan]="2">
+          {{ p.description ?? '—' }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Precio de costo">
+          {{ p.cost_price != null ? (p.cost_price | currency:'Q ':'symbol':'1.2-2':'en-US') : '—' }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Precio mínimo de venta">
+          {{ p.min_sale_price != null ? (p.min_sale_price | currency:'Q ':'symbol':'1.2-2':'en-US') : '—' }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Precio de venta">
+          {{ p.unit_price | currency:'Q ':'symbol':'1.2-2':'en-US' }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Creado">{{ p.created_at | date:'dd/MM/yyyy' }}</nz-descriptions-item>
+      </nz-descriptions>
+    }
+  }
+</div>
