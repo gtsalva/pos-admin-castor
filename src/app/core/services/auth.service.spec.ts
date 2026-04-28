@@ -30,7 +30,7 @@ describe('AuthService', () => {
       },
     };
     service.login('gerente@castor.gt', 'pass').subscribe();
-    const req = http.expectOne('http://localhost:3000/api/auth/login');
+    const req = http.expectOne('http://localhost:3001/api/auth/login');
     req.flush(mockRes);
     expect(service.isLoggedIn()).toBe(true);
     expect(service.currentUser()?.role).toBe('MANAGER');
