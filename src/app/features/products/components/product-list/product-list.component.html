@@ -1,16 +1,16 @@
 <div class="product-list-header">
   <h3>Productos</h3>
   <nz-input-group [nzSuffix]="searchIcon" class="search-input">
-    <input nz-input placeholder="Buscar por nombre o SKU..."
-      (input)="onSearch($any($event.target).value)" />
+    <input nz-input #searchInput placeholder="Buscar por nombre o SKU..."
+      (input)="onSearch(searchInput.value)" />
   </nz-input-group>
   <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
-  <a nz-button nzType="primary" routerLink="/productos/nuevo">
+  <a nz-button nzType="primary" [routerLink]="['/productos', 'nuevo']">
     <span nz-icon nzType="plus"></span> Nuevo producto
   </a>
 </div>
 
-<nz-table
+<nz-table #table
   [nzData]="items()"
   [nzTotal]="total()"
   [nzPageSize]="pageSize()"
@@ -23,7 +23,7 @@
   (nzPageSizeChange)="pageSizeChange.emit($event)">
   <thead>
     <tr>
-      <th></th>
+      <th aria-hidden="true"></th>
       <th>SKU</th>
       <th>Nombre</th>
       <th>Categoría</th>
@@ -35,10 +35,10 @@
     </tr>
   </thead>
   <tbody>
-    @for (row of items(); track row.product_id) {
+    @for (row of table.data; track row.product_id) {
       <tr>
-        <td>
-          <span nz-icon nzType="picture" style="font-size:24px;color:#ccc;"></span>
+        <td aria-hidden="true">
+          <span nz-icon nzType="picture" class="img-placeholder"></span>
         </td>
         <td><code>{{ row.sku }}</code></td>
         <td>
@@ -46,9 +46,9 @@
         </td>
         <td>{{ row.category?.name ?? '—' }}</td>
         <td nzAlign="right">
-          {{ row.cost_price != null ? (row.cost_price | currency:'Q ':'symbol':'1.2-2':'en-US') : '—' }}
+          {{ row.cost_price != null ? (row.cost_price | currency:'GTQ':'symbol':'1.2-2':'es-GT') : '—' }}
         </td>
-        <td nzAlign="right">{{ row.unit_price | currency:'Q ':'symbol':'1.2-2':'en-US' }}</td>
+        <td nzAlign="right">{{ row.unit_price | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</td>
         <td nzAlign="center">
           <nz-tag [nzColor]="row.stock <= row.min_stock ? 'red' : 'green'">
             {{ row.stock }}
