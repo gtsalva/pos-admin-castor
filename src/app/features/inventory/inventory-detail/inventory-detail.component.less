@@ -1,12 +1,12 @@
 @terracotta: #C85A1A;
-@text:        #1A1614;
-@muted:       #8C7B75;
-@border:      #EDE0D4;
-@bg-card:     #FFFFFF;
+@text: #1A1614;
+@muted: #8C7B75;
+@border: #EDE0D4;
+@bg-card: #FFFFFF;
 
 .inventory-detail-page {
   padding: 28px 32px;
-  max-width: 960px;
+  max-width: 1024px;
 }
 
 .loading-center {
@@ -138,9 +138,13 @@
   gap: 6px;
   margin-bottom: 16px;
 
-  &:last-of-type { margin-bottom: 0; }
+  &:last-of-type {
+    margin-bottom: 0;
+  }
 
-  &--sm { margin-bottom: 0; }
+  &--sm {
+    margin-bottom: 0;
+  }
 }
 
 .field-label {
@@ -169,21 +173,41 @@
 // ── Movements table ───────────────────────────────────────
 .movements-table {
   :global {
-    .ant-table-thead > tr > th {
+    .ant-table-thead>tr>th {
       padding-left: 24px;
-      &:first-child { padding-left: 24px; }
-      &:last-child  { padding-right: 24px; }
+
+      &:first-child {
+        padding-left: 24px;
+      }
+
+      &:last-child {
+        padding-right: 24px;
+      }
     }
-    .ant-table-tbody > tr > td {
+
+    .ant-table-tbody>tr>td {
       padding-left: 24px;
-      &:first-child { padding-left: 24px; }
-      &:last-child  { padding-right: 24px; }
+
+      &:first-child {
+        padding-left: 24px;
+      }
+
+      &:last-child {
+        padding-right: 24px;
+      }
     }
   }
 }
 
-.qty-in  { color: #389E0D; font-weight: 600; }
-.qty-out { color: #CF1322; font-weight: 600; }
+.qty-in {
+  color: #389E0D;
+  font-weight: 600;
+}
+
+.qty-out {
+  color: #CF1322;
+  font-weight: 600;
+}
 
 .notes-cell {
   color: @muted;

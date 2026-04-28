@@ -41,12 +41,12 @@ import {
   WarningFill,
 } from '@ant-design/icons-angular/icons';
 import { registerLocaleData } from '@angular/common';
-import localeEs from '@angular/common/locales/es';
+import localeEsGT from '@angular/common/locales/es-GT';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 
-registerLocaleData(localeEs);
+registerLocaleData(localeEsGT);
 
 export const appConfig: ApplicationConfig = {
   providers: [

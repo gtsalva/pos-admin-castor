@@ -58,10 +58,13 @@ export class ProductFormComponent implements OnInit {
   readonly existingResources = signal<ProductResource[]>([]);
   readonly queuedFiles = signal<QueuedFile[]>([]);
   readonly deletingId = signal<string | null>(null);
+  private _autoCalcActive = false;
 
   readonly defaultImage = computed(() =>
     this.existingResources().find(r => r.resource_type === 'image') ?? null
   );
+
+  readonly hasUploading = computed(() => this.queuedFiles().some(q => q.uploading));
 
   readonly form = this.fb.group({
     sku:            ['', [Validators.required, Validators.minLength(2)]],
@@ -80,34 +83,46 @@ export class ProductFormComponent implements OnInit {
     this.productId.set(id);
     this.isEdit.set(!!id);
 
+    this.form.get('cost_price')!.valueChanges.subscribe(cost => {
+      if (!this._autoCalcActive || cost == null) return;
+      this.form.patchValue({
+        min_sale_price: Math.round(cost * 1.2 * 100) / 100,
+        unit_price:     Math.round(cost * 1.35 * 100) / 100,
+      }, { emitEvent: false });
+    });
+
     this.categoriesApi.getAll().subscribe({
       next: cats => this.categories.set(cats),
       error: () => this.message.error('No se pudieron cargar las categorías'),
     });
 
-    if (id) {
-      this.isLoading.set(true);
-      this.form.get('stock')!.disable();
-      this.api.getOne(id).subscribe({
-        next: p => {
-          this.form.patchValue({
-            sku: p.sku, name: p.name,
-            description: p.description ?? '',
-            unit_price: p.unit_price,
-            cost_price: p.cost_price,
-            min_sale_price: p.min_sale_price,
-            min_stock: p.min_stock,
-            category_id: p.category_id,
-          });
-          this.isLoading.set(false);
-        },
-        error: () => { this.isLoading.set(false); this.router.navigate(['/productos']); },
-      });
-      this.resourcesApi.list(id).subscribe({
-        next: res => this.existingResources.set(res),
-        error: () => this.message.error('Error al cargar los recursos del producto'),
-      });
+    if (!id) {
+      this._autoCalcActive = true;
+      return;
     }
+
+    this.isLoading.set(true);
+    this.form.get('stock')!.disable();
+    this.api.getOne(id).subscribe({
+      next: p => {
+        this.form.patchValue({
+          sku: p.sku, name: p.name,
+          description: p.description ?? '',
+          unit_price: p.unit_price,
+          cost_price: p.cost_price,
+          min_sale_price: p.min_sale_price,
+          min_stock: p.min_stock,
+          category_id: p.category_id,
+        });
+        this._autoCalcActive = true;
+        this.isLoading.set(false);
+      },
+      error: () => { this.isLoading.set(false); this.router.navigate(['/productos']); },
+    });
+    this.resourcesApi.list(id).subscribe({
+      next: res => this.existingResources.set(res),
+      error: () => this.message.error('Error al cargar los recursos del producto'),
+    });
   }
 
   onFileDrop(event: DragEvent): void {

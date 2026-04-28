@@ -32,6 +32,8 @@ interface OrderRow {
   product_name: string;
   quantity_ordered: number;
   unit_cost: number;
+  min_sale_price: number | null;
+  unit_price: number | null;
 }
 
 function isProductOption(value: unknown): value is ProductOption {
@@ -87,7 +89,7 @@ function isProductOption(value: unknown): value is ProductOption {
       @if (currentStep() === 1) {
         <div>
           <h3>Agregar productos</h3>
-          <div style="display:grid; grid-template-columns:2fr 1fr 1fr auto; gap:8px; align-items:end; margin-bottom:16px">
+          <div style="display:grid; gap:8px; margin-bottom:16px">
             <div>
               <label style="display:block; margin-bottom:4px">Buscar producto (SKU o nombre)</label>
               <input nz-input
@@ -103,23 +105,34 @@ function isProductOption(value: unknown): value is ProductOption {
                 }
               </nz-autocomplete>
             </div>
-            <div>
-              <label style="display:block; margin-bottom:4px">Cantidad</label>
-              <nz-input-number [formControl]="step1Fields.controls.qty" [nzMin]="1" [nzStep]="1" style="width:100%"></nz-input-number>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr auto; gap:8px; align-items:end">
+              <div>
+                <label style="display:block; margin-bottom:4px">Cantidad</label>
+                <nz-input-number [formControl]="step1Fields.controls.qty" [nzMin]="1" [nzStep]="1" style="width:100%"></nz-input-number>
+              </div>
+              <div>
+                <label style="display:block; margin-bottom:4px">Costo unit. (Q)</label>
+                <nz-input-number [formControl]="step1Fields.controls.cost" [nzMin]="0.01" [nzPrecision]="2" [nzStep]="0.5" style="width:100%"></nz-input-number>
+              </div>
+              <div>
+                <label style="display:block; margin-bottom:4px">P. mínimo venta (Q)</label>
+                <nz-input-number [formControl]="step1Fields.controls.min_sale_price" [nzMin]="0" [nzPrecision]="2" [nzStep]="0.5" nzPlaceHolder="Opcional" style="width:100%"></nz-input-number>
+              </div>
+              <div>
+                <label style="display:block; margin-bottom:4px">P. venta (Q)</label>
+                <nz-input-number [formControl]="step1Fields.controls.unit_price" [nzMin]="0" [nzPrecision]="2" [nzStep]="0.5" nzPlaceHolder="Opcional" style="width:100%"></nz-input-number>
+              </div>
+              <button nz-button nzType="dashed" (click)="addRow()" [disabled]="!canAdd()">
+                + Agregar
+              </button>
             </div>
-            <div>
-              <label style="display:block; margin-bottom:4px">Costo unit. (Q)</label>
-              <nz-input-number [formControl]="step1Fields.controls.cost" [nzMin]="0.01" [nzPrecision]="2" [nzStep]="0.5" style="width:100%"></nz-input-number>
-            </div>
-            <button nz-button nzType="dashed" (click)="addRow()" [disabled]="!canAdd()">
-              + Agregar
-            </button>
+            <div style="font-size:12px; color:#888">Los precios de venta se auto-sugieren al ingresar el costo (+20% mínimo, +35% venta). Editables. Si se dejan vacíos, el precio del producto no cambia.</div>
           </div>
 
           <nz-table [nzData]="rows()" nzSize="small" [nzShowPagination]="false">
             <thead>
               <tr>
-                <th>SKU</th><th>Producto</th><th>Cantidad</th><th>Costo Unit.</th><th>Subtotal</th><th></th>
+                <th>SKU</th><th>Producto</th><th>Cantidad</th><th>Costo Unit.</th><th>P. Mínimo</th><th>P. Venta</th><th>Subtotal</th><th></th>
               </tr>
             </thead>
             <tbody>
@@ -129,6 +142,8 @@ function isProductOption(value: unknown): value is ProductOption {
                   <td>{{ row.product_name }}</td>
                   <td>{{ row.quantity_ordered }}</td>
                   <td>{{ row.unit_cost | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</td>
+                  <td>{{ row.min_sale_price != null ? (row.min_sale_price | currency:'GTQ':'symbol':'1.2-2':'es-GT') : '—' }}</td>
+                  <td>{{ row.unit_price != null ? (row.unit_price | currency:'GTQ':'symbol':'1.2-2':'es-GT') : '—' }}</td>
                   <td>{{ row.quantity_ordered * row.unit_cost | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</td>
                   <td><button nz-button nzType="link" nzDanger (click)="removeRow(i)">Quitar</button></td>
                 </tr>
@@ -157,7 +172,7 @@ function isProductOption(value: unknown): value is ProductOption {
           }
           <nz-table [nzData]="rows()" nzSize="small" [nzShowPagination]="false" style="margin:16px 0">
             <thead>
-              <tr><th>SKU</th><th>Producto</th><th>Cantidad</th><th>Costo Unit.</th><th>Subtotal</th></tr>
+              <tr><th>SKU</th><th>Producto</th><th>Cantidad</th><th>Costo Unit.</th><th>P. Mínimo</th><th>P. Venta</th><th>Subtotal</th></tr>
             </thead>
             <tbody>
               @for (row of rows(); track row.product_id) {
@@ -166,6 +181,8 @@ function isProductOption(value: unknown): value is ProductOption {
                   <td>{{ row.product_name }}</td>
                   <td>{{ row.quantity_ordered }}</td>
                   <td>{{ row.unit_cost | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</td>
+                  <td>{{ row.min_sale_price != null ? (row.min_sale_price | currency:'GTQ':'symbol':'1.2-2':'es-GT') : '—' }}</td>
+                  <td>{{ row.unit_price != null ? (row.unit_price | currency:'GTQ':'symbol':'1.2-2':'es-GT') : '—' }}</td>
                   <td>{{ row.quantity_ordered * row.unit_cost | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</td>
                 </tr>
               }
@@ -209,12 +226,24 @@ export class PurchasesNewComponent implements OnInit {
     product_search: [''],
     qty:            [1, [Validators.min(1)]],
     cost:           [0, [Validators.min(0.01)]],
+    min_sale_price: [null as number | null],
+    unit_price:     [null as number | null],
   });
 
   ngOnInit(): void {
     this.suppliersApi.getAll({ is_active: true, limit: 100 }).subscribe((res) =>
       this.suppliers.set(res.data),
     );
+
+    this.step1Fields.controls.cost.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(cost => {
+      if (cost == null || cost <= 0) return;
+      this.step1Fields.patchValue({
+        min_sale_price: Math.round(cost * 1.2 * 100) / 100,
+        unit_price:     Math.round(cost * 1.35 * 100) / 100,
+      }, { emitEvent: false });
+    });
 
     this.step1Fields.controls.product_search.valueChanges.pipe(
       debounceTime(300),
@@ -254,8 +283,10 @@ export class PurchasesNewComponent implements OnInit {
 
   addRow(): void {
     if (!this.canAdd()) return;
-    const qty = this.step1Fields.controls.qty.value!;
-    const cost = this.step1Fields.controls.cost.value!;
+    const qty            = this.step1Fields.controls.qty.value!;
+    const cost           = this.step1Fields.controls.cost.value!;
+    const min_sale_price = this.step1Fields.controls.min_sale_price.value;
+    const unit_price     = this.step1Fields.controls.unit_price.value;
     this.rows.update((list) => [
       ...list,
       {
@@ -264,9 +295,14 @@ export class PurchasesNewComponent implements OnInit {
         product_name:     this.selectedProduct!.name,
         quantity_ordered: qty,
         unit_cost:        cost,
+        min_sale_price,
+        unit_price,
       },
     ]);
-    this.step1Fields.reset({ product_search: '', qty: 1, cost: 0 }, { emitEvent: false });
+    this.step1Fields.reset(
+      { product_search: '', qty: 1, cost: 0, min_sale_price: null, unit_price: null },
+      { emitEvent: false },
+    );
     this.selectedProduct = null;
     this.productOptions.set([]);
   }
@@ -296,6 +332,8 @@ export class PurchasesNewComponent implements OnInit {
         product_id:       r.product_id,
         quantity_ordered: r.quantity_ordered,
         unit_cost:        r.unit_cost,
+        ...(r.min_sale_price != null ? { min_sale_price: r.min_sale_price } : {}),
+        ...(r.unit_price     != null ? { unit_price:     r.unit_price     } : {}),
       })),
     };
     this.purchasesApi.create(payload)

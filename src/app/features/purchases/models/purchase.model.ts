@@ -9,6 +9,8 @@ export interface PurchaseOrderItem {
   quantity_received: number | null;
   unit_cost: number;
   subtotal: number;
+  min_sale_price: number | null;
+  unit_price: number | null;
 }
 
 export interface PurchaseOrder {
@@ -42,6 +44,8 @@ export interface CreatePurchasePayload {
     product_id: string;
     quantity_ordered: number;
     unit_cost: number;
+    min_sale_price?: number;
+    unit_price?: number;
   }[];
 }
 

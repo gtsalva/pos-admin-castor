@@ -1,6 +1,6 @@
 .product-form-page {
   padding: 24px;
-  max-width: 860px;
+  max-width: 1024px;
 }
 
 .page-title {
@@ -104,7 +104,9 @@
   gap: 4px;
   color: #CF1322;
 
-  .anticon { font-size: 32px; }
+  .anticon {
+    font-size: 32px;
+  }
 }
 
 .resource-pdf-label {
@@ -139,17 +141,19 @@
   gap: 2px;
   opacity: 0;
   transition: opacity 0.15s;
-  background: rgba(255,255,255,0.9);
+  background: rgba(255, 255, 255, 0.9);
   border-radius: 6px;
   padding: 2px;
 }
 
-.resource-card:hover .resource-actions { opacity: 1; }
+.resource-card:hover .resource-actions {
+  opacity: 1;
+}
 
 .resource-uploading {
   position: absolute;
   inset: 0;
-  background: rgba(255,255,255,0.7);
+  background: rgba(255, 255, 255, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;

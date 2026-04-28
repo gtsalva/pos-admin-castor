@@ -96,7 +96,7 @@ export class InventoryDetailComponent implements OnInit {
     this.product_id.set(id);
     this.loadProduct(id);
     this.loadMovements(id, 1);
-    this.suppliersApi.getAll({ limit: 200 }).subscribe({
+    this.suppliersApi.getAll({ limit: 100 }).subscribe({
       next: res => this.suppliers.set(res.data),
     });
   }
