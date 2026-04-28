@@ -12,9 +12,8 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzAutocompleteOptionComponent } from 'ng-zorro-antd/auto-complete';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { FormsModule } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
-import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SuppliersApiService } from '../../suppliers/services/suppliers-api.service';
 import { PurchasesApiService } from '../services/purchases-api.service';
@@ -35,11 +34,15 @@ interface OrderRow {
   unit_cost: number;
 }
 
+function isProductOption(value: unknown): value is ProductOption {
+  return typeof value === 'object' && value !== null && 'product_id' in value;
+}
+
 @Component({
   selector: 'app-purchases-new',
   standalone: true,
   imports: [
-    ReactiveFormsModule, FormsModule,
+    ReactiveFormsModule,
     NzStepsModule, NzFormModule, NzSelectModule,
     NzInputModule, NzButtonModule, NzInputNumberModule,
     NzTableModule, NzDividerModule, NzAutocompleteModule,
@@ -88,8 +91,7 @@ interface OrderRow {
             <div>
               <label style="display:block; margin-bottom:4px">Buscar producto (SKU o nombre)</label>
               <input nz-input
-                [(ngModel)]="productSearch"
-                (ngModelChange)="searchProducts($event)"
+                [formControl]="step1Fields.controls.product_search"
                 [nzAutocomplete]="auto"
                 placeholder="Escribe para buscar..." />
               <nz-autocomplete #auto (selectionChange)="onProductSelect($event)">
@@ -102,11 +104,11 @@ interface OrderRow {
             </div>
             <div>
               <label style="display:block; margin-bottom:4px">Cantidad</label>
-              <nz-input-number [(ngModel)]="newQty" [nzMin]="1" [nzStep]="1" style="width:100%"></nz-input-number>
+              <nz-input-number [formControl]="step1Fields.controls.qty" [nzMin]="1" [nzStep]="1" style="width:100%"></nz-input-number>
             </div>
             <div>
               <label style="display:block; margin-bottom:4px">Costo unit. (Q)</label>
-              <nz-input-number [(ngModel)]="newCost" [nzMin]="0.01" [nzPrecision]="2" [nzStep]="0.5" style="width:100%"></nz-input-number>
+              <nz-input-number [formControl]="step1Fields.controls.cost" [nzMin]="0.01" [nzPrecision]="2" [nzStep]="0.5" style="width:100%"></nz-input-number>
             </div>
             <button nz-button nzType="dashed" (click)="addRow()" [disabled]="!canAdd()">
               + Agregar
@@ -188,7 +190,6 @@ export class PurchasesNewComponent implements OnInit {
   private readonly msg = inject(NzMessageService);
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly searchSubject = new Subject<string>();
 
   readonly currentStep = signal(0);
   readonly suppliers = signal<Supplier[]>([]);
@@ -196,9 +197,6 @@ export class PurchasesNewComponent implements OnInit {
   readonly rows = signal<OrderRow[]>([]);
   readonly isSaving = signal(false);
 
-  productSearch = '';
-  newQty = 1;
-  newCost = 0;
   private selectedProduct: ProductOption | null = null;
 
   step0 = this.fb.group({
@@ -206,14 +204,25 @@ export class PurchasesNewComponent implements OnInit {
     notes:       [''],
   });
 
+  step1Fields = this.fb.group({
+    product_search: [''],
+    qty:            [1, [Validators.min(1)]],
+    cost:           [0, [Validators.min(0.01)]],
+  });
+
   ngOnInit(): void {
     this.suppliersApi.getAll({ is_active: true, limit: 100 }).subscribe((res) =>
       this.suppliers.set(res.data),
     );
 
-    this.searchSubject.pipe(
+    this.step1Fields.controls.product_search.valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged(),
+      tap((q) => {
+        this.selectedProduct = null;
+        if (!q || q.length < 2) this.productOptions.set([]);
+      }),
+      filter((q): q is string => !!q && q.length >= 2),
       switchMap((q) => this.productsApi.getAll({ search: q, limit: 10 })),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((res) =>
@@ -223,37 +232,38 @@ export class PurchasesNewComponent implements OnInit {
     );
   }
 
-  searchProducts(q: string): void {
-    this.selectedProduct = null;
-    if (q.length >= 2) this.searchSubject.next(q);
-  }
-
   onProductSelect(option: NzAutocompleteOptionComponent): void {
-    const selected = option.nzValue as ProductOption;
-    this.selectedProduct = selected;
-    this.productSearch = `${selected.sku} — ${selected.name}`;
+    const value: unknown = option.nzValue;
+    if (!isProductOption(value)) return;
+    this.selectedProduct = value;
+    this.step1Fields.controls.product_search.setValue(
+      `${value.sku} — ${value.name}`,
+      { emitEvent: false },
+    );
   }
 
   canAdd(): boolean {
-    return !!(this.selectedProduct && this.newQty >= 1 && this.newCost > 0);
+    const qty = this.step1Fields.controls.qty.value ?? 0;
+    const cost = this.step1Fields.controls.cost.value ?? 0;
+    return !!(this.selectedProduct && qty >= 1 && cost > 0);
   }
 
   addRow(): void {
     if (!this.canAdd()) return;
+    const qty = this.step1Fields.controls.qty.value!;
+    const cost = this.step1Fields.controls.cost.value!;
     this.rows.update((list) => [
       ...list,
       {
         product_id:       this.selectedProduct!.product_id,
         product_sku:      this.selectedProduct!.sku,
         product_name:     this.selectedProduct!.name,
-        quantity_ordered: this.newQty,
-        unit_cost:        this.newCost,
+        quantity_ordered: qty,
+        unit_cost:        cost,
       },
     ]);
-    this.productSearch = '';
+    this.step1Fields.reset({ product_search: '', qty: 1, cost: 0 }, { emitEvent: false });
     this.selectedProduct = null;
-    this.newQty = 1;
-    this.newCost = 0;
     this.productOptions.set([]);
   }
 
@@ -284,15 +294,17 @@ export class PurchasesNewComponent implements OnInit {
         unit_cost:        r.unit_cost,
       })),
     };
-    this.purchasesApi.create(payload).subscribe({
-      next: (po) => {
-        this.msg.success(`Orden ${po.order_number} creada`);
-        this.router.navigate(['/compras', po.purchase_order_id]);
-      },
-      error: () => {
-        this.msg.error('Error al crear la orden');
-        this.isSaving.set(false);
-      },
-    });
+    this.purchasesApi.create(payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (po) => {
+          this.msg.success(`Orden ${po.order_number} creada`);
+          this.router.navigate(['/compras', po.purchase_order_id]);
+        },
+        error: () => {
+          this.msg.error('Error al crear la orden');
+          this.isSaving.set(false);
+        },
+      });
   }
 }
