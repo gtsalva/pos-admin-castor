@@ -93,6 +93,7 @@ function isProductOption(value: unknown): value is ProductOption {
               <input nz-input
                 [formControl]="step1Fields.controls.product_search"
                 [nzAutocomplete]="auto"
+                (input)="onSearchInput()"
                 placeholder="Escribe para buscar..." />
               <nz-autocomplete #auto (selectionChange)="onProductSelect($event)">
                 @for (p of productOptions(); track p.product_id) {
@@ -219,7 +220,6 @@ export class PurchasesNewComponent implements OnInit {
       debounceTime(300),
       distinctUntilChanged(),
       tap((q) => {
-        this.selectedProduct = null;
         if (!q || q.length < 2) this.productOptions.set([]);
       }),
       filter((q): q is string => !!q && q.length >= 2),
@@ -230,6 +230,10 @@ export class PurchasesNewComponent implements OnInit {
         res.data.map((p) => ({ product_id: p.product_id, sku: p.sku, name: p.name })),
       ),
     );
+  }
+
+  onSearchInput(): void {
+    this.selectedProduct = null;
   }
 
   onProductSelect(option: NzAutocompleteOptionComponent): void {
