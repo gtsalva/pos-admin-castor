@@ -1,0 +1,76 @@
+<nz-modal
+  [nzVisible]="visible()"
+  [nzTitle]="isEdit ? 'Editar período' : 'Nuevo período de incentivos'"
+  [nzWidth]="480"
+  (nzOnCancel)="cancel.emit()"
+  (nzOnOk)="submit()"
+  nzOkText="Guardar"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="form" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label nzRequired>Nombre del período</nz-form-label>
+        <nz-form-control nzErrorTip="Requerido">
+          <input nz-input formControlName="name" placeholder="Ej: Abril 2026" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <div nz-row [nzGutter]="16">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>Fecha inicio</nz-form-label>
+            <nz-form-control nzErrorTip="Requerido">
+              <nz-date-picker formControlName="start_date" nzFormat="yyyy-MM-dd" style="width:100%" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>Fecha fin</nz-form-label>
+            <nz-form-control nzErrorTip="Requerido">
+              <nz-date-picker formControlName="end_date" nzFormat="yyyy-MM-dd" style="width:100%" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div nz-row [nzGutter]="16">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>Meta de ventas (Q)</nz-form-label>
+            <nz-form-control nzErrorTip="Requerido">
+              <nz-input-number
+                formControlName="goal_amount"
+                [nzMin]="0"
+                [nzStep]="100"
+                [nzFormatter]="formatQ"
+                style="width:100%"
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>Tasa de comisión (%)</nz-form-label>
+            <nz-form-control nzErrorTip="Entre 0 y 100">
+              <nz-input-number
+                formControlName="commission_rate"
+                [nzMin]="0"
+                [nzMax]="100"
+                [nzStep]="0.5"
+                [nzFormatter]="formatPct"
+                style="width:100%"
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <nz-form-item>
+        <nz-form-control>
+          <label nz-checkbox formControlName="is_active">Período activo</label>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>
