@@ -5,6 +5,9 @@
       (input)="onSearch($any($event.target).value)" />
   </nz-input-group>
   <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+  <a nz-button nzType="primary" routerLink="/productos/nuevo">
+    <span nz-icon nzType="plus"></span> Nuevo producto
+  </a>
 </div>
 
 <nz-table
@@ -24,9 +27,11 @@
       <th>SKU</th>
       <th>Nombre</th>
       <th>Categoría</th>
-      <th>Precio</th>
-      <th>Stock</th>
+      <th nzAlign="right">Costo</th>
+      <th nzAlign="right">Precio venta</th>
+      <th nzAlign="center">Stock</th>
       <th>Estado</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -36,10 +41,15 @@
           <span nz-icon nzType="picture" style="font-size:24px;color:#ccc;"></span>
         </td>
         <td><code>{{ row.sku }}</code></td>
-        <td>{{ row.name }}</td>
-        <td>{{ row.category?.name ?? '—' }}</td>
-        <td>{{ row.unit_price | currency:'Q ':'symbol':'1.2-2':'en-US' }}</td>
         <td>
+          <a [routerLink]="['/productos', row.product_id]">{{ row.name }}</a>
+        </td>
+        <td>{{ row.category?.name ?? '—' }}</td>
+        <td nzAlign="right">
+          {{ row.cost_price != null ? (row.cost_price | currency:'Q ':'symbol':'1.2-2':'en-US') : '—' }}
+        </td>
+        <td nzAlign="right">{{ row.unit_price | currency:'Q ':'symbol':'1.2-2':'en-US' }}</td>
+        <td nzAlign="center">
           <nz-tag [nzColor]="row.stock <= row.min_stock ? 'red' : 'green'">
             {{ row.stock }}
           </nz-tag>
@@ -48,6 +58,11 @@
           <nz-tag [nzColor]="row.is_active ? 'blue' : 'default'">
             {{ row.is_active ? 'Activo' : 'Inactivo' }}
           </nz-tag>
+        </td>
+        <td>
+          <a nz-button nzType="link" [routerLink]="['/productos', row.product_id, 'editar']">
+            Editar
+          </a>
         </td>
       </tr>
     }

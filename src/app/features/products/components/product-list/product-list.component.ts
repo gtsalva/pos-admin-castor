@@ -1,5 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -10,7 +11,7 @@ import { Product } from '../../../../shared/models/product.model';
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [NzTableModule, NzTagModule, NzInputModule, NzButtonModule, NzIconModule, CurrencyPipe],
+  imports: [RouterLink, NzTableModule, NzTagModule, NzInputModule, NzButtonModule, NzIconModule, CurrencyPipe],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.less',
 })
