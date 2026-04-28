@@ -2,14 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { environment } from '../../../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import {
   PurchaseOrder,
   CreatePurchasePayload,
   ReceivePurchasePayload,
   PurchaseQuery,
 } from '../models/purchase.model';
-import { PaginatedResult } from '../../../../shared/models/pagination.model';
+import { PaginatedResult } from '../../../shared/models/pagination.model';
 
 interface ApiResponse<T> {
   data: T;
