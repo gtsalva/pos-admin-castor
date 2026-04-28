@@ -4,6 +4,8 @@ export interface Product {
   name: string;
   description: string | null;
   unit_price: number;
+  cost_price: number | null;
+  min_sale_price: number | null;
   stock: number;
   min_stock: number;
   is_active: boolean;
@@ -18,7 +20,21 @@ export interface CreateProductDto {
   name: string;
   description?: string;
   unit_price: number;
+  cost_price?: number;
+  min_sale_price?: number;
   stock: number;
   min_stock?: number;
   category_id?: string;
+}
+
+export interface UpdateProductDto {
+  sku?: string;
+  name?: string;
+  description?: string;
+  unit_price?: number;
+  cost_price?: number;
+  min_sale_price?: number;
+  min_stock?: number;
+  category_id?: string;
+  is_active?: boolean;
 }

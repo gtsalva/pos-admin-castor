@@ -3,8 +3,14 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
-import { Product } from '../../../shared/models/product.model';
+import { Product, CreateProductDto, UpdateProductDto } from '../../../shared/models/product.model';
 import { PaginatedResult, TableParams } from '../../../shared/models/pagination.model';
+
+interface ApiResponse<T> {
+  data: T;
+  message: string;
+  statusCode: number;
+}
 
 interface ApiPaginatedResponse<T> {
   data: PaginatedResult<T>;
@@ -21,6 +27,7 @@ export interface ProductSearchQuery {
 @Injectable({ providedIn: 'root' })
 export class ProductsApiService {
   private readonly http = inject(HttpClient);
+  private readonly base = `${environment.apiUrl}/products`;
 
   searchProducts(params: TableParams): Observable<PaginatedResult<Product>> {
     let httpParams = new HttpParams()
@@ -31,7 +38,7 @@ export class ProductsApiService {
     if (params.category_id) httpParams = httpParams.set('category_id', params.category_id);
 
     return this.http
-      .get<ApiPaginatedResponse<Product>>(`${environment.apiUrl}/products`, { params: httpParams })
+      .get<ApiPaginatedResponse<Product>>(this.base, { params: httpParams })
       .pipe(map(res => res.data));
   }
 
@@ -43,7 +50,25 @@ export class ProductsApiService {
     if (query.search) httpParams = httpParams.set('query', query.search);
 
     return this.http
-      .get<ApiPaginatedResponse<Product>>(`${environment.apiUrl}/products`, { params: httpParams })
+      .get<ApiPaginatedResponse<Product>>(this.base, { params: httpParams })
+      .pipe(map(res => res.data));
+  }
+
+  getOne(product_id: string): Observable<Product> {
+    return this.http
+      .get<ApiResponse<Product>>(`${this.base}/${product_id}`)
+      .pipe(map(res => res.data));
+  }
+
+  create(payload: CreateProductDto): Observable<Product> {
+    return this.http
+      .post<ApiResponse<Product>>(this.base, payload)
+      .pipe(map(res => res.data));
+  }
+
+  update(product_id: string, payload: UpdateProductDto): Observable<Product> {
+    return this.http
+      .patch<ApiResponse<Product>>(`${this.base}/${product_id}`, payload)
       .pipe(map(res => res.data));
   }
 }
