@@ -50,6 +50,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/suppliers/suppliers.routes').then(m => m.suppliersRoutes),
       },
+      {
+        path: 'categorias',
+        loadChildren: () =>
+          import('./features/categories/categories.routes').then(m => m.categoriesRoutes),
+      },
     ],
   },
   { path: '**', redirectTo: 'dashboard' },

@@ -1,0 +1,80 @@
+<div class="catf-page">
+
+  @if (isLoading()) {
+  <div class="catf-loading"><nz-spin nzSimple></nz-spin></div>
+  } @else {
+
+  <!-- ── Back link ──────────────────────────────────────── -->
+  <a routerLink="/categorias" class="catf-back">
+    ← Categorías
+  </a>
+
+  <!-- ── Card ──────────────────────────────────────────── -->
+  <div class="catf-card">
+
+    <!-- Header stripe -->
+    <div class="catf-card__stripe"></div>
+
+    <div class="catf-card__body">
+
+      <div class="catf-heading">
+        <div class="catf-heading__label">{{ isEdit() ? 'Editar' : 'Nueva' }}</div>
+        <h2 class="catf-heading__title">{{ isEdit() ? 'Categoría' : 'Categoría' }}</h2>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="catf-form">
+
+        <!-- Name -->
+        <div class="catf-field">
+          <div class="catf-field__header">
+            <label class="catf-label catf-label--required">Nombre</label>
+            <span class="catf-counter" [class.catf-counter--limit]="nameLength >= 70">
+              {{ nameLength }}/80
+            </span>
+          </div>
+          <input nz-input formControlName="name" placeholder="Ej. Salas y Living" class="catf-input" maxlength="80" />
+          @if (nameCtrl.invalid && nameCtrl.touched) {
+          <div class="catf-error">
+            @if (nameCtrl.errors?.['required']) { El nombre es obligatorio. }
+            @else if (nameCtrl.errors?.['minlength']) { Mínimo 2 caracteres. }
+          </div>
+          }
+        </div>
+
+        <!-- Description -->
+        <div class="catf-field">
+          <label class="catf-label">Descripción <span class="catf-optional">(opcional)</span></label>
+          <textarea nz-input formControlName="description" placeholder="Describe qué productos incluye esta categoría…"
+            [nzAutosize]="{ minRows: 3, maxRows: 5 }" class="catf-input"></textarea>
+        </div>
+
+        <!-- Status (edit only) -->
+        @if (isEdit()) {
+        <div class="catf-field catf-field--inline">
+          <label class="catf-label">Estado</label>
+          <div class="catf-switch-row">
+            <nz-switch formControlName="is_active"></nz-switch>
+            <!-- <span class="catf-switch-label">
+                  {{ form.value?.is_active ? 'Activa' : 'Inactiva' }}
+                </span> -->
+          </div>
+        </div>
+        }
+
+        <!-- Actions -->
+        <div class="catf-actions">
+          <a nz-button routerLink="/categorias" class="catf-cancel">
+            Cancelar
+          </a>
+          <button nz-button nzType="primary" type="submit" [nzLoading]="submitting()" [disabled]="form.invalid"
+            class="catf-submit">
+            {{ isEdit() ? 'Guardar cambios' : 'Crear categoría' }}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  }
+</div>

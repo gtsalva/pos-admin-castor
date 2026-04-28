@@ -9,7 +9,7 @@ import { SalesApiService } from '../sales/services/sales-api.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CurrencyPipe, NzStatisticModule, NzCardModule, NzGridModule, NzSpinModule],
+  imports: [NzStatisticModule, NzCardModule, NzGridModule, NzSpinModule],
   template: `
     <div class="dashboard">
       <h2>Dashboard</h2>

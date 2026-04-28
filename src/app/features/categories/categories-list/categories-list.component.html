@@ -1,0 +1,117 @@
+<div class="cat-page">
+
+  <!-- ── Page header ─────────────────────────────────────── -->
+  <div class="cat-header">
+    <div class="cat-header__left">
+      <div class="cat-header__eyebrow">Catálogo</div>
+      <h1 class="cat-header__title">Categorías</h1>
+      <div class="cat-header__meta">
+        <span class="meta-pill meta-pill--active">{{ activeCount() }} activas</span>
+        <span class="meta-pill meta-pill--inactive">{{ inactiveCount() }} inactivas</span>
+      </div>
+    </div>
+    <a nz-button nzType="primary" routerLink="nueva" class="cat-cta">
+      <span nz-icon nzType="plus"></span>
+      Nueva categoría
+    </a>
+  </div>
+
+  <!-- ── Filters ──────────────────────────────────────────── -->
+  <div class="cat-filters">
+    <div class="cat-search">
+      <span nz-icon nzType="search" class="search-icon"></span>
+      <input
+        class="cat-search__input"
+        type="text"
+        placeholder="Buscar por nombre o descripción…"
+        [value]="searchQuery()"
+        (input)="searchQuery.set($any($event.target).value)"
+      />
+    </div>
+    <div class="status-tabs">
+      <button class="status-tab" [class.active]="statusFilter() === 'active'" (click)="statusFilter.set('active')">Activas</button>
+      <button class="status-tab" [class.active]="statusFilter() === 'inactive'" (click)="statusFilter.set('inactive')">Inactivas</button>
+      <button class="status-tab" [class.active]="statusFilter() === 'all'" (click)="statusFilter.set('all')">Todas</button>
+    </div>
+  </div>
+
+  <!-- ── Table ────────────────────────────────────────────── -->
+  <div class="cat-table-wrap">
+    @if (isLoading()) {
+      <div class="cat-loading"><nz-spin nzSimple></nz-spin></div>
+    } @else if (filtered().length === 0) {
+      <div class="cat-empty">
+        <div class="cat-empty__icon">◈</div>
+        <div class="cat-empty__text">Sin categorías</div>
+        <div class="cat-empty__sub">Crea la primera o ajusta el filtro</div>
+      </div>
+    } @else {
+      <table class="cat-table">
+        <thead>
+          <tr>
+            <th class="col-name">Nombre</th>
+            <th class="col-desc">Descripción</th>
+            <th class="col-status">Estado</th>
+            <th class="col-actions"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (cat of filtered(); track cat.category_id) {
+            <tr class="cat-row" [class.cat-row--inactive]="!cat.is_active">
+              <td class="col-name">
+                <div class="row-accent"></div>
+                <span class="cat-name">{{ cat.name }}</span>
+              </td>
+              <td class="col-desc">
+                <span class="cat-desc">{{ cat.description || '—' }}</span>
+              </td>
+              <td class="col-status">
+                @if (cat.is_active) {
+                  <span class="status-badge status-badge--active">
+                    <span class="status-dot"></span>Activa
+                  </span>
+                } @else {
+                  <span class="status-badge status-badge--inactive">
+                    <span class="status-dot"></span>Inactiva
+                  </span>
+                }
+              </td>
+              <td class="col-actions">
+                <div class="actions">
+                  <a nz-button nzType="link" [routerLink]="[cat.category_id, 'editar']" class="action-edit">
+                    Editar
+                  </a>
+                  <span class="action-sep">·</span>
+                  @if (cat.is_active) {
+                    <button nz-button nzType="link" nzDanger
+                      nz-popconfirm
+                      nzPopconfirmTitle="¿Desactivar '{{ cat.name }}'?"
+                      nzPopconfirmPlacement="left"
+                      [nzOkText]="'Desactivar'"
+                      (nzOnConfirm)="toggleActive(cat)"
+                      [disabled]="togglingId() === cat.category_id"
+                      class="action-toggle">
+                      Desactivar
+                    </button>
+                  } @else {
+                    <button nz-button nzType="link"
+                      nz-popconfirm
+                      nzPopconfirmTitle="¿Activar '{{ cat.name }}'?"
+                      nzPopconfirmPlacement="left"
+                      [nzOkText]="'Activar'"
+                      (nzOnConfirm)="toggleActive(cat)"
+                      [disabled]="togglingId() === cat.category_id"
+                      class="action-toggle action-toggle--activate">
+                      Activar
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+</div>

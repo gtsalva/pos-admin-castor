@@ -4,9 +4,11 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { NZ_I18N, es_ES } from 'ng-zorro-antd/i18n';
 import { NzMessageModule } from 'ng-zorro-antd/message';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzNotificationModule } from 'ng-zorro-antd/notification';
 import { provideNzIcons } from 'ng-zorro-antd/icon';
 import {
+  AppstoreOutline,
   CheckCircleFill,
   CheckCircleOutline,
   CloseCircleFill,
@@ -26,6 +28,7 @@ import {
   PlusOutline,
   SearchOutline,
   PictureOutline,
+  ShoppingCartOutline,
   ShoppingOutline,
   TeamOutline,
   TransactionOutline,
@@ -34,20 +37,21 @@ import {
   WarningFill,
 } from '@ant-design/icons-angular/icons';
 import { registerLocaleData } from '@angular/common';
-import en from '@angular/common/locales/en';
+import localeEs from '@angular/common/locales/es';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 
-registerLocaleData(en);
+registerLocaleData(localeEs);
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
     provideAnimationsAsync(),
-    importProvidersFrom(NzMessageModule, NzNotificationModule),
+    importProvidersFrom(NzMessageModule, NzModalModule, NzNotificationModule),
     provideNzIcons([
+      AppstoreOutline,
       CheckCircleFill,
       CheckCircleOutline,
       CloseCircleFill,
@@ -67,6 +71,7 @@ export const appConfig: ApplicationConfig = {
       PictureOutline,
       PlusOutline,
       SearchOutline,
+      ShoppingCartOutline,
       ShoppingOutline,
       TeamOutline,
       TransactionOutline,
@@ -75,6 +80,6 @@ export const appConfig: ApplicationConfig = {
       WarningFill,
     ]),
     { provide: NZ_I18N, useValue: es_ES },
-    { provide: LOCALE_ID, useValue: 'en-US' },
+    { provide: LOCALE_ID, useValue: 'es-GT' },
   ],
 };
