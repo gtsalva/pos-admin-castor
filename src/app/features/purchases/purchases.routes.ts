@@ -1,10 +1,12 @@
 import { Routes } from '@angular/router';
+import { PurchasesStateService } from './services/purchases-state.service';
 
 export const purchaseRoutes: Routes = [
   {
     path: '',
     loadComponent: () =>
       import('./purchases-list/purchases-list.component').then(m => m.PurchasesListComponent),
+    providers: [PurchasesStateService],
   },
   {
     path: 'nueva',

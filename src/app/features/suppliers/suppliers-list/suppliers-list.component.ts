@@ -1,19 +1,21 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, DestroyRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { FormsModule } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SuppliersApiService } from '../services/suppliers-api.service';
 import { Supplier } from '../models/supplier.model';
 
 @Component({
   selector: 'app-suppliers-list',
   standalone: true,
-  imports: [RouterLink, NzTableModule, NzButtonModule, NzTagModule, NzInputModule, NzIconModule, FormsModule],
+  imports: [RouterLink, ReactiveFormsModule, NzTableModule, NzButtonModule, NzTagModule, NzInputModule, NzIconModule],
   template: `
     <div style="padding: 24px">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
@@ -23,7 +25,7 @@ import { Supplier } from '../models/supplier.model';
 
       <div style="margin-bottom:16px">
         <nz-input-group [nzPrefix]="searchIcon" style="max-width:320px">
-          <input nz-input placeholder="Buscar proveedor..." [(ngModel)]="search" (ngModelChange)="onSearch()" />
+          <input nz-input placeholder="Buscar proveedor..." [formControl]="searchControl" />
         </nz-input-group>
         <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
       </div>
@@ -72,20 +74,30 @@ import { Supplier } from '../models/supplier.model';
 export class SuppliersListComponent implements OnInit {
   private readonly api = inject(SuppliersApiService);
   private readonly msg = inject(NzMessageService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly items = signal<Supplier[]>([]);
   readonly total = signal(0);
   readonly page = signal(1);
   readonly isLoading = signal(false);
-  search = '';
+
+  readonly searchControl = new FormControl('');
 
   ngOnInit(): void {
     this.load();
+    this.searchControl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.page.set(1);
+      this.load();
+    });
   }
 
   load(): void {
     this.isLoading.set(true);
-    this.api.getAll({ page: this.page(), limit: 20, search: this.search || undefined }).subscribe({
+    this.api.getAll({ page: this.page(), limit: 20, search: this.searchControl.value || undefined }).subscribe({
       next: (res) => {
         this.items.set(res.data);
         this.total.set(res.total);
@@ -96,11 +108,6 @@ export class SuppliersListComponent implements OnInit {
         this.isLoading.set(false);
       },
     });
-  }
-
-  onSearch(): void {
-    this.page.set(1);
-    this.load();
   }
 
   onPageChange(page: number): void {

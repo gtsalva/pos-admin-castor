@@ -1,5 +1,6 @@
-import { Component, inject, signal, OnInit, input } from '@angular/core';
+import { Component, inject, signal, OnInit, input, ViewChild, TemplateRef } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
@@ -9,8 +10,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzFormModule } from 'ng-zorro-antd/form';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { PurchasesApiService } from '../services/purchases-api.service';
 import { PurchaseOrder, PurchaseStatus } from '../models/purchase.model';
 
@@ -26,9 +27,10 @@ const STATUS_LABEL: Record<PurchaseStatus, string> = {
   standalone: true,
   imports: [
     RouterLink,
+    ReactiveFormsModule,
     NzDescriptionsModule, NzTableModule, NzTagModule,
-    NzButtonModule, NzSpinModule, NzPopconfirmModule, NzInputModule,
-    CurrencyPipe, DatePipe, FormsModule,
+    NzButtonModule, NzSpinModule, NzPopconfirmModule, NzInputModule, NzFormModule,
+    CurrencyPipe, DatePipe,
   ],
   template: `
     <div style="padding:24px">
@@ -102,10 +104,17 @@ const STATUS_LABEL: Record<PurchaseStatus, string> = {
         </nz-table>
       }
     </div>
+
+    <ng-template #cancelReasonTpl>
+      <p style="margin-bottom:8px">Describe el motivo de la cancelación:</p>
+      <textarea nz-input [formControl]="cancelReasonCtrl" rows="3" placeholder="Motivo de cancelación..."></textarea>
+    </ng-template>
   `,
 })
 export class PurchasesDetailComponent implements OnInit {
   readonly purchaseId = input.required<string>();
+
+  @ViewChild('cancelReasonTpl') cancelReasonTpl!: TemplateRef<void>;
 
   private readonly api = inject(PurchasesApiService);
   private readonly modal = inject(NzModalService);
@@ -114,6 +123,7 @@ export class PurchasesDetailComponent implements OnInit {
 
   readonly po = signal<PurchaseOrder | null>(null);
   readonly isLoading = signal(false);
+  readonly cancelReasonCtrl = new FormControl('', [Validators.required]);
 
   ngOnInit(): void {
     this.load();
@@ -131,18 +141,21 @@ export class PurchasesDetailComponent implements OnInit {
   statusLabel(s: PurchaseStatus): string { return STATUS_LABEL[s]; }
 
   openCancelModal(): void {
-    let reason = '';
-    this.modal.confirm({
+    this.cancelReasonCtrl.reset();
+    this.modal.create({
       nzTitle: 'Motivo de cancelación',
-      nzContent: `<div style="margin-top:8px"><label>Describe el motivo:</label><br/><textarea id="cancel-reason-input" style="width:100%;margin-top:4px;border:1px solid #d9d9d9;border-radius:4px;padding:4px 8px" rows="3"></textarea></div>`,
+      nzContent: this.cancelReasonTpl,
+      nzOkText: 'Cancelar orden',
+      nzOkDanger: true,
+      nzCancelText: 'No cancelar',
       nzOnOk: () => {
-        reason = (document.getElementById('cancel-reason-input') as HTMLTextAreaElement)?.value ?? '';
-        if (!reason.trim()) {
+        if (!this.cancelReasonCtrl.value?.trim()) {
+          this.cancelReasonCtrl.markAsTouched();
           this.msg.warning('Ingresa el motivo de cancelación');
           return false;
         }
         return new Promise<void>((resolve, reject) => {
-          this.api.cancel(this.purchaseId(), reason).subscribe({
+          this.api.cancel(this.purchaseId(), this.cancelReasonCtrl.value!).subscribe({
             next: (po) => { this.po.set(po); this.msg.success('Orden cancelada'); resolve(); },
             error: () => { this.msg.error('Error al cancelar'); reject(); },
           });
