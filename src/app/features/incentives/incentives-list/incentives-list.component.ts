@@ -28,8 +28,8 @@ export class IncentivesListComponent implements OnInit {
   readonly periods = signal<IncentivePeriod[]>([]);
   readonly loading = signal(false);
 
-  showForm = false;
-  editPeriod: IncentivePeriod | null = null;
+  readonly showForm = signal(false);
+  readonly editPeriod = signal<IncentivePeriod | null>(null);
 
   ngOnInit(): void {
     this.load();
@@ -44,24 +44,24 @@ export class IncentivesListComponent implements OnInit {
   }
 
   openCreate(): void {
-    this.editPeriod = null;
-    this.showForm = true;
+    this.editPeriod.set(null);
+    this.showForm.set(true);
   }
 
   openEdit(period: IncentivePeriod): void {
-    this.editPeriod = period;
-    this.showForm = true;
+    this.editPeriod.set(period);
+    this.showForm.set(true);
   }
 
   onFormSave(payload: CreatePeriodPayload | UpdatePeriodPayload): void {
-    if (this.editPeriod) {
-      this.api.updatePeriod(this.editPeriod.period_id, payload as UpdatePeriodPayload).subscribe({
-        next: () => { this.msg.success('Período actualizado'); this.showForm = false; this.load(); },
+    if (this.editPeriod()) {
+      this.api.updatePeriod(this.editPeriod()!.period_id, payload as UpdatePeriodPayload).subscribe({
+        next: () => { this.msg.success('Período actualizado'); this.showForm.set(false); this.load(); },
         error: () => this.msg.error('Error al actualizar período'),
       });
     } else {
       this.api.createPeriod(payload as CreatePeriodPayload).subscribe({
-        next: () => { this.msg.success('Período creado'); this.showForm = false; this.load(); },
+        next: () => { this.msg.success('Período creado'); this.showForm.set(false); this.load(); },
         error: () => this.msg.error('Error al crear período'),
       });
     }

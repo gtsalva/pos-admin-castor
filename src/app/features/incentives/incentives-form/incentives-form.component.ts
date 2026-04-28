@@ -1,4 +1,4 @@
-import { Component, input, output, OnChanges } from '@angular/core';
+import { Component, input, output, OnChanges, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -25,7 +25,7 @@ export class IncentivesFormComponent implements OnChanges {
   readonly save = output<CreatePeriodPayload>();
   readonly cancel = output<void>();
 
-  private readonly fb = new FormBuilder();
+  private readonly fb = inject(FormBuilder);
 
   readonly form = this.fb.group({
     name: ['', [Validators.required, Validators.maxLength(100)]],
@@ -40,6 +40,12 @@ export class IncentivesFormComponent implements OnChanges {
   readonly formatPct = (v: number) => `${v}%`;
 
   get isEdit(): boolean { return !!this.period(); }
+
+  private toDateString(value: string | Date | null | undefined): string {
+    if (!value) return '';
+    if (typeof value === 'string') return value;
+    return value.toISOString().split('T')[0];
+  }
 
   ngOnChanges(): void {
     const p = this.period();
@@ -65,8 +71,8 @@ export class IncentivesFormComponent implements OnChanges {
     const v = this.form.value;
     this.save.emit({
       name: v.name!,
-      start_date: typeof v.start_date === 'string' ? v.start_date : (v.start_date as unknown as Date).toISOString().split('T')[0],
-      end_date: typeof v.end_date === 'string' ? v.end_date : (v.end_date as unknown as Date).toISOString().split('T')[0],
+      start_date: this.toDateString(v.start_date as string | Date),
+      end_date: this.toDateString(v.end_date as string | Date),
       goal_amount: v.goal_amount!,
       commission_rate: v.commission_rate!,
       is_active: v.is_active ?? true,

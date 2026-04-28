@@ -57,8 +57,8 @@
 </div>
 
 <app-incentives-form
-  [visible]="showForm"
-  [period]="editPeriod"
+  [visible]="showForm()"
+  [period]="editPeriod()"
   (save)="onFormSave($event)"
-  (cancel)="showForm = false"
+  (cancel)="showForm.set(false)"
 />
