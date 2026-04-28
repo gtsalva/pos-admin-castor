@@ -16,6 +16,8 @@ export interface InventoryMovement {
   quantity: number;
   notes: string | null;
   reference_id: string | null;
+  supplier_id: string | null;
+  supplier: { supplier_id: string; name: string } | null;
   created_at: string;
   user: { user_id: string; full_name: string };
 }
@@ -25,4 +27,5 @@ export interface AdjustStockPayload {
   movement_type: MovementType;
   quantity: number;
   notes?: string;
+  supplier_id?: string;
 }

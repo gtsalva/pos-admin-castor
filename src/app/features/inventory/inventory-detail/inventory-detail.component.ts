@@ -15,6 +15,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { InventoryItem, InventoryMovement, MovementType } from '../../../shared/models/inventory.model';
 import { PaginatedResult } from '../../../shared/models/pagination.model';
 import { InventoryApiService } from '../services/inventory-api.service';
+import { SuppliersApiService } from '../../suppliers/services/suppliers-api.service';
+import { Supplier } from '../../suppliers/models/supplier.model';
 
 @Component({
   selector: 'app-inventory-detail',
@@ -41,6 +43,7 @@ export class InventoryDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly api = inject(InventoryApiService);
+  private readonly suppliersApi = inject(SuppliersApiService);
   private readonly message = inject(NzMessageService);
   private readonly fb = inject(FormBuilder);
 
@@ -54,11 +57,13 @@ export class InventoryDetailComponent implements OnInit {
   readonly isLoadingMovements = signal(false);
 
   readonly submitting = signal(false);
+  readonly suppliers = signal<Supplier[]>([]);
 
   readonly adjustForm = this.fb.group({
     movement_type: ['IN' as MovementType, Validators.required],
     quantity: [1, [Validators.required, Validators.min(1)]],
     notes: [''],
+    supplier_id: [null as string | null],
   });
 
   readonly movementOptions: { value: MovementType; label: string }[] = [
@@ -79,19 +84,23 @@ export class InventoryDetailComponent implements OnInit {
     ADJUSTMENT: 'processing',
   };
 
+  get isInMovement(): boolean {
+    return this.adjustForm.get('movement_type')?.value === 'IN';
+  }
+
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('productId');
     if (!id) { this.router.navigate(['/inventario']); return; }
     this.product_id.set(id);
     this.loadProduct(id);
     this.loadMovements(id, 1);
+    this.suppliersApi.getAll({ limit: 200 }).subscribe({
+      next: res => this.suppliers.set(res.data),
+    });
   }
 
   private loadProduct(product_id: string): void {
     this.isLoadingProduct.set(true);
-    // Carga todos los productos y busca el que coincide con product_id
-    // La API no tiene GET /inventory/:id individual, solo GET /inventory paginado
-    // Usamos limit=200 para encontrarlo
     this.api.getInventory({ limit: 200 }).subscribe({
       next: res => {
         const found = res.data.find(p => p.product_id === product_id) ?? null;
@@ -130,11 +139,12 @@ export class InventoryDetailComponent implements OnInit {
       movement_type: v.movement_type as MovementType,
       quantity: v.quantity!,
       notes: v.notes?.trim() || undefined,
+      supplier_id: v.supplier_id ?? undefined,
     }).subscribe({
       next: () => {
         this.submitting.set(false);
         this.message.success('Stock ajustado correctamente');
-        this.adjustForm.reset({ movement_type: 'IN', quantity: 1, notes: '' });
+        this.adjustForm.reset({ movement_type: 'IN', quantity: 1, notes: '', supplier_id: null });
         this.loadProduct(this.product_id());
         this.loadMovements(this.product_id(), 1);
       },

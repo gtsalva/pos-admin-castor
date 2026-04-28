@@ -15,9 +15,12 @@
           <h2 class="product-title">{{ p.name }}</h2>
           <span class="product-category">{{ p.category?.name ?? 'Sin categoría' }}</span>
         </div>
-        <nz-tag [nzColor]="stockTagColor(p)" class="stock-badge-large">
-          {{ p.stock }} en stock
-        </nz-tag>
+        <div style="display:flex;gap:8px;align-items:center">
+          <nz-tag [nzColor]="stockTagColor(p)" class="stock-badge-large">
+            {{ p.stock }} en stock
+          </nz-tag>
+          <a nz-button [routerLink]="['/productos', p.product_id]">Ver producto</a>
+        </div>
       </div>
 
       <!-- ── Stat cards ────────────────────────────────────── -->
@@ -28,7 +31,7 @@
         </div>
         <div class="stat-card">
           <div class="stat-label">Precio unitario</div>
-          <div class="stat-value price">{{ p.unit_price | currency:'Q ':'symbol':'1.2-2':'en-US' }}</div>
+          <div class="stat-value price">{{ p.unit_price | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</div>
         </div>
         <div class="stat-card" [class.stat-card--alert]="p.stock <= p.min_stock">
           <div class="stat-label">Stock actual</div>
@@ -66,6 +69,17 @@
               }
             </div>
           </div>
+          @if (isInMovement) {
+            <div class="form-field">
+              <label class="field-label">Proveedor (opcional)</label>
+              <nz-select formControlName="supplier_id" nzAllowClear
+                nzPlaceHolder="Seleccionar proveedor…" style="width: 100%">
+                @for (s of suppliers(); track s.supplier_id) {
+                  <nz-option [nzValue]="s.supplier_id" [nzLabel]="s.name" />
+                }
+              </nz-select>
+            </div>
+          }
           <div class="form-field">
             <label class="field-label">Notas</label>
             <textarea
@@ -86,7 +100,7 @@
       <!-- ── Movements ─────────────────────────────────────── -->
       <div class="section-block">
         <div class="section-title">Historial de movimientos</div>
-        <nz-table
+        <nz-table #movementsTable
           [nzData]="movements()"
           [nzTotal]="movementsTotal()"
           [nzPageIndex]="movementsPage()"
@@ -100,13 +114,14 @@
             <tr>
               <th>Tipo</th>
               <th nzAlign="right">Cantidad</th>
+              <th>Proveedor</th>
               <th>Usuario</th>
               <th>Notas</th>
               <th>Fecha</th>
             </tr>
           </thead>
           <tbody>
-            @for (m of movements(); track m.movement_id) {
+            @for (m of movementsTable.data; track m.movement_id) {
               <tr>
                 <td>
                   <nz-tag [nzColor]="movementColors[m.movement_type]">
@@ -116,6 +131,7 @@
                 <td nzAlign="right" [class.qty-in]="m.movement_type !== 'OUT'" [class.qty-out]="m.movement_type === 'OUT'">
                   {{ m.movement_type === 'OUT' ? '−' : '+' }}{{ m.quantity }}
                 </td>
+                <td>{{ m.supplier?.name ?? '—' }}</td>
                 <td>{{ m.user.full_name }}</td>
                 <td class="notes-cell">{{ m.notes ?? '—' }}</td>
                 <td class="date-cell">{{ m.created_at | date:'dd/MM/yyyy HH:mm' }}</td>
