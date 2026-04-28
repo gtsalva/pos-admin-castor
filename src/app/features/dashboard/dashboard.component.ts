@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -21,8 +21,7 @@ import { SalesApiService } from '../sales/services/sales-api.service';
             <nz-card>
               <nz-statistic
                 nzTitle="Ventas hoy"
-                [nzValue]="totalHoy()"
-                nzPrefix="Q"
+                [nzValue]="totalHoyStr()"
                 [nzValueStyle]="{ color: '#C85A1A' }"
               />
             </nz-card>
@@ -45,9 +44,18 @@ import { SalesApiService } from '../sales/services/sales-api.service';
 export class DashboardComponent implements OnInit {
   private readonly salesApi = inject(SalesApiService);
 
+  private static readonly fmt = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
   readonly loading = signal(true);
   readonly totalHoy = signal(0);
   readonly transaccionesHoy = signal(0);
+
+  readonly totalHoyStr = computed(() =>
+    'Q ' + DashboardComponent.fmt.format(this.totalHoy())
+  );
 
   ngOnInit(): void {
     const today = new Date().toISOString().split('T')[0];
