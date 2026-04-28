@@ -19,6 +19,7 @@ import { ProductResourcesApiService } from '../services/product-resources-api.se
 import { ProductResource } from '../../../shared/models/product-resource.model';
 
 interface QueuedFile {
+  id: string;
   file: File;
   previewUrl: string;
   resource_type: 'image' | 'pdf';
@@ -133,7 +134,7 @@ export class ProductFormComponent implements OnInit {
       }
       const resource_type: 'image' | 'pdf' = file.type === 'application/pdf' ? 'pdf' : 'image';
       const previewUrl = resource_type === 'image' ? URL.createObjectURL(file) : '';
-      const queued: QueuedFile = { file, previewUrl, resource_type, uploading: true, uploadedUrl: null, error: false };
+      const queued: QueuedFile = { id: crypto.randomUUID(), file, previewUrl, resource_type, uploading: true, uploadedUrl: null, error: false };
       this.queuedFiles.update(q => [...q, queued]);
 
       if (this.isEdit() && this.productId()) {
@@ -151,6 +152,7 @@ export class ProductFormComponent implements OnInit {
       )
     ).subscribe({
       next: resource => {
+        if (queued.previewUrl) URL.revokeObjectURL(queued.previewUrl);
         this.existingResources.update(r => [...r, resource]);
         this.queuedFiles.update(q => q.filter(f => f !== queued));
       },

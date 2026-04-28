@@ -142,7 +142,7 @@
         <!-- Queued / uploading files -->
         @if (queuedFiles().length > 0) {
           <div class="resource-grid" style="margin-top:12px">
-            @for (q of queuedFiles(); track q.previewUrl) {
+            @for (q of queuedFiles(); track q.id) {
               <div class="resource-card resource-card--queued"
                 [class.resource-card--error]="q.error">
                 @if (q.resource_type === 'image' && q.previewUrl) {
