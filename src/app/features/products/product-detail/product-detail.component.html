@@ -42,6 +42,81 @@
         </nz-descriptions-item>
         <nz-descriptions-item nzTitle="Creado">{{ p.created_at | date:'dd/MM/yyyy' }}</nz-descriptions-item>
       </nz-descriptions>
+
+      <!-- ── Resources ───────────────────────────────────────── -->
+      @if (resources().length > 0) {
+        <div style="margin-top:24px">
+          <h3 style="font-size:15px;font-weight:600;color:#3A2820;margin-bottom:16px">
+            Imágenes y documentos
+          </h3>
+
+          @if (images.length > 0) {
+            <div style="display:flex;gap:16px;margin-bottom:20px;align-items:flex-start">
+              <!-- Main image -->
+              <div style="flex:0 0 320px">
+                <img [src]="images[selectedImageIdx()]?.url"
+                  style="width:320px;height:240px;object-fit:contain;border-radius:10px;border:1.5px solid #EDE0D4;background:#FAF5F0"
+                  alt="imagen producto" />
+              </div>
+              <!-- Thumbnails -->
+              <div style="display:flex;flex-direction:column;gap:8px">
+                @for (img of images; track img.resource_id; let i = $index) {
+                  <div style="position:relative;cursor:pointer" (click)="selectImage(i)">
+                    <img [src]="img.url"
+                      [style.border]="selectedImageIdx() === i ? '2px solid #C85A1A' : '2px solid #EDE0D4'"
+                      style="width:72px;height:72px;object-fit:cover;border-radius:8px;display:block"
+                      alt="thumb" />
+                    @if (i === 0) {
+                      <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(200,90,26,0.8);color:#fff;font-size:9px;font-weight:700;text-align:center;border-radius:0 0 6px 6px;padding:2px">
+                        PORTADA
+                      </div>
+                    }
+                    <div style="position:absolute;top:2px;right:2px;display:flex;gap:2px">
+                      @if (i !== 0) {
+                        <button nz-button nzType="link" nzSize="small"
+                          style="background:rgba(255,255,255,0.9);border-radius:4px;padding:0 4px;height:20px;min-width:0"
+                          (click)="setDefault(img);$event.stopPropagation()" title="Portada">
+                          <span nz-icon nzType="star" nzTheme="outline" style="font-size:10px"></span>
+                        </button>
+                      }
+                      <button nz-button nzType="link" nzDanger nzSize="small"
+                        style="background:rgba(255,255,255,0.9);border-radius:4px;padding:0 4px;height:20px;min-width:0"
+                        nz-popconfirm nzPopconfirmTitle="¿Eliminar imagen?"
+                        (nzOnConfirm)="deleteResource(img)"
+                        [disabled]="deletingId() === img.resource_id"
+                        (click)="$event.stopPropagation()">
+                        <span nz-icon nzType="delete" nzTheme="outline" style="font-size:10px"></span>
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          @if (pdfs.length > 0) {
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#6B5347;margin-bottom:8px">Documentos PDF</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                @for (pdf of pdfs; track pdf.resource_id) {
+                  <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#FAF5F0;border:1.5px solid #EDE0D4;border-radius:8px">
+                    <span nz-icon nzType="file-pdf" nzTheme="outline" style="font-size:20px;color:#CF1322"></span>
+                    <a [href]="pdf.url" target="_blank" style="flex:1;color:#3A2820;font-size:13px;font-weight:500;text-decoration:none">
+                      Ver PDF
+                    </a>
+                    <button nz-button nzType="link" nzDanger nzSize="small"
+                      nz-popconfirm nzPopconfirmTitle="¿Eliminar PDF?"
+                      (nzOnConfirm)="deleteResource(pdf)"
+                      [disabled]="deletingId() === pdf.resource_id">
+                      <span nz-icon nzType="delete" nzTheme="outline"></span>
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
     }
   }
 </div>
