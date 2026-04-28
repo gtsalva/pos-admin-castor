@@ -105,6 +105,7 @@ export class ProductFormComponent implements OnInit {
       });
       this.resourcesApi.list(id).subscribe({
         next: res => this.existingResources.set(res),
+        error: () => this.message.error('Error al cargar los recursos del producto'),
       });
     }
   }
@@ -211,6 +212,11 @@ export class ProductFormComponent implements OnInit {
   }
 
   submit(): void {
+    const inFlight = this.queuedFiles().some(q => q.uploading);
+    if (inFlight) {
+      this.message.warning('Espera a que terminen de subir los archivos');
+      return;
+    }
     if (this.form.invalid) return;
     const v = this.form.getRawValue();
     this.submitting.set(true);
