@@ -8,6 +8,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { DecimalPipe, DatePipe } from '@angular/common';
 import { IncentivesApiService } from '../services/incentives-api.service';
+import { QuetzalesPipe } from '../../../shared/pipes/quetzales.pipe';
 import { IncentivePeriod, CreatePeriodPayload, UpdatePeriodPayload } from '../models/incentive.model';
 import { IncentivesFormComponent } from '../incentives-form/incentives-form.component';
 
@@ -16,7 +17,7 @@ import { IncentivesFormComponent } from '../incentives-form/incentives-form.comp
   standalone: true,
   imports: [
     NzTableModule, NzTagModule, NzButtonModule, NzIconModule,
-    NzPopconfirmModule, DecimalPipe, DatePipe, IncentivesFormComponent,
+    NzPopconfirmModule, DecimalPipe, DatePipe, QuetzalesPipe, IncentivesFormComponent,
   ],
   templateUrl: './incentives-list.component.html',
 })

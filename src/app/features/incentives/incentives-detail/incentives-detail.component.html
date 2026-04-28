@@ -14,7 +14,7 @@
       <div class="period-meta">
         <span>{{ d.period.start_date | date:'dd/MM/yyyy' }} – {{ d.period.end_date | date:'dd/MM/yyyy' }}</span>
         <span>·</span>
-        <span>Meta: Q {{ d.period.goal_amount | number:'1.2-2' }}</span>
+        <span>Meta: {{ d.period.goal_amount | quetzales }}</span>
         <span>·</span>
         <span>Comisión: {{ d.period.commission_rate }}%</span>
         <nz-tag [nzColor]="d.period.is_active ? 'success' : 'default'">
@@ -28,8 +28,7 @@
         <nz-card class="stat-card">
           <nz-statistic
             nzTitle="Total vendido"
-            [nzValue]="totals().total_sold"
-            nzPrefix="Q"
+            [nzValue]="totalsStr().total_sold"
             [nzValueStyle]="{ color: '#C85A1A' }"
           />
         </nz-card>
@@ -38,8 +37,7 @@
         <nz-card class="stat-card">
           <nz-statistic
             nzTitle="Comisiones proyectadas"
-            [nzValue]="totals().total_commission"
-            nzPrefix="Q"
+            [nzValue]="totalsStr().total_commission"
             [nzValueStyle]="{ color: '#C85A1A' }"
           />
         </nz-card>
@@ -88,8 +86,8 @@
                 <strong>{{ perf.full_name }}</strong><br/>
                 <small style="color:#888">{{ perf.email }}</small>
               </td>
-              <td nzAlign="right">{{ perf.amount_sold | number:'1.2-2' }}</td>
-              <td nzAlign="right">{{ perf.commission_earned | number:'1.2-2' }}</td>
+              <td nzAlign="right">{{ perf.amount_sold | quetzales }}</td>
+              <td nzAlign="right">{{ perf.commission_earned | quetzales }}</td>
               <td>
                 <nz-progress
                   [nzPercent]="perf.goal_pct > 100 ? 100 : perf.goal_pct"
@@ -112,7 +110,7 @@
                   <button
                     nz-button nzType="primary" nzSize="small"
                     nz-popconfirm
-                    [nzPopconfirmTitle]="'¿Liquidar Q ' + (perf.commission_earned | number:'1.2-2') + ' a ' + perf.full_name + '?'"
+                    [nzPopconfirmTitle]="'¿Liquidar ' + (perf.commission_earned | quetzales) + ' a ' + perf.full_name + '?'"
                     (nzOnConfirm)="liquidate(perf)"
                     [nzLoading]="liquidating() === perf.salesperson_id"
                   >

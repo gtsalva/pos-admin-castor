@@ -14,6 +14,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { DecimalPipe, DatePipe } from '@angular/common';
 import { IncentivesApiService } from '../services/incentives-api.service';
 import { PeriodPerformance, SalespersonPerformance } from '../models/incentive.model';
+import { QuetzalesPipe } from '../../../shared/pipes/quetzales.pipe';
 
 @Component({
   selector: 'app-incentives-detail',
@@ -21,7 +22,7 @@ import { PeriodPerformance, SalespersonPerformance } from '../models/incentive.m
   imports: [
     RouterLink, NzTableModule, NzTagModule, NzProgressModule, NzButtonModule,
     NzIconModule, NzStatisticModule, NzCardModule, NzGridModule,
-    NzPopconfirmModule, NzSpinModule, DecimalPipe, DatePipe,
+    NzPopconfirmModule, NzSpinModule, DecimalPipe, DatePipe, QuetzalesPipe,
   ],
   templateUrl: './incentives-detail.component.html',
   styles: [`
@@ -100,6 +101,20 @@ export class IncentivesDetailComponent implements OnInit {
       total_commission: perf.reduce((s, p) => s + p.commission_earned, 0),
       liquidated_count: perf.filter(p => p.is_liquidated).length,
       pending_count: perf.filter(p => !p.is_liquidated).length,
+    };
+  });
+
+  private static readonly fmt = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  readonly totalsStr = computed(() => {
+    const t = this.totals();
+    const f = IncentivesDetailComponent.fmt;
+    return {
+      total_sold: 'Q ' + f.format(t.total_sold),
+      total_commission: 'Q ' + f.format(t.total_commission),
     };
   });
 

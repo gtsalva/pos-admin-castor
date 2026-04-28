@@ -27,8 +27,8 @@
         <tr>
           <td>{{ p.name }}</td>
           <td>{{ p.start_date | date:'dd/MM/yyyy' }} – {{ p.end_date | date:'dd/MM/yyyy' }}</td>
-          <td nzAlign="right">{{ p.goal_amount | number:'1.2-2' }}</td>
-          <td nzAlign="right">{{ p.commission_rate | number:'1.2-2' }}%</td>
+          <td nzAlign="right">{{ p.goal_amount | quetzales }}</td>
+          <td nzAlign="right">{{ p.commission_rate | number:'1.2-2':'en-US' }}%</td>
           <td>
             <nz-tag [nzColor]="p.is_active ? 'success' : 'default'">
               {{ p.is_active ? 'Activo' : 'Cerrado' }}
