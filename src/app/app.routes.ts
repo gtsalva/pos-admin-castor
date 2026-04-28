@@ -46,6 +46,11 @@ export const routes: Routes = [
           import('./features/purchases/purchases.routes').then(m => m.purchaseRoutes),
       },
       {
+        path: 'incentivos',
+        loadChildren: () =>
+          import('./features/incentives/incentives.routes').then(m => m.incentivesRoutes),
+      },
+      {
         path: 'proveedores',
         loadChildren: () =>
           import('./features/suppliers/suppliers.routes').then(m => m.suppliersRoutes),
