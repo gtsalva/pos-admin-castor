@@ -12,6 +12,12 @@ interface ApiPaginatedResponse<T> {
   statusCode: number;
 }
 
+export interface ProductSearchQuery {
+  search?: string;
+  limit?: number;
+  page?: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ProductsApiService {
   private readonly http = inject(HttpClient);
@@ -23,6 +29,18 @@ export class ProductsApiService {
 
     if (params.query) httpParams = httpParams.set('query', params.query);
     if (params.category_id) httpParams = httpParams.set('category_id', params.category_id);
+
+    return this.http
+      .get<ApiPaginatedResponse<Product>>(`${environment.apiUrl}/products`, { params: httpParams })
+      .pipe(map(res => res.data));
+  }
+
+  getAll(query: ProductSearchQuery = {}): Observable<PaginatedResult<Product>> {
+    let httpParams = new HttpParams()
+      .set('page', String(query.page ?? 1))
+      .set('limit', String(query.limit ?? 20));
+
+    if (query.search) httpParams = httpParams.set('query', query.search);
 
     return this.http
       .get<ApiPaginatedResponse<Product>>(`${environment.apiUrl}/products`, { params: httpParams })
