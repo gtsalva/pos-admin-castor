@@ -30,14 +30,13 @@ export class AdminShellComponent {
   readonly currentUser = this.auth.currentUser;
 
   readonly navItems: NavItem[] = [
-    { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
+    { label: 'Reportes', icon: 'bar-chart', route: '/reportes' },
     { label: 'Productos', icon: 'shopping', route: '/productos' },
     { label: 'Clientes', icon: 'team', route: '/clientes' },
     { label: 'Ventas', icon: 'transaction', route: '/ventas' },
     { label: 'Inventario', icon: 'database', route: '/inventario' },
     { label: 'Compras', icon: 'shopping-cart', route: '/compras' },
     { label: 'Incentivos', icon: 'trophy', route: '/incentivos' },
-    { label: 'Reportes', icon: 'bar-chart', route: '/reportes' },
     { label: 'Proveedores', icon: 'team', route: '/proveedores' },
     { label: 'Categorías', icon: 'appstore', route: '/categorias' },
   ];

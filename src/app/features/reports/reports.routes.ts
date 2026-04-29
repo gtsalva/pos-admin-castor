@@ -6,7 +6,7 @@ export const reportsRoutes: Routes = [
     path: '',
     component: ReportsShellComponent,
     children: [
-      { path: '', redirectTo: 'vendedores', pathMatch: 'full' },
+      { path: '', redirectTo: 'ingresos', pathMatch: 'full' },
       {
         path: 'vendedores',
         loadComponent: () =>
