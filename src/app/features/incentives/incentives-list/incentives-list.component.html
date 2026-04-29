@@ -1,10 +1,9 @@
 <div class="page-container">
-  <div class="page-header">
-    <h2>Incentivos</h2>
+  <app-page-header title="Incentivos">
     <button nz-button nzType="primary" (click)="openCreate()">
       <span nz-icon nzType="plus"></span> Nuevo período
     </button>
-  </div>
+  </app-page-header>
 
   <nz-table
     [nzData]="periods()"

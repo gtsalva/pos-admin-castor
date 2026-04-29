@@ -1,10 +1,9 @@
-<div style="padding: 24px;">
-  <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
-    <h2 style="margin:0;">Clientes</h2>
+<div>
+  <app-page-header title="Clientes">
     <button nz-button nzType="primary" (click)="newClient.emit()">
       <span nz-icon nzType="plus"></span> Nuevo cliente
     </button>
-  </div>
+  </app-page-header>
   <div style="margin-bottom:16px;">
     <nz-input-group [nzSuffix]="searchIcon" style="max-width:320px;">
       <input nz-input placeholder="Buscar por nombre, NIT o razón social…" [(ngModel)]="searchText" (keydown.enter)="onSearch()" />

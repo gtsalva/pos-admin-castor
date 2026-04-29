@@ -1,20 +1,22 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-reports-shell',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, NzIconModule],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, NzIconModule, PageHeaderComponent],
   template: `
-    <div class="reports-header">
-      <h2 style="margin:0;font-size:22px;font-weight:700;color:#1A1614">Reportes</h2>
-      <p style="margin:4px 0 16px;color:#8C7B75;font-size:13px">
-        Analítica del negocio — últimos 30 días por defecto
-      </p>
-    </div>
+    <app-page-header
+      title="Reportes"
+      subtitle="Analítica del negocio — últimos 30 días por defecto"
+    />
 
     <div class="report-tabs">
+      <a routerLink="ingresos" routerLinkActive="active-tab" class="report-tab">
+        <span nz-icon nzType="bar-chart"></span> Ingresos
+      </a>
       <a routerLink="vendedores" routerLinkActive="active-tab" class="report-tab">
         <span nz-icon nzType="trophy"></span> Mejores vendedores
       </a>
@@ -24,9 +26,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
       <a routerLink="margenes" routerLinkActive="active-tab" class="report-tab">
         <span nz-icon nzType="rise"></span> Rendimiento precio-costo
       </a>
-      <a routerLink="ingresos" routerLinkActive="active-tab" class="report-tab">
-        <span nz-icon nzType="bar-chart"></span> Ingresos
-      </a>
+     
     </div>
 
     <div class="reports-content">
@@ -34,7 +34,6 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
     </div>
   `,
   styles: [`
-    .reports-header { margin-bottom: 8px; }
     .report-tabs {
       display: flex;
       gap: 4px;
@@ -66,4 +65,4 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
     }
   `],
 })
-export class ReportsShellComponent {}
+export class ReportsShellComponent { }

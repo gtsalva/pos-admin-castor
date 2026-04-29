@@ -12,6 +12,7 @@ import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { SalesStateService } from '../services/sales-state.service';
 import { SaleQuery } from '../../../shared/models/sale.model';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-sales-list',
@@ -28,6 +29,7 @@ import { SaleQuery } from '../../../shared/models/sale.model';
     NzIconModule,
     NzSpaceModule,
     NzFormModule,
+    PageHeaderComponent,
   ],
   providers: [SalesStateService],
   templateUrl: './sales-list.component.html',

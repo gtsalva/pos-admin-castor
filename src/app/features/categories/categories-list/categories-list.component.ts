@@ -10,6 +10,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { CategoriesAdminApiService } from '../services/categories-api.service';
 import { Category } from '../models/category.model';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-categories-list',
@@ -18,6 +19,7 @@ import { Category } from '../models/category.model';
     RouterLink,
     NzTableModule, NzButtonModule, NzInputModule,
     NzIconModule, NzPopconfirmModule, NzSpinModule, NzSelectModule,
+    PageHeaderComponent,
   ],
   templateUrl: './categories-list.component.html',
   styleUrl: './categories-list.component.less',

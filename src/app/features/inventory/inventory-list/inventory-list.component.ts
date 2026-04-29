@@ -11,6 +11,7 @@ import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { InventoryStateService } from '../services/inventory-state.service';
 import { InventoryItem } from '../../../shared/models/inventory.model';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-inventory-list',
@@ -25,6 +26,7 @@ import { InventoryItem } from '../../../shared/models/inventory.model';
     NzIconModule,
     NzSpaceModule,
     NzDividerModule,
+    PageHeaderComponent,
   ],
   providers: [InventoryStateService],
   templateUrl: './inventory-list.component.html',

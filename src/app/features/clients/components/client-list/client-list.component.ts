@@ -9,11 +9,12 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { Client } from '../../models/client.model';
+import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-client-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, NzTableModule, NzButtonModule, NzInputModule, NzPopconfirmModule, NzTagModule, NzIconModule, NzDividerModule],
+  imports: [CommonModule, FormsModule, NzTableModule, NzButtonModule, NzInputModule, NzPopconfirmModule, NzTagModule, NzIconModule, NzDividerModule, PageHeaderComponent],
   templateUrl: './client-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

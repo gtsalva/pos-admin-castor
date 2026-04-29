@@ -10,6 +10,7 @@ import { DecimalPipe, DatePipe } from '@angular/common';
 import { IncentivesApiService } from '../services/incentives-api.service';
 import { QuetzalesPipe } from '../../../shared/pipes/quetzales.pipe';
 import { IncentivePeriod, CreatePeriodPayload, UpdatePeriodPayload } from '../models/incentive.model';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { IncentivesFormComponent } from '../incentives-form/incentives-form.component';
 
 @Component({
@@ -17,9 +18,10 @@ import { IncentivesFormComponent } from '../incentives-form/incentives-form.comp
   standalone: true,
   imports: [
     NzTableModule, NzTagModule, NzButtonModule, NzIconModule,
-    NzPopconfirmModule, DecimalPipe, DatePipe, QuetzalesPipe, IncentivesFormComponent,
+    NzPopconfirmModule, DecimalPipe, DatePipe, QuetzalesPipe, IncentivesFormComponent, PageHeaderComponent,
   ],
   templateUrl: './incentives-list.component.html',
+  styleUrl: './incentives-list.component.less',
 })
 export class IncentivesListComponent implements OnInit {
   private readonly api = inject(IncentivesApiService);

@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, DestroyRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -26,13 +27,12 @@ const STATUS_LABEL: Record<PurchaseStatus, string> = {
 @Component({
   selector: 'app-purchases-list',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule, NzTableModule, NzButtonModule, NzTagModule, NzSelectModule, QuetzalesPipe, DatePipe],
+  imports: [RouterLink, ReactiveFormsModule, NzTableModule, NzButtonModule, NzTagModule, NzSelectModule, QuetzalesPipe, DatePipe, PageHeaderComponent],
   template: `
-    <div style="padding:24px">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
-        <h2 style="margin:0">Órdenes de Compra</h2>
+    <div>
+      <app-page-header title="Órdenes de Compra">
         <button nz-button nzType="primary" routerLink="nueva">+ Nueva orden</button>
-      </div>
+      </app-page-header>
 
       <div style="margin-bottom:16px">
         <nz-select style="width:180px" [formControl]="statusFilter" nzPlaceHolder="Filtrar por estado" nzAllowClear>

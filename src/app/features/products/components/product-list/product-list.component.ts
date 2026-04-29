@@ -7,11 +7,12 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { QuetzalesPipe } from '../../../../shared/pipes/quetzales.pipe';
 import { Product } from '../../../../shared/models/product.model';
+import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [RouterLink, NzTableModule, NzTagModule, NzInputModule, NzButtonModule, NzIconModule, QuetzalesPipe],
+  imports: [RouterLink, NzTableModule, NzTagModule, NzInputModule, NzButtonModule, NzIconModule, QuetzalesPipe, PageHeaderComponent],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.less',
 })

@@ -1,6 +1,5 @@
-<div class="product-list-header">
-  <h3>Productos</h3>
-  <nz-input-group [nzSuffix]="searchIcon" class="search-input">
+<app-page-header title="Productos">
+  <nz-input-group [nzSuffix]="searchIcon" style="width:260px">
     <input nz-input #searchInput placeholder="Buscar por nombre o SKU..."
       (input)="onSearch(searchInput.value)" />
   </nz-input-group>
@@ -8,7 +7,7 @@
   <a nz-button nzType="primary" [routerLink]="['/productos', 'nuevo']">
     <span nz-icon nzType="plus"></span> Nuevo producto
   </a>
-</div>
+</app-page-header>
 
 <nz-table #table
   [nzData]="items()"

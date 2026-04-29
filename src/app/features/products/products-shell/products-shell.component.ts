@@ -21,7 +21,6 @@ import { ProductListComponent } from '../components/product-list/product-list.co
       />
     </div>
   `,
-  styles: ['.products-page { padding: 24px; }'],
 })
 export class ProductsShellComponent implements OnInit {
   readonly state = inject(ProductsStateService);

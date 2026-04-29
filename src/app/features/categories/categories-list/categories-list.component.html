@@ -1,20 +1,16 @@
 <div class="cat-page">
 
-  <!-- ── Page header ─────────────────────────────────────── -->
-  <div class="cat-header">
-    <div class="cat-header__left">
-      <div class="cat-header__eyebrow">Catálogo</div>
-      <h1 class="cat-header__title">Categorías</h1>
-      <div class="cat-header__meta">
-        <span class="meta-pill meta-pill--active">{{ activeCount() }} activas</span>
-        <span class="meta-pill meta-pill--inactive">{{ inactiveCount() }} inactivas</span>
-      </div>
-    </div>
+  <app-page-header
+    title="Categorías"
+    [breadcrumbs]="[{ label: 'Catálogo' }]"
+  >
+    <span class="meta-pill meta-pill--active">{{ activeCount() }} activas</span>
+    <span class="meta-pill meta-pill--inactive">{{ inactiveCount() }} inactivas</span>
     <a nz-button nzType="primary" routerLink="nueva" class="cat-cta">
       <span nz-icon nzType="plus"></span>
       Nueva categoría
     </a>
-  </div>
+  </app-page-header>
 
   <!-- ── Filters ──────────────────────────────────────────── -->
   <div class="cat-filters">

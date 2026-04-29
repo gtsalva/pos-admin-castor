@@ -44,7 +44,8 @@ import {
   WarningFill,
   UnlockOutline,
   ArrowLeftOutline,
-
+  DownloadOutline,
+  RiseOutline
 } from '@ant-design/icons-angular/icons';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
@@ -97,7 +98,9 @@ export const appConfig: ApplicationConfig = {
       UserOutline,
       WarningFill,
       UnlockOutline,
-      ArrowLeftOutline
+      ArrowLeftOutline,
+      DownloadOutline,
+      RiseOutline
     ]),
     { provide: NZ_I18N, useValue: es_ES },
     { provide: LOCALE_ID, useValue: 'es-GT' },

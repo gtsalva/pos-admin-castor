@@ -1,5 +1,6 @@
 import { Component, inject, signal, OnInit, DestroyRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -15,13 +16,12 @@ import { Supplier } from '../models/supplier.model';
 @Component({
   selector: 'app-suppliers-list',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule, NzTableModule, NzButtonModule, NzTagModule, NzInputModule, NzIconModule],
+  imports: [RouterLink, ReactiveFormsModule, NzTableModule, NzButtonModule, NzTagModule, NzInputModule, NzIconModule, PageHeaderComponent],
   template: `
-    <div style="padding: 24px">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
-        <h2 style="margin:0">Proveedores</h2>
+    <div>
+      <app-page-header title="Proveedores">
         <button nz-button nzType="primary" routerLink="nuevo">+ Nuevo proveedor</button>
-      </div>
+      </app-page-header>
 
       <div style="margin-bottom:16px">
         <nz-input-group [nzPrefix]="searchIcon" style="max-width:320px">
