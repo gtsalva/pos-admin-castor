@@ -39,6 +39,7 @@ export class AdminShellComponent {
     { label: 'Incentivos', icon: 'trophy', route: '/incentivos' },
     { label: 'Proveedores', icon: 'team', route: '/proveedores' },
     { label: 'Categorías', icon: 'appstore', route: '/categorias' },
+    { label: 'Usuarios', icon: 'user', route: '/usuarios' },
   ];
 
   logout(): void {
