@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import {
   TopSellerRow,
@@ -12,6 +13,12 @@ import {
   ProductMarginsFilters,
   RevenueFilters,
 } from '../models/report.model';
+
+interface ApiResponse<T> {
+  data: T;
+  message: string;
+  statusCode: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class ReportsApiService {
@@ -29,26 +36,26 @@ export class ReportsApiService {
   }
 
   getTopSellers(filters: TopSellersFilters = {}): Observable<TopSellerRow[]> {
-    return this.http.get<TopSellerRow[]>(`${this.base}/top-sellers`, {
+    return this.http.get<ApiResponse<TopSellerRow[]>>(`${this.base}/top-sellers`, {
       params: this.buildParams(filters as Record<string, string | number | undefined>),
-    });
+    }).pipe(map(res => res.data));
   }
 
   getTopProducts(filters: TopProductsFilters = {}): Observable<TopProductRow[]> {
-    return this.http.get<TopProductRow[]>(`${this.base}/top-products`, {
+    return this.http.get<ApiResponse<TopProductRow[]>>(`${this.base}/top-products`, {
       params: this.buildParams(filters as Record<string, string | number | undefined>),
-    });
+    }).pipe(map(res => res.data));
   }
 
   getProductMargins(filters: ProductMarginsFilters = {}): Observable<ProductMarginRow[]> {
-    return this.http.get<ProductMarginRow[]>(`${this.base}/product-margins`, {
+    return this.http.get<ApiResponse<ProductMarginRow[]>>(`${this.base}/product-margins`, {
       params: this.buildParams(filters as Record<string, string | number | undefined>),
-    });
+    }).pipe(map(res => res.data));
   }
 
   getRevenue(filters: RevenueFilters = {}): Observable<RevenueReport> {
-    return this.http.get<RevenueReport>(`${this.base}/revenue`, {
+    return this.http.get<ApiResponse<RevenueReport>>(`${this.base}/revenue`, {
       params: this.buildParams(filters as Record<string, string | number | undefined>),
-    });
+    }).pipe(map(res => res.data));
   }
 }
