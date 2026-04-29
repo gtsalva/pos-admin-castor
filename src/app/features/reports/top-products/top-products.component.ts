@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartOptions } from 'chart.js';
 import { Chart, registerables } from 'chart.js';
@@ -23,7 +24,7 @@ Chart.register(...registerables);
   selector: 'app-top-products',
   standalone: true,
   imports: [
-    QuetzalesPipe,
+    DecimalPipe, QuetzalesPipe,
     BaseChartDirective,
     NzGridModule, NzCardModule, NzTableModule, NzTagModule,
     NzSpinModule, NzDividerModule, NzButtonModule, NzIconModule, NzSegmentedModule,
