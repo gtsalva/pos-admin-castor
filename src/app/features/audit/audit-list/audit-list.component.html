@@ -1,24 +1,26 @@
 <div style="padding: 24px;">
   <h2>Auditoría</h2>
 
-  <div nz-row [nzGutter]="12" style="margin-bottom: 16px; align-items: flex-end;">
-    <div nz-col>
-      <label>Acción</label><br>
-      <nz-select [(ngModel)]="filterAction" nzAllowClear nzPlaceHolder="Todas" style="width: 220px;">
-        @for (a of actions; track a) {
-          <nz-option [nzValue]="a" [nzLabel]="a"></nz-option>
-        }
-      </nz-select>
+  <form [formGroup]="filters">
+    <div nz-row [nzGutter]="12" style="margin-bottom: 16px; align-items: flex-end;">
+      <div nz-col>
+        <label>Acción</label><br>
+        <nz-select formControlName="action" nzAllowClear nzPlaceHolder="Todas" style="width: 220px;">
+          @for (a of actions; track a) {
+            <nz-option [nzValue]="a" [nzLabel]="a"></nz-option>
+          }
+        </nz-select>
+      </div>
+      <div nz-col>
+        <label>Rango de fecha</label><br>
+        <nz-range-picker formControlName="date_range" nzFormat="dd/MM/yyyy"></nz-range-picker>
+      </div>
+      <div nz-col>
+        <button nz-button nzType="primary" (click)="load()">Filtrar</button>
+        <button nz-button style="margin-left: 8px;" (click)="reset()">Limpiar</button>
+      </div>
     </div>
-    <div nz-col>
-      <label>Rango de fecha</label><br>
-      <nz-range-picker [(ngModel)]="filterDateRange" nzFormat="dd/MM/yyyy"></nz-range-picker>
-    </div>
-    <div nz-col>
-      <button nz-button nzType="primary" (click)="load()">Filtrar</button>
-      <button nz-button style="margin-left: 8px;" (click)="reset()">Limpiar</button>
-    </div>
-  </div>
+  </form>
 
   <nz-table
     [nzData]="result()?.data ?? []"
@@ -26,6 +28,7 @@
     [nzLoading]="loading()"
     [nzTotal]="result()?.total ?? 0"
     [nzPageSize]="50"
+    [nzPageIndex]="currentPage()"
     (nzPageIndexChange)="load($event)"
     nzFrontPagination="false">
     <thead>
