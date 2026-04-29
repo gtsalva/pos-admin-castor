@@ -35,11 +35,18 @@ export class GlobalCloseComponent implements OnInit {
 
   loadSummary(): void {
     this.loading.set(true);
-    const date = new Date(this.selectedDate.getTime() - 6 * 3600 * 1000).toISOString().slice(0, 10);
+    const date = this.formatDate(this.selectedDate);
     this.shiftsApi.getDailySummary(date).subscribe({
       next: (s) => { this.summary.set(s); this.loading.set(false); },
-      error: () => this.loading.set(false),
+      error: () => { this.loading.set(false); this.msg.error('No se pudo cargar el resumen del día.'); },
     });
+  }
+
+  private formatDate(d: Date): string {
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
   }
 
   closeShift(entry: DailySummaryEntry): void {
