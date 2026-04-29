@@ -22,6 +22,12 @@ export class UsersApiService {
       .pipe(map((res) => res.data));
   }
 
+  getById(user_id: string): Observable<User> {
+    return this.http
+      .get<ApiResponse<User>>(`${this.base}/${user_id}`)
+      .pipe(map((res) => res.data));
+  }
+
   create(payload: CreateUserPayload): Observable<User> {
     return this.http
       .post<ApiResponse<User>>(this.base, payload)

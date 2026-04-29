@@ -50,7 +50,7 @@ const ROLE_COLOR: Record<UserRole, string> = {
 
     <div style="margin-bottom:16px">
       <nz-input-group [nzPrefix]="searchIcon" style="max-width:320px">
-        <input nz-input placeholder="Buscar por nombre o email..." [(ngModel)]="search" />
+        <input nz-input placeholder="Buscar por nombre o email..." [ngModel]="search()" (ngModelChange)="search.set($event)" />
       </nz-input-group>
       <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
     </div>
@@ -112,10 +112,10 @@ export class UsersListComponent implements OnInit {
 
   readonly all = signal<User[]>([]);
   readonly isLoading = signal(false);
-  search = '';
+  readonly search = signal('');
 
   readonly filtered = computed(() => {
-    const q = this.search.toLowerCase();
+    const q = this.search().toLowerCase();
     if (!q) return this.all();
     return this.all().filter(
       (u) => u.full_name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q),

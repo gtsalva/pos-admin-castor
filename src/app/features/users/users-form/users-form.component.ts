@@ -101,9 +101,8 @@ export class UsersFormComponent implements OnInit {
       this.form.get('password')!.clearValidators();
       this.form.get('password')!.updateValueAndValidity();
       this.isLoadingUser.set(true);
-      this.api.getAll().subscribe({
-        next: (users) => {
-          const user = users.find((u) => u.user_id === this.userId());
+      this.api.getById(this.userId()!).subscribe({
+        next: (user) => {
           if (!user) { this.router.navigate(['/usuarios']); return; }
           this.form.patchValue({ full_name: user.full_name, email: user.email, role: user.role });
           this.isLoadingUser.set(false);
@@ -136,6 +135,7 @@ export class UsersFormComponent implements OnInit {
 
     req.subscribe({
       next: () => {
+        this.isSaving.set(false);
         this.msg.success('Usuario guardado');
         this.router.navigate(['/usuarios']);
       },
