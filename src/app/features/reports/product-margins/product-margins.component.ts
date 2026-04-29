@@ -1,5 +1,4 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartOptions } from 'chart.js';
 import { Chart, registerables } from 'chart.js';
@@ -17,6 +16,7 @@ import { ReportsApiService } from '../services/reports-api.service';
 import { ProductMarginRow, ProductMarginsFilters } from '../models/report.model';
 import { KpiCardComponent } from '../shared/kpi-card/kpi-card.component';
 import { ReportFilterBarComponent, FilterBarValues } from '../shared/report-filter-bar/report-filter-bar.component';
+import { QuetzalesPipe } from '../../../shared/pipes/quetzales.pipe';
 
 Chart.register(...registerables);
 
@@ -24,7 +24,7 @@ Chart.register(...registerables);
   selector: 'app-product-margins',
   standalone: true,
   imports: [
-    DecimalPipe,
+    QuetzalesPipe,
     BaseChartDirective,
     NzGridModule, NzCardModule, NzTableModule, NzTagModule,
     NzSpinModule, NzDividerModule, NzButtonModule, NzIconModule, NzToolTipModule,
@@ -94,7 +94,7 @@ Chart.register(...registerables);
               <th>Categoría</th>
               <th nzAlign="right" [nzSortFn]="sortByCost">Costo</th>
               <th nzAlign="right" [nzSortFn]="sortByPrice">Precio venta</th>
-              <th nzAlign="right" [nzSortFn]="sortByMarginAmt">Margen $</th>
+              <th nzAlign="right" [nzSortFn]="sortByMarginAmt">Margen Q</th>
               <th nzAlign="right" [nzSortFn]="sortByMarginPct">Margen %</th>
               <th nzAlign="right">Unidades</th>
             </tr>
@@ -111,20 +111,18 @@ Chart.register(...registerables);
                 </td>
                 <td nzAlign="right">
                   @if (row.cost_price !== null) {
-                    <span>
-                      {{ formatCurrency(row.cost_price) }}
-                    </span>
+                    <span>{{ row.cost_price | quetzales }}</span>
                   } @else {
                     <span nz-tooltip nzTooltipTitle="Sin precio de costo registrado" style="color:#C4B0A3">—</span>
                   }
                 </td>
                 <td nzAlign="right">
-                  <span>{{ formatCurrency(row.sale_price) }}</span>
+                  <span>{{ row.sale_price | quetzales }}</span>
                 </td>
                 <td nzAlign="right">
                   @if (row.margin_amount !== null) {
                     <span [style.color]="row.margin_amount >= 0 ? '#7BA05B' : '#CF1322'" style="font-weight:600">
-                      <span>{{ formatCurrency(row.margin_amount) }}</span>
+                      {{ row.margin_amount | quetzales }}
                     </span>
                   } @else { <span style="color:#C4B0A3">—</span> }
                 </td>
@@ -207,10 +205,6 @@ export class ProductMarginsComponent implements OnInit {
     if (pct >= 20) return 'gold';
     if (pct >= 0) return 'orange';
     return 'red';
-  }
-
-  formatCurrency(value: number): string {
-    return '$' + (value | 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   ngOnInit(): void { this.load({}); }

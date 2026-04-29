@@ -1,5 +1,4 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartOptions } from 'chart.js';
 import { Chart, registerables } from 'chart.js';
@@ -15,6 +14,7 @@ import { ReportsApiService } from '../services/reports-api.service';
 import { RevenueReport, RevenueFilters } from '../models/report.model';
 import { KpiCardComponent } from '../shared/kpi-card/kpi-card.component';
 import { ReportFilterBarComponent, FilterBarValues } from '../shared/report-filter-bar/report-filter-bar.component';
+import { QuetzalesPipe } from '../../../shared/pipes/quetzales.pipe';
 
 Chart.register(...registerables);
 
@@ -34,7 +34,7 @@ const PM_COLORS: Record<string, string> = {
   selector: 'app-revenue',
   standalone: true,
   imports: [
-    DecimalPipe,
+    QuetzalesPipe,
     BaseChartDirective,
     NzGridModule, NzCardModule, NzTableModule, NzTagModule,
     NzSpinModule, NzDividerModule, NzButtonModule, NzIconModule,
@@ -53,7 +53,7 @@ const PM_COLORS: Record<string, string> = {
         <nz-col [nzSpan]="8">
           <app-kpi-card
             label="Ingresos totales"
-            [value]="'$' + (report().totals.total_revenue | number:'1.0-0')"
+            [value]="report().totals.total_revenue | quetzales"
             accentColor="#C85A1A"
           />
         </nz-col>
@@ -67,7 +67,7 @@ const PM_COLORS: Record<string, string> = {
         <nz-col [nzSpan]="8">
           <app-kpi-card
             label="Ticket promedio"
-            [value]="'$' + (report().totals.avg_ticket | number:'1.0-2')"
+            [value]="report().totals.avg_ticket | quetzales"
             accentColor="#7BA05B"
           />
         </nz-col>
@@ -116,7 +116,7 @@ const PM_COLORS: Record<string, string> = {
                       </nz-tag>
                     </td>
                     <td nzAlign="right">{{ row.sales_count | number }}</td>
-                    <td nzAlign="right" style="font-weight:600">${'$'}{{ row.revenue | number:'1.0-2' }}</td>
+                    <td nzAlign="right" style="font-weight:600">{{ row.revenue | quetzales }}</td>
                   </tr>
                 }
               </tbody>
@@ -152,7 +152,7 @@ const PM_COLORS: Record<string, string> = {
                   <tr>
                     <td>{{ row.category_name ?? 'Sin categoría' }}</td>
                     <td nzAlign="right">{{ row.units_sold | number }}</td>
-                    <td nzAlign="right" style="font-weight:600">${'$'}{{ row.revenue | number:'1.0-2' }}</td>
+                    <td nzAlign="right" style="font-weight:600">{{ row.revenue | quetzales }}</td>
                   </tr>
                 }
               </tbody>

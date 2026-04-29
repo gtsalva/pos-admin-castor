@@ -1,5 +1,4 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartOptions } from 'chart.js';
 import { Chart, registerables } from 'chart.js';
@@ -15,6 +14,7 @@ import { ReportsApiService } from '../services/reports-api.service';
 import { TopSellerRow, TopSellersFilters } from '../models/report.model';
 import { KpiCardComponent } from '../shared/kpi-card/kpi-card.component';
 import { ReportFilterBarComponent, FilterBarValues } from '../shared/report-filter-bar/report-filter-bar.component';
+import { QuetzalesPipe } from '../../../shared/pipes/quetzales.pipe';
 
 Chart.register(...registerables);
 
@@ -22,7 +22,7 @@ Chart.register(...registerables);
   selector: 'app-top-sellers',
   standalone: true,
   imports: [
-    DecimalPipe,
+    QuetzalesPipe,
     BaseChartDirective,
     NzGridModule, NzCardModule, NzTableModule, NzTagModule,
     NzSpinModule, NzDividerModule, NzButtonModule, NzIconModule,
@@ -48,14 +48,14 @@ Chart.register(...registerables);
         <nz-col [nzSpan]="8">
           <app-kpi-card
             label="Ingresos totales"
-            [value]="'$' + (totalRevenue() | number:'1.0-0')"
+            [value]="totalRevenue() | quetzales"
             accentColor="#E8A857"
           />
         </nz-col>
         <nz-col [nzSpan]="8">
           <app-kpi-card
             label="Ticket promedio"
-            [value]="'$' + (avgTicket() | number:'1.0-0')"
+            [value]="avgTicket() | quetzales"
             accentColor="#7BA05B"
           />
         </nz-col>
@@ -118,9 +118,9 @@ Chart.register(...registerables);
                 <td style="font-weight:500">{{ row.salesperson_name }}</td>
                 <td nzAlign="right">{{ row.total_sales | number }}</td>
                 <td nzAlign="right" style="color:#C85A1A;font-weight:600">
-                  ${'$'}{{ row.total_revenue | number:'1.0-2' }}
+                  {{ row.total_revenue | quetzales }}
                 </td>
-                <td nzAlign="right">${'$'}{{ row.avg_sale_value | number:'1.0-2' }}</td>
+                <td nzAlign="right">{{ row.avg_sale_value | quetzales }}</td>
                 <td nzAlign="center">
                   <span style="color:#E8A857;font-weight:600">
                     {{ totalRevenue() > 0 ? ((row.total_revenue / totalRevenue() * 100) | number:'1.1-1') : '0' }}%

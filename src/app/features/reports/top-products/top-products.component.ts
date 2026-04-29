@@ -1,5 +1,4 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartOptions } from 'chart.js';
 import { Chart, registerables } from 'chart.js';
@@ -16,6 +15,7 @@ import { ReportsApiService } from '../services/reports-api.service';
 import { TopProductRow, TopProductsFilters } from '../models/report.model';
 import { KpiCardComponent } from '../shared/kpi-card/kpi-card.component';
 import { ReportFilterBarComponent, FilterBarValues } from '../shared/report-filter-bar/report-filter-bar.component';
+import { QuetzalesPipe } from '../../../shared/pipes/quetzales.pipe';
 
 Chart.register(...registerables);
 
@@ -23,7 +23,7 @@ Chart.register(...registerables);
   selector: 'app-top-products',
   standalone: true,
   imports: [
-    DecimalPipe,
+    QuetzalesPipe,
     BaseChartDirective,
     NzGridModule, NzCardModule, NzTableModule, NzTagModule,
     NzSpinModule, NzDividerModule, NzButtonModule, NzIconModule, NzSegmentedModule,
@@ -52,7 +52,7 @@ Chart.register(...registerables);
         <nz-col [nzSpan]="8">
           <app-kpi-card
             label="Ingresos totales"
-            [value]="'$' + (totalRevenue() | number:'1.0-0')"
+            [value]="totalRevenue() | quetzales"
             accentColor="#7BA05B"
           />
         </nz-col>
@@ -102,7 +102,7 @@ Chart.register(...registerables);
                   }
                 </td>
                 <td nzAlign="right" style="color:#4E7FA8;font-weight:600">{{ row.units_sold | number }}</td>
-                <td nzAlign="right" style="color:#7BA05B;font-weight:600">${'$'}{{ row.total_revenue | number:'1.0-2' }}</td>
+                <td nzAlign="right" style="color:#7BA05B;font-weight:600">{{ row.total_revenue | quetzales }}</td>
               </tr>
             }
           </tbody>
