@@ -46,7 +46,7 @@ export class LoginComponent {
 
     const { email, password } = this.form.getRawValue();
     this.auth.login(email!, password!).subscribe({
-      next: () => this.router.navigate(['/dashboard']),
+      next: () => this.router.navigate(['/reportes']),// /dashboard
       error: (err) => {
         const msg = err?.error?.message ?? 'Credenciales incorrectas';
         this.errorMsg.set(msg);
