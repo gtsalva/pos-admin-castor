@@ -1,0 +1,66 @@
+<div style="margin-bottom: 16px; display: flex; gap: 12px; align-items: center;">
+  <nz-date-picker [(ngModel)]="selectedDate" (ngModelChange)="loadSummary()" nzFormat="dd/MM/yyyy"></nz-date-picker>
+  <button nz-button (click)="loadSummary()">Actualizar</button>
+</div>
+
+<nz-spin [nzSpinning]="loading()">
+  <nz-table #tbl [nzData]="summary()?.entries ?? []" nzSize="small" [nzShowPagination]="false">
+    <thead>
+      <tr>
+        <th>Vendedor</th>
+        <th>Total</th>
+        <th>Tx</th>
+        <th>Efectivo</th>
+        <th>Tarjeta</th>
+        <th>Transferencia</th>
+        <th>Estado</th>
+        <th>Conciliado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (entry of tbl.data; track entry.salesperson_id) {
+        <tr>
+          <td>{{ entry.salesperson_name ?? entry.salesperson_id }}</td>
+          <td>Q {{ entry.total_sales | number:'1.2-2' }}</td>
+          <td>{{ entry.transaction_count }}</td>
+          <td>Q {{ entry.cash_total | number:'1.2-2' }}</td>
+          <td>Q {{ entry.card_total | number:'1.2-2' }}</td>
+          <td>Q {{ entry.transfer_total | number:'1.2-2' }}</td>
+          <td>
+            @if (entry.shift_close?.status === 'CLOSED') { <nz-tag nzColor="red">Cerrado</nz-tag> }
+            @else if (entry.shift_close?.status === 'REOPENED') { <nz-tag nzColor="orange">Reabierto</nz-tag> }
+            @else { <nz-tag nzColor="green">Abierto</nz-tag> }
+          </td>
+          <td>
+            @if (entry.has_reconciliation) { <nz-tag nzColor="blue">Sí</nz-tag> }
+            @else { <nz-tag>No</nz-tag> }
+          </td>
+          <td style="display: flex; gap: 6px;">
+            @if (!entry.shift_close || entry.shift_close.status === 'REOPENED') {
+              <button nz-button nzSize="small" nzDanger
+                nz-popconfirm nzPopconfirmTitle="¿Cerrar turno de este vendedor?"
+                (nzOnConfirm)="closeShift(entry)"
+                [nzLoading]="actionLoading() === entry.salesperson_id">
+                Cerrar
+              </button>
+            }
+            @if (entry.shift_close?.status === 'CLOSED') {
+              <button nz-button nzSize="small"
+                nz-popconfirm nzPopconfirmTitle="¿Reabrir turno?"
+                (nzOnConfirm)="reopenShift(entry)"
+                [nzLoading]="actionLoading() === entry.salesperson_id">
+                Reabrir
+              </button>
+              @if (!entry.has_reconciliation) {
+                <button nz-button nzSize="small" nzType="primary" (click)="requestReconcile(entry)">
+                  Conciliar
+                </button>
+              }
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </nz-table>
+</nz-spin>

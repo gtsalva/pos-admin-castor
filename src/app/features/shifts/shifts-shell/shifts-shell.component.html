@@ -1,0 +1,17 @@
+<div style="padding: 24px;">
+  <h2>Cierres de Turno</h2>
+  <app-global-close (reconcileRequested)="onReconcileRequested($event)"></app-global-close>
+</div>
+
+@if (reconcileVisible() && reconcileEntry()) {
+  <nz-modal
+    [nzVisible]="reconcileVisible()"
+    nzTitle="Conciliación de Caja"
+    [nzFooter]="null"
+    nzWidth="700px"
+    (nzOnCancel)="reconcileVisible.set(false)">
+    <ng-container *nzModalContent>
+      <app-reconciliation [entry]="reconcileEntry()!" (done)="onReconcileDone()"></app-reconciliation>
+    </ng-container>
+  </nz-modal>
+}
