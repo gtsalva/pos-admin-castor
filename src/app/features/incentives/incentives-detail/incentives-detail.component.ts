@@ -11,7 +11,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { DecimalPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { IncentivesApiService } from '../services/incentives-api.service';
 import { PeriodPerformance, SalespersonPerformance } from '../models/incentive.model';
 import { QuetzalesPipe } from '../../../shared/pipes/quetzales.pipe';
@@ -22,7 +22,7 @@ import { QuetzalesPipe } from '../../../shared/pipes/quetzales.pipe';
   imports: [
     RouterLink, NzTableModule, NzTagModule, NzProgressModule, NzButtonModule,
     NzIconModule, NzStatisticModule, NzCardModule, NzGridModule,
-    NzPopconfirmModule, NzSpinModule, DecimalPipe, DatePipe, QuetzalesPipe,
+    NzPopconfirmModule, NzSpinModule, DatePipe, QuetzalesPipe,
   ],
   templateUrl: './incentives-detail.component.html',
   styles: [`

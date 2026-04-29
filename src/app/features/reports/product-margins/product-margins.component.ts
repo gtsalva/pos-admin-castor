@@ -191,7 +191,7 @@ export class ProductMarginsComponent implements OnInit {
     scales: {
       x: {
         grid: { color: '#F0E6DB' },
-        ticks: { color: '#8C7B75', callback: (v) => v + '%' },
+        ticks: { color: '#8C7B75', callback: (v: number | string) => v + '%' },
       },
       y: { grid: { display: false }, ticks: { color: '#3A2820', font: { size: 11 } } },
     },
