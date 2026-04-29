@@ -1,0 +1,54 @@
+<div style="padding: 24px;">
+  <h2>Auditoría</h2>
+
+  <div nz-row [nzGutter]="12" style="margin-bottom: 16px; align-items: flex-end;">
+    <div nz-col>
+      <label>Acción</label><br>
+      <nz-select [(ngModel)]="filterAction" nzAllowClear nzPlaceHolder="Todas" style="width: 220px;">
+        @for (a of actions; track a) {
+          <nz-option [nzValue]="a" [nzLabel]="a"></nz-option>
+        }
+      </nz-select>
+    </div>
+    <div nz-col>
+      <label>Rango de fecha</label><br>
+      <nz-range-picker [(ngModel)]="filterDateRange" nzFormat="dd/MM/yyyy"></nz-range-picker>
+    </div>
+    <div nz-col>
+      <button nz-button nzType="primary" (click)="load()">Filtrar</button>
+      <button nz-button style="margin-left: 8px;" (click)="reset()">Limpiar</button>
+    </div>
+  </div>
+
+  <nz-table
+    [nzData]="result()?.data ?? []"
+    nzSize="small"
+    [nzLoading]="loading()"
+    [nzTotal]="result()?.total ?? 0"
+    [nzPageSize]="50"
+    (nzPageIndexChange)="load($event)"
+    nzFrontPagination="false">
+    <thead>
+      <tr>
+        <th nzWidth="160px">Fecha/Hora</th>
+        <th nzWidth="200px">Acción</th>
+        <th nzWidth="180px">Usuario</th>
+        <th nzWidth="120px">Entidad</th>
+        <th>Metadata</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (log of result()?.data ?? []; track log.audit_log_id) {
+        <tr>
+          <td style="font-size:12px;">{{ log.created_at | date:'dd/MM/yy HH:mm:ss' }}</td>
+          <td><nz-tag [nzColor]="actionColors[log.action] ?? 'default'">{{ log.action }}</nz-tag></td>
+          <td>{{ log.performed_by_name }}</td>
+          <td>{{ log.entity_type ?? '—' }}</td>
+          <td style="max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11px; font-family:monospace;">
+            {{ metaStr(log) }}
+          </td>
+        </tr>
+      }
+    </tbody>
+  </nz-table>
+</div>

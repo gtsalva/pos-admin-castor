@@ -40,6 +40,8 @@ export class AdminShellComponent {
     { label: 'Proveedores', icon: 'team', route: '/proveedores' },
     { label: 'Categorías', icon: 'appstore', route: '/categorias' },
     { label: 'Usuarios', icon: 'user', route: '/usuarios' },
+    { label: 'Cierres', icon: 'lock', route: '/cierres' },
+    { label: 'Auditoría', icon: 'file-search', route: '/auditoria' },
   ];
 
   logout(): void {

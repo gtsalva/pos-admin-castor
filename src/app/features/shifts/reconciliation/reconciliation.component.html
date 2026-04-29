@@ -12,7 +12,7 @@
       <nz-form-item>
         <nz-form-label>Efectivo contado (esperado: Q {{ entry().cash_total | number:'1.2-2' }})</nz-form-label>
         <nz-form-control>
-          <nz-input-number formControlName="cash_counted" [nzMin]="0" nzPrecision="2" style="width:100%"></nz-input-number>
+          <nz-input-number formControlName="cash_counted" [nzMin]="0" [nzPrecision]="2" style="width:100%"></nz-input-number>
           @if (form.get('cash_counted')?.value !== null) {
             <small [style.color]="diff('cash') < 0 ? 'red' : diff('cash') > 0 ? 'orange' : 'green'">
               Diferencia: Q {{ diff('cash') | number:'1.2-2' }}
@@ -25,7 +25,7 @@
       <nz-form-item>
         <nz-form-label>Tarjeta contada (esperada: Q {{ entry().card_total | number:'1.2-2' }})</nz-form-label>
         <nz-form-control>
-          <nz-input-number formControlName="card_counted" [nzMin]="0" nzPrecision="2" style="width:100%"></nz-input-number>
+          <nz-input-number formControlName="card_counted" [nzMin]="0" [nzPrecision]="2" style="width:100%"></nz-input-number>
           @if (form.get('card_counted')?.value !== null) {
             <small [style.color]="diff('card') < 0 ? 'red' : diff('card') > 0 ? 'orange' : 'green'">
               Diferencia: Q {{ diff('card') | number:'1.2-2' }}
@@ -38,7 +38,7 @@
       <nz-form-item>
         <nz-form-label>Transferencia contada (esperada: Q {{ entry().transfer_total | number:'1.2-2' }})</nz-form-label>
         <nz-form-control>
-          <nz-input-number formControlName="transfer_counted" [nzMin]="0" nzPrecision="2" style="width:100%"></nz-input-number>
+          <nz-input-number formControlName="transfer_counted" [nzMin]="0" [nzPrecision]="2" style="width:100%"></nz-input-number>
           @if (form.get('transfer_counted')?.value !== null) {
             <small [style.color]="diff('transfer') < 0 ? 'red' : diff('transfer') > 0 ? 'orange' : 'green'">
               Diferencia: Q {{ diff('transfer') | number:'1.2-2' }}
@@ -51,7 +51,7 @@
       <nz-form-item>
         <nz-form-label>Otro ingreso (efectivo extra fuera del sistema)</nz-form-label>
         <nz-form-control>
-          <nz-input-number formControlName="other_counted" [nzMin]="0" nzPrecision="2" style="width:100%"></nz-input-number>
+          <nz-input-number formControlName="other_counted" [nzMin]="0" [nzPrecision]="2" style="width:100%"></nz-input-number>
         </nz-form-control>
       </nz-form-item>
     </div>

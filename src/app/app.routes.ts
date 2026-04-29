@@ -70,6 +70,16 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/users/users.routes').then((m) => m.usersRoutes),
       },
+      {
+        path: 'cierres',
+        loadChildren: () =>
+          import('./features/shifts/shifts.routes').then(m => m.shiftsRoutes),
+      },
+      {
+        path: 'auditoria',
+        loadChildren: () =>
+          import('./features/audit/audit.routes').then(m => m.auditRoutes),
+      },
     ],
   },
   { path: '**', redirectTo: 'reportes' },
