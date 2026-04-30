@@ -48,7 +48,7 @@ export class AuditListComponent implements OnInit {
   });
 
   readonly actions = Object.keys(ACTION_COLORS);
-  readonly actionColors = ACTION_COLORS;
+  readonly actionColors: Record<string, string | undefined> = ACTION_COLORS;
 
   ngOnInit(): void { this.load(); }
 
