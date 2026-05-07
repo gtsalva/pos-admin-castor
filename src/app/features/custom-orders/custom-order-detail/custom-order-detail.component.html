@@ -1,0 +1,243 @@
+<nz-breadcrumb>
+  <nz-breadcrumb-item><a routerLink="/cotizaciones">Cotizaciones</a></nz-breadcrumb-item>
+  <nz-breadcrumb-item>{{ order()?.order_number ?? '…' }}</nz-breadcrumb-item>
+</nz-breadcrumb>
+
+@if (loading()) {
+  <div class="loading-center"><nz-spin nzTip="Cargando…" /></div>
+} @else {
+  @if (order(); as o) {
+
+    <div class="hero">
+      <div class="hero-left">
+        <div class="hero-number">{{ o.order_number }}</div>
+        <div class="hero-date">{{ o.created_at | date:"d 'de' MMMM, yyyy" }} · {{ o.salesperson.full_name }}</div>
+      </div>
+      <div class="hero-right">
+        <nz-tag [nzColor]="statusColors[o.status]" class="hero-tag">{{ statusLabels[o.status] }}</nz-tag>
+        <div class="hero-total">{{ o.total | quetzales }}</div>
+      </div>
+    </div>
+
+    <div class="payment-bar">
+      <div class="payment-bar-info">
+        <span>Pagado: <strong>{{ o.total_paid | quetzales }}</strong></span>
+        <span>Saldo: <strong class="balance">{{ balance() | quetzales }}</strong></span>
+      </div>
+      <nz-progress [nzPercent]="paidPercent()" [nzStatus]="paidPercent() >= 100 ? 'success' : 'active'"
+        [nzStrokeColor]="'#c85a1a'" />
+    </div>
+
+    <div class="meta-grid">
+      <div class="meta-card">
+        <div class="meta-label">Cliente</div>
+        <div class="meta-value">{{ clientLabel() }}</div>
+        @if (o.client_phone) { <div class="meta-sub">{{ o.client_phone }}</div> }
+        @if (o.client_email) { <div class="meta-sub">{{ o.client_email }}</div> }
+      </div>
+      <div class="meta-card">
+        <div class="meta-label">Fecha de entrega</div>
+        <div class="meta-value">{{ o.delivery_date ?? 'Sin definir' }}</div>
+        @if (o.status === 'APPROVED' || o.status === 'IN_PRODUCTION' || o.status === 'DELIVERED') {
+          <button nz-button nzType="link" nzSize="small" (click)="openDeliveryModal()">
+            <span nz-icon nzType="edit"></span> Cambiar
+          </button>
+        }
+      </div>
+      @if (o.supplier) {
+        <div class="meta-card">
+          <div class="meta-label">Proveedor</div>
+          <div class="meta-value">{{ o.supplier.name }}</div>
+        </div>
+      }
+    </div>
+
+    <div class="actions-bar">
+      @if (o.status === 'DRAFT') {
+        <button nz-button nzType="primary" [nzLoading]="acting()" (click)="send()">
+          <span nz-icon nzType="send"></span> Enviar al cliente
+        </button>
+      }
+      @if (o.status === 'SENT') {
+        <button nz-button nzType="primary" [nzLoading]="acting()" (click)="openApproveModal()">
+          <span nz-icon nzType="check-circle"></span> Aprobar
+        </button>
+      }
+      @if (o.status === 'APPROVED') {
+        <button nz-button nzType="primary" [nzLoading]="acting()" (click)="markProduction()">
+          <span nz-icon nzType="tool"></span> Iniciar producción
+        </button>
+      }
+      @if (o.status === 'IN_PRODUCTION') {
+        <button nz-button nzType="primary" [nzLoading]="acting()" (click)="markDelivered()">
+          <span nz-icon nzType="check"></span> Marcar entregado
+        </button>
+      }
+      @if (o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
+        <button nz-button nzType="default" (click)="openPaymentModal()">
+          <span nz-icon nzType="dollar"></span> Registrar pago
+        </button>
+        <button nz-button nzType="default" nzDanger [nzLoading]="acting()" (click)="cancel()">
+          <span nz-icon nzType="close-circle"></span> Cancelar orden
+        </button>
+      }
+    </div>
+
+    <div class="section">
+      <div class="section-title">Artículos</div>
+      <nz-table [nzData]="o.items" [nzShowPagination]="false" nzSize="middle">
+        <thead><tr>
+          <th>Descripción</th>
+          <th nzAlign="right">Cantidad</th>
+          <th nzAlign="right">Precio unit.</th>
+          <th nzAlign="right">Costo (interno)</th>
+          <th nzAlign="right">Subtotal</th>
+        </tr></thead>
+        <tbody>
+          @for (item of o.items; track item.custom_order_item_id) {
+            <tr>
+              <td>
+                <div>{{ item.description }}</div>
+                @if (item.notes) { <div class="item-notes">{{ item.notes }}</div> }
+              </td>
+              <td nzAlign="right">{{ item.quantity }}</td>
+              <td nzAlign="right">{{ item.unit_price | quetzales }}</td>
+              <td nzAlign="right" class="cost-price">{{ item.cost_price != null ? (item.cost_price | quetzales) : '—' }}</td>
+              <td nzAlign="right" class="subtotal-cell">{{ item.subtotal | quetzales }}</td>
+            </tr>
+          }
+        </tbody>
+      </nz-table>
+      <div class="total-bar">
+        <span>Total</span>
+        <strong>{{ o.total | quetzales }}</strong>
+      </div>
+    </div>
+
+    @if (o.client_notes) {
+      <div class="section">
+        <div class="section-title">Notas para el cliente</div>
+        <p class="client-notes">{{ o.client_notes }}</p>
+      </div>
+    }
+
+    @if (o.notes) {
+      <div class="section">
+        <div class="section-title">Notas internas</div>
+        <p class="internal-notes">{{ o.notes }}</p>
+      </div>
+    }
+
+    @if (o.payments.length > 0) {
+      <div class="section">
+        <div class="section-title">Pagos recibidos</div>
+        <nz-table [nzData]="o.payments" [nzShowPagination]="false" nzSize="small">
+          <thead><tr>
+            <th>Fecha</th>
+            <th>Método</th>
+            <th>Referencia</th>
+            <th>Recibido por</th>
+            <th nzAlign="right">Monto</th>
+          </tr></thead>
+          <tbody>
+            @for (p of o.payments; track p.custom_order_payment_id) {
+              <tr>
+                <td>{{ p.created_at | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ paymentLabels[p.payment_method] }}</td>
+                <td>{{ p.payment_reference ?? '—' }}</td>
+                <td>{{ p.received_by.full_name }}</td>
+                <td nzAlign="right" class="payment-amount">{{ p.amount | quetzales }}</td>
+              </tr>
+            }
+          </tbody>
+        </nz-table>
+      </div>
+    }
+  }
+}
+
+<!-- Modal: Aprobar -->
+<nz-modal
+  [nzVisible]="approveModalVisible()"
+  nzTitle="Aprobar cotización"
+  nzOkText="Confirmar aprobación"
+  [nzOkDisabled]="approveForm.invalid"
+  (nzOnOk)="confirmApprove()"
+  (nzOnCancel)="approveModalVisible.set(false)"
+>
+  <ng-container *nzModalContent>
+    <p>Establece la fecha estimada de entrega para esta orden.</p>
+    <form nz-form [formGroup]="approveForm" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label nzRequired>Fecha de entrega estimada</nz-form-label>
+        <nz-form-control nzErrorTip="Requerida">
+          <nz-date-picker formControlName="delivery_date" nzFormat="dd/MM/yyyy" style="width:100%" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>
+
+<!-- Modal: Cambiar fecha de entrega -->
+<nz-modal
+  [nzVisible]="deliveryModalVisible()"
+  nzTitle="Cambiar fecha de entrega"
+  nzOkText="Guardar"
+  [nzOkDisabled]="deliveryForm.invalid"
+  (nzOnOk)="confirmDeliveryDate()"
+  (nzOnCancel)="deliveryModalVisible.set(false)"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="deliveryForm" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label nzRequired>Nueva fecha de entrega</nz-form-label>
+        <nz-form-control>
+          <nz-date-picker formControlName="delivery_date" nzFormat="dd/MM/yyyy" style="width:100%" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>
+
+<!-- Modal: Registrar pago -->
+<nz-modal
+  [nzVisible]="paymentModalVisible()"
+  nzTitle="Registrar pago"
+  nzOkText="Registrar"
+  [nzOkDisabled]="paymentForm.invalid"
+  (nzOnOk)="confirmPayment()"
+  (nzOnCancel)="paymentModalVisible.set(false)"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="paymentForm" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label nzRequired>Método de pago</nz-form-label>
+        <nz-form-control>
+          <nz-select formControlName="payment_method" style="width:100%">
+            @for (m of paymentMethods; track m.value) {
+              <nz-option [nzValue]="m.value" [nzLabel]="m.label" />
+            }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired>Monto</nz-form-label>
+        <nz-form-control nzErrorTip="Mínimo Q 0.01">
+          <nz-input-number formControlName="amount" [nzMin]="0.01" [nzPrecision]="2" nzPrefix="Q" style="width:100%" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>No. de autorización / Referencia</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="payment_reference" placeholder="Opcional" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>Notas</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="notes" placeholder="Opcional" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

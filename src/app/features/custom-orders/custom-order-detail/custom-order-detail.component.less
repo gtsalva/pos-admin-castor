@@ -1,0 +1,70 @@
+.loading-center { display:flex; align-items:center; justify-content:center; height:300px; }
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 24px;
+  background: #fdf6f0;
+  border-radius: 12px;
+  margin: 16px 0;
+
+  &-number { font-size: 24px; font-weight: 700; color: #3d3432; }
+  &-date   { font-size: 13px; color: #8c7b75; margin-top: 4px; }
+  &-right  { text-align: right; }
+  &-total  { font-size: 28px; font-weight: 700; color: #c85a1a; margin-top: 6px; }
+  &-tag    { font-size: 13px; }
+}
+
+.payment-bar {
+  margin: 16px 0;
+  &-info { display:flex; justify-content:space-between; margin-bottom:6px; font-size:13px; }
+  .balance { color: #c85a1a; }
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+
+  .meta-card {
+    background: #fff;
+    border: 1px solid #f0e8e0;
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .meta-label { font-size: 11px; color: #8c7b75; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .meta-value { font-weight: 600; font-size: 15px; color: #3d3432; }
+  .meta-sub   { font-size: 12px; color: #8c7b75; margin-top: 2px; }
+}
+
+.actions-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.section {
+  margin-bottom: 28px;
+  &-title { font-size: 15px; font-weight: 600; color: #3d3432; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #f0e8e0; }
+}
+
+.item-notes     { font-size: 12px; color: #8c7b75; margin-top: 2px; }
+.cost-price     { font-size: 12px; color: #8c7b75; font-style: italic; }
+.subtotal-cell  { font-weight: 600; }
+.payment-amount { font-weight: 600; color: #3d3432; }
+
+.total-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #fdf6f0;
+  border-radius: 0 0 8px 8px;
+  font-size: 16px;
+  strong { font-weight: 700; color: #c85a1a; font-size: 18px; }
+}
+
+.client-notes   { color: #3d3432; line-height: 1.6; }
+.internal-notes { color: #8c7b75; font-style: italic; line-height: 1.6; }
