@@ -80,6 +80,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/audit/audit.routes').then(m => m.auditRoutes),
       },
+      {
+        path: 'cotizaciones',
+        loadChildren: () =>
+          import('./features/custom-orders/custom-orders.routes').then(m => m.customOrderRoutes),
+      },
     ],
   },
   { path: '**', redirectTo: 'reportes' },

@@ -47,6 +47,11 @@ import {
   DownloadOutline,
   RiseOutline,
   FileSearchOutline,
+  FileTextOutline,
+  SendOutline,
+  DollarOutline,
+  GiftOutline,
+  SaveOutline
 } from '@ant-design/icons-angular/icons';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
@@ -102,7 +107,12 @@ export const appConfig: ApplicationConfig = {
       ArrowLeftOutline,
       DownloadOutline,
       RiseOutline,
-      FileSearchOutline
+      FileSearchOutline,
+      FileTextOutline,
+      SendOutline,
+      DollarOutline,
+      GiftOutline,
+      SaveOutline
     ]),
     { provide: NZ_I18N, useValue: es_ES },
     { provide: LOCALE_ID, useValue: 'es-GT' },

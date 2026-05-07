@@ -41,12 +41,16 @@ export interface CustomOrder {
   notes: string | null;
   client_notes: string | null;
   delivery_date: string | null;
+  agreed_price: number | null;
   total: number;
   total_paid: number;
+  counts_for_incentive: boolean;
+  custom_commission: number | null;
   supplier: { supplier_id: string; name: string } | null;
   linked_purchase_order_id: string | null;
   items: CustomOrderItem[];
   payments: CustomOrderPayment[];
+  commission_payments: CustomOrderCommissionPayment[];
   created_at: string;
   updated_at: string;
 }
@@ -79,9 +83,22 @@ export interface CreateCustomOrderPayload {
   items: CreateCustomOrderItemPayload[];
 }
 
+export interface CustomOrderCommissionPayment {
+  commission_payment_id: string;
+  amount: number;
+  notes: string | null;
+  paid_by: { user_id: string; full_name: string };
+  created_at: string;
+}
+
 export interface RegisterPaymentPayload {
   payment_method: PaymentMethod;
   amount: number;
   payment_reference?: string;
+  notes?: string;
+}
+
+export interface RegisterCommissionPaymentPayload {
+  amount: number;
   notes?: string;
 }

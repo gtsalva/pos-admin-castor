@@ -10,7 +10,6 @@ import { NzIconModule }     from 'ng-zorro-antd/icon';
 import { NzSpaceModule }    from 'ng-zorro-antd/space';
 import { NzFormModule }     from 'ng-zorro-antd/form';
 import { QuetzalesPipe }    from '../../../shared/pipes/quetzales.pipe';
-import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { CustomOrdersStateService } from '../services/custom-orders-state.service';
 import { CustomOrder, CustomOrderStatus } from '../models/custom-order.model';
 
@@ -21,7 +20,6 @@ import { CustomOrder, CustomOrderStatus } from '../models/custom-order.model';
     ReactiveFormsModule, DatePipe, NzTableModule, NzTagModule, NzButtonModule,
     NzSelectModule, NzIconModule, NzSpaceModule, NzFormModule,
     QuetzalesPipe,
-    PageHeaderComponent,
   ],
   providers: [CustomOrdersStateService],
   templateUrl: './custom-orders-list.component.html',

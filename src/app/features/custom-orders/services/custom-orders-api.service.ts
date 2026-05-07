@@ -9,6 +9,7 @@ import {
   CustomOrderQuery,
   CreateCustomOrderPayload,
   RegisterPaymentPayload,
+  RegisterCommissionPaymentPayload,
 } from '../models/custom-order.model';
 
 interface ApiResponse<T> {
@@ -55,7 +56,7 @@ export class CustomOrdersApiService {
       .pipe(map(res => res.data));
   }
 
-  update(id: string, payload: Partial<CreateCustomOrderPayload>): Observable<CustomOrder> {
+  update(id: string, payload: Partial<CreateCustomOrderPayload> & { custom_commission?: number | null; counts_for_incentive?: boolean }): Observable<CustomOrder> {
     return this.http
       .patch<ApiResponse<CustomOrder>>(`${this.base}/${id}`, payload)
       .pipe(map(res => res.data));
@@ -102,6 +103,12 @@ export class CustomOrdersApiService {
   registerPayment(id: string, payload: RegisterPaymentPayload): Observable<CustomOrder> {
     return this.http
       .post<ApiResponse<CustomOrder>>(`${this.base}/${id}/payments`, payload)
+      .pipe(map(res => res.data));
+  }
+
+  registerCommissionPayment(id: string, payload: RegisterCommissionPaymentPayload): Observable<CustomOrder> {
+    return this.http
+      .post<ApiResponse<CustomOrder>>(`${this.base}/${id}/commission-payments`, payload)
       .pipe(map(res => res.data));
   }
 }

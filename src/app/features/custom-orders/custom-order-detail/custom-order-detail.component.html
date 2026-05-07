@@ -114,6 +114,87 @@
       </div>
     </div>
 
+    @if (!o.counts_for_incentive) {
+      <div class="section commission-section">
+        <div class="section-title">
+          <span nz-icon nzType="gift" nzTheme="outline"></span>
+          Comisión manual — {{ o.salesperson.full_name }}
+        </div>
+
+        <div class="commission-top">
+          <div class="commission-planned">
+            <div class="commission-planned-label">Monto acordado</div>
+            <div class="commission-planned-row">
+              <nz-input-number
+                [ngModel]="commissionValue()"
+                (ngModelChange)="commissionValue.set($event)"
+                [ngModelOptions]="{standalone: true}"
+                [nzMin]="0"
+                [nzPrecision]="2"
+                nzPrefix="Q"
+                nzSize="large"
+                nzPlaceHolder="0.00"
+                style="width: 180px" />
+              <button nz-button nzType="default" nzSize="large"
+                [nzLoading]="savingCommission()"
+                (click)="saveCommission()">
+                <span nz-icon nzType="save"></span> Guardar
+              </button>
+            </div>
+          </div>
+
+          <div class="commission-summary">
+            <div class="commission-summary-item">
+              <span class="commission-summary-label">Acordado</span>
+              <span class="commission-summary-value">{{ (o.custom_commission ?? 0) | quetzales }}</span>
+            </div>
+            <div class="commission-summary-sep">→</div>
+            <div class="commission-summary-item">
+              <span class="commission-summary-label">Pagado</span>
+              <span class="commission-summary-value paid">{{ commissionTotalPaid() | quetzales }}</span>
+            </div>
+            <div class="commission-summary-sep">→</div>
+            <div class="commission-summary-item">
+              <span class="commission-summary-label">Pendiente</span>
+              <span class="commission-summary-value" [class.pending]="commissionBalance() > 0">{{ commissionBalance() | quetzales }}</span>
+            </div>
+          </div>
+        </div>
+
+        @if (o.commission_payments.length > 0) {
+          <nz-table [nzData]="o.commission_payments" [nzShowPagination]="false" nzSize="small" class="commission-table">
+            <thead><tr>
+              <th>Fecha</th>
+              <th>Pagado por</th>
+              <th>Notas</th>
+              <th nzAlign="right">Monto</th>
+            </tr></thead>
+            <tbody>
+              @for (cp of o.commission_payments; track cp.commission_payment_id) {
+                <tr>
+                  <td>{{ cp.created_at | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td>{{ cp.paid_by.full_name }}</td>
+                  <td>{{ cp.notes ?? '—' }}</td>
+                  <td nzAlign="right" class="commission-amount">{{ cp.amount | quetzales }}</td>
+                </tr>
+              }
+            </tbody>
+          </nz-table>
+        } @else {
+          <div class="commission-empty">
+            <span nz-icon nzType="info-circle"></span>
+            Aún no se ha registrado ningún pago de comisión.
+          </div>
+        }
+
+        <div class="commission-footer">
+          <button nz-button nzType="primary" (click)="openCommissionPaymentModal()">
+            <span nz-icon nzType="plus"></span> Registrar pago de comisión
+          </button>
+        </div>
+      </div>
+    }
+
     @if (o.client_notes) {
       <div class="section">
         <div class="section-title">Notas para el cliente</div>
@@ -193,6 +274,33 @@
         <nz-form-label nzRequired>Nueva fecha de entrega</nz-form-label>
         <nz-form-control>
           <nz-date-picker formControlName="delivery_date" nzFormat="dd/MM/yyyy" style="width:100%" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>
+
+<!-- Modal: Pago de comisión -->
+<nz-modal
+  [nzVisible]="commissionPaymentModalVisible()"
+  nzTitle="Registrar pago de comisión"
+  nzOkText="Registrar"
+  [nzOkDisabled]="commissionPaymentForm.invalid"
+  (nzOnOk)="confirmCommissionPayment()"
+  (nzOnCancel)="commissionPaymentModalVisible.set(false)"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="commissionPaymentForm" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label nzRequired>Monto pagado</nz-form-label>
+        <nz-form-control nzErrorTip="Mínimo Q 0.01">
+          <nz-input-number formControlName="amount" [nzMin]="0.01" [nzPrecision]="2" nzPrefix="Q" style="width:100%" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>Notas</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="notes" placeholder="Ej: efectivo entregado en caja, transferencia..." />
         </nz-form-control>
       </nz-form-item>
     </form>

@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormBuilder, Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzTagModule }          from 'ng-zorro-antd/tag';
@@ -20,13 +20,13 @@ import { NzProgressModule }     from 'ng-zorro-antd/progress';
 import { NzMessageService }     from 'ng-zorro-antd/message';
 import { QuetzalesPipe }        from '../../../shared/pipes/quetzales.pipe';
 import { CustomOrdersApiService } from '../services/custom-orders-api.service';
-import { CustomOrder, CustomOrderStatus, RegisterPaymentPayload, PaymentMethod } from '../models/custom-order.model';
+import { CustomOrder, CustomOrderStatus, RegisterPaymentPayload, RegisterCommissionPaymentPayload, PaymentMethod } from '../models/custom-order.model';
 
 @Component({
   selector: 'app-custom-order-detail',
   standalone: true,
   imports: [
-    RouterLink, ReactiveFormsModule, DatePipe, QuetzalesPipe,
+    RouterLink, ReactiveFormsModule, FormsModule, DatePipe, QuetzalesPipe,
     NzDescriptionsModule, NzTagModule, NzButtonModule, NzDividerModule,
     NzModalModule, NzInputModule, NzInputNumberModule, NzFormModule,
     NzSelectModule, NzDatePickerModule, NzSpinModule, NzTableModule,
@@ -94,6 +94,23 @@ export class CustomOrderDetailComponent implements OnInit {
     return o ? Math.max(0, o.total - o.total_paid) : 0;
   });
 
+  readonly commissionValue = signal<number | null>(null);
+  readonly savingCommission = signal(false);
+
+  readonly commissionTotalPaid = computed(() =>
+    (this.order()?.commission_payments ?? []).reduce((s, cp) => s + cp.amount, 0)
+  );
+  readonly commissionBalance = computed(() => {
+    const agreed = this.order()?.custom_commission ?? 0;
+    return Math.max(0, agreed - this.commissionTotalPaid());
+  });
+
+  readonly commissionPaymentModalVisible = signal(false);
+  readonly commissionPaymentForm = this.fb.group({
+    amount: [0, [Validators.required, Validators.min(0.01)]],
+    notes:  [''],
+  });
+
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) { this.router.navigate(['/cotizaciones']); return; }
@@ -103,8 +120,30 @@ export class CustomOrderDetailComponent implements OnInit {
   loadOrder(id: string): void {
     this.loading.set(true);
     this.api.getOne(id).subscribe({
-      next: o => { this.order.set(o); this.loading.set(false); },
+      next: o => {
+        this.order.set(o);
+        this.commissionValue.set(o.custom_commission);
+        this.loading.set(false);
+      },
       error: () => { this.loading.set(false); this.router.navigate(['/cotizaciones']); },
+    });
+  }
+
+  saveCommission(): void {
+    const id = this.order()?.custom_order_id;
+    if (!id) return;
+    this.savingCommission.set(true);
+    this.api.update(id, { custom_commission: this.commissionValue() }).subscribe({
+      next: (updated) => {
+        this.order.set(updated);
+        this.commissionValue.set(updated.custom_commission);
+        this.savingCommission.set(false);
+        this.message.success('Comisión guardada');
+      },
+      error: (err: { error?: { message?: string } }) => {
+        this.savingCommission.set(false);
+        this.message.error(err?.error?.message ?? 'Error al guardar comisión');
+      },
     });
   }
 
@@ -128,6 +167,33 @@ export class CustomOrderDetailComponent implements OnInit {
   markProduction(): void { this.act(this.api.markProduction(this.order()!.custom_order_id)); }
   markDelivered():  void { this.act(this.api.markDelivered(this.order()!.custom_order_id)); }
   cancel():         void { this.act(this.api.cancel(this.order()!.custom_order_id)); }
+
+  openCommissionPaymentModal(): void {
+    this.commissionPaymentForm.reset({ amount: 0, notes: '' });
+    this.commissionPaymentModalVisible.set(true);
+  }
+
+  confirmCommissionPayment(): void {
+    if (this.commissionPaymentForm.invalid) return;
+    const v = this.commissionPaymentForm.value;
+    const payload: RegisterCommissionPaymentPayload = {
+      amount: Number(v.amount),
+      notes:  v.notes || undefined,
+    };
+    this.commissionPaymentModalVisible.set(false);
+    this.acting.set(true);
+    this.api.registerCommissionPayment(this.order()!.custom_order_id, payload).subscribe({
+      next: (updated) => {
+        this.order.set(updated);
+        this.acting.set(false);
+        this.message.success(`Pago de comisión de Q ${payload.amount.toFixed(2)} registrado`);
+      },
+      error: (err: { error?: { message?: string } }) => {
+        this.acting.set(false);
+        this.message.error(err?.error?.message ?? 'Error al registrar pago de comisión');
+      },
+    });
+  }
 
   openApproveModal(): void {
     this.approveForm.reset();
