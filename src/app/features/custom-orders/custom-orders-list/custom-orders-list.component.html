@@ -1,0 +1,59 @@
+<div class="page-header-bar">
+  <h2 class="page-title">Cotizaciones</h2>
+  <span class="page-subtitle">Gestión de muebles y trabajos a la medida</span>
+</div>
+
+<div class="filter-bar">
+  <form nz-form [formGroup]="filterForm" nzLayout="inline">
+    <nz-form-item>
+      <nz-select formControlName="status" nzPlaceHolder="Estado" nzAllowClear style="width:180px">
+        @for (opt of statusOptions; track opt.value) {
+          <nz-option [nzValue]="opt.value" [nzLabel]="opt.label" />
+        }
+      </nz-select>
+    </nz-form-item>
+    <nz-form-item>
+      <button nz-button nzType="primary" (click)="applyFilters()">Filtrar</button>
+      <button nz-button nzType="default" class="ml-8" (click)="clearFilters()">Limpiar</button>
+    </nz-form-item>
+  </form>
+</div>
+
+<nz-table
+  [nzData]="state.items()"
+  [nzTotal]="state.total()"
+  [nzPageIndex]="state.page()"
+  [nzPageSize]="state.limit()"
+  [nzLoading]="state.loading()"
+  nzShowSizeChanger
+  (nzPageIndexChange)="state.setPage($event)"
+>
+  <thead>
+    <tr>
+      <th>Nº Cotización</th>
+      <th>Cliente</th>
+      <th>Vendedor</th>
+      <th>Total</th>
+      <th>Saldo</th>
+      <th>Entrega</th>
+      <th>Estado</th>
+      <th>Fecha</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (o of state.items(); track o.custom_order_id) {
+      <tr class="row-clickable" (click)="openDetail(o)">
+        <td><strong>{{ o.order_number }}</strong></td>
+        <td>{{ clientLabel(o) }}</td>
+        <td>{{ o.salesperson.full_name }}</td>
+        <td>{{ o.total | quetzales }}</td>
+        <td [class.balance-pending]="balanceOf(o) > 0">{{ balanceOf(o) | quetzales }}</td>
+        <td>{{ o.delivery_date ?? '—' }}</td>
+        <td>
+          <nz-tag [nzColor]="statusColors[o.status]">{{ statusLabels[o.status] }}</nz-tag>
+        </td>
+        <td>{{ o.created_at | date:'dd/MM/yyyy' }}</td>
+      </tr>
+    }
+  </tbody>
+</nz-table>
