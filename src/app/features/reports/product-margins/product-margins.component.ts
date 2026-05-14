@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartOptions } from 'chart.js';
@@ -33,7 +33,7 @@ Chart.register(...registerables);
   ],
   template: `
     <app-report-filter-bar
-      [config]="{ showCategory: true, showMinMargin: true }"
+      [config]="{ showCategory: true, showMinMargin: true, showIncentivePeriod: true }"
       (filtersChange)="onFilters($event)"
     />
 
@@ -149,7 +149,7 @@ Chart.register(...registerables);
     </ng-template>
   `,
 })
-export class ProductMarginsComponent implements OnInit {
+export class ProductMarginsComponent {
   private api = inject(ReportsApiService);
 
   data = signal<ProductMarginRow[]>([]);
@@ -207,8 +207,6 @@ export class ProductMarginsComponent implements OnInit {
     if (pct >= 0) return 'orange';
     return 'red';
   }
-
-  ngOnInit(): void { this.load({}); }
 
   onFilters(filters: FilterBarValues): void { this.load(filters as ProductMarginsFilters); }
 

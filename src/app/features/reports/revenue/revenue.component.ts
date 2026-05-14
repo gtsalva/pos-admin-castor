@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartOptions } from 'chart.js';
@@ -43,7 +43,7 @@ const PM_COLORS: Record<string, string> = {
   ],
   template: `
     <app-report-filter-bar
-      [config]="{ showPeriod: true, showPaymentMethod: true, showCategory: true }"
+      [config]="{ showPeriod: true, showPaymentMethod: true, showCategory: true, showIncentivePeriod: true }"
       (filtersChange)="onFilters($event)"
     />
 
@@ -170,7 +170,7 @@ const PM_COLORS: Record<string, string> = {
     </ng-template>
   `,
 })
-export class RevenueComponent implements OnInit {
+export class RevenueComponent {
   private api = inject(ReportsApiService);
 
   report = signal<RevenueReport>({
@@ -248,8 +248,6 @@ export class RevenueComponent implements OnInit {
   pmTagColor(pm: string): string {
     return pm === 'CASH' ? 'volcano' : pm === 'CARD' ? 'blue' : 'green';
   }
-
-  ngOnInit(): void { this.load({}); }
 
   onFilters(filters: FilterBarValues): void { this.load(filters as RevenueFilters); }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartOptions } from 'chart.js';
@@ -32,7 +32,7 @@ Chart.register(...registerables);
   ],
   template: `
     <app-report-filter-bar
-      [config]="{ showCategory: true, showLimit: true }"
+      [config]="{ showCategory: true, showLimit: true, showIncentivePeriod: true }"
       (filtersChange)="onFilters($event)"
     />
 
@@ -125,7 +125,7 @@ Chart.register(...registerables);
     </ng-template>
   `,
 })
-export class TopProductsComponent implements OnInit {
+export class TopProductsComponent {
   private api = inject(ReportsApiService);
 
   data = signal<TopProductRow[]>([]);
@@ -155,8 +155,6 @@ export class TopProductsComponent implements OnInit {
       y: { grid: { color: '#F0E6DB' }, ticks: { color: '#8C7B75' } },
     },
   };
-
-  ngOnInit(): void { this.load({}); }
 
   onFilters(filters: FilterBarValues): void { this.load(filters as TopProductsFilters); }
 
