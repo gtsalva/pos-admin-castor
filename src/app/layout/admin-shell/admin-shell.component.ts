@@ -33,6 +33,7 @@ export class AdminShellComponent {
     {
       label: 'Ventas',
       items: [
+        { label: 'Reportes', icon: 'bar-chart', route: '/reportes' },
         { label: 'Ventas', icon: 'transaction', route: '/ventas' },
         { label: 'Cotizaciones', icon: 'file-text', route: '/cotizaciones' },
         { label: 'Cierres', icon: 'lock', route: '/cierres' },
@@ -68,7 +69,6 @@ export class AdminShellComponent {
     {
       label: 'Sistema',
       items: [
-        { label: 'Reportes', icon: 'bar-chart', route: '/reportes' },
         { label: 'Usuarios', icon: 'user', route: '/usuarios' },
         { label: 'Auditoría', icon: 'file-search', route: '/auditoria' },
       ],
