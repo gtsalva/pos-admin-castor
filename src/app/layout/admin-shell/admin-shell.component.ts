@@ -6,7 +6,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { AuthService } from '../../core/services/auth.service';
-import { SidebarComponent, NavItem } from '../sidebar/sidebar.component';
+import { SidebarComponent, NavGroup } from '../sidebar/sidebar.component';
 
 @Component({
   selector: 'app-admin-shell',
@@ -29,20 +29,50 @@ export class AdminShellComponent {
 
   readonly currentUser = this.auth.currentUser;
 
-  readonly navItems: NavItem[] = [
-    { label: 'Reportes', icon: 'bar-chart', route: '/reportes' },
-    { label: 'Productos', icon: 'shopping', route: '/productos' },
-    { label: 'Clientes', icon: 'team', route: '/clientes' },
-    { label: 'Ventas', icon: 'transaction', route: '/ventas' },
-    { label: 'Cotizaciones', icon: 'file-text', route: '/cotizaciones' },
-    { label: 'Inventario', icon: 'database', route: '/inventario' },
-    { label: 'Compras', icon: 'shopping-cart', route: '/compras' },
-    { label: 'Incentivos', icon: 'trophy', route: '/incentivos' },
-    { label: 'Proveedores', icon: 'team', route: '/proveedores' },
-    { label: 'Categorías', icon: 'appstore', route: '/categorias' },
-    { label: 'Usuarios', icon: 'user', route: '/usuarios' },
-    { label: 'Cierres', icon: 'lock', route: '/cierres' },
-    { label: 'Auditoría', icon: 'file-search', route: '/auditoria' },
+  readonly navGroups: NavGroup[] = [
+    {
+      label: 'Ventas',
+      items: [
+        { label: 'Ventas', icon: 'transaction', route: '/ventas' },
+        { label: 'Cotizaciones', icon: 'file-text', route: '/cotizaciones' },
+        { label: 'Cierres', icon: 'lock', route: '/cierres' },
+      ],
+    },
+    {
+      label: 'Clientes',
+      items: [
+        { label: 'Clientes', icon: 'contacts', route: '/clientes' },
+      ],
+    },
+    {
+      label: 'Catálogo',
+      items: [
+        { label: 'Productos', icon: 'shopping', route: '/productos' },
+        { label: 'Categorías', icon: 'appstore', route: '/categorias' },
+        { label: 'Inventario', icon: 'database', route: '/inventario' },
+      ],
+    },
+    {
+      label: 'Compras',
+      items: [
+        { label: 'Compras', icon: 'shopping-cart', route: '/compras' },
+        { label: 'Proveedores', icon: 'shop', route: '/proveedores' },
+      ],
+    },
+    {
+      label: 'Equipo',
+      items: [
+        { label: 'Incentivos', icon: 'trophy', route: '/incentivos' },
+      ],
+    },
+    {
+      label: 'Sistema',
+      items: [
+        { label: 'Reportes', icon: 'bar-chart', route: '/reportes' },
+        { label: 'Usuarios', icon: 'user', route: '/usuarios' },
+        { label: 'Auditoría', icon: 'file-search', route: '/auditoria' },
+      ],
+    },
   ];
 
   goToPerfil(): void {

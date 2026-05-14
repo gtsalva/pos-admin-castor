@@ -9,6 +9,11 @@ export interface NavItem {
   route: string;
 }
 
+export interface NavGroup {
+  label: string;
+  items: NavItem[];
+}
+
 @Component({
   selector: 'app-sidebar',
   standalone: true,
@@ -17,5 +22,5 @@ export interface NavItem {
   styleUrl: './sidebar.component.less',
 })
 export class SidebarComponent {
-  readonly navItems = input<NavItem[]>([]);
+  readonly navGroups = input<NavGroup[]>([]);
 }

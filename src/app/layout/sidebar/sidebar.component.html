@@ -1,8 +1,12 @@
 <ul nz-menu nzMode="inline" class="sidebar-menu">
-  @for (item of navItems(); track item.route) {
-    <li nz-menu-item [routerLink]="item.route" routerLinkActive="ant-menu-item-selected">
-      <span nz-icon [nzType]="item.icon"></span>
-      <span>{{ item.label }}</span>
+  @for (group of navGroups(); track group.label) {
+    <li nz-menu-group [nzTitle]="group.label">
+      @for (item of group.items; track item.route) {
+        <li nz-menu-item [routerLink]="item.route" routerLinkActive="ant-menu-item-selected">
+          <span nz-icon [nzType]="item.icon"></span>
+          <span>{{ item.label }}</span>
+        </li>
+      }
     </li>
   }
 </ul>
