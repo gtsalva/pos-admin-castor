@@ -22,7 +22,7 @@
   (nzPageSizeChange)="pageSizeChange.emit($event)">
   <thead>
     <tr>
-      <th aria-hidden="true"></th>
+      <th nzWidth="56px" aria-hidden="true"></th>
       <th>SKU</th>
       <th>Nombre</th>
       <th>Categoría</th>
@@ -37,7 +37,12 @@
     @for (row of table.data; track row.product_id) {
       <tr>
         <td aria-hidden="true">
-          <span nz-icon nzType="picture" class="img-placeholder"></span>
+          @if (row.image_url) {
+            <nz-avatar nzShape="square" [nzSrc]="row.image_url" [nzSize]="40" />
+          } @else {
+            <nz-avatar nzShape="square" nzIcon="picture" [nzSize]="40"
+              style="background:#F5E6D3;color:#C85A1A" />
+          }
         </td>
         <td><code>{{ row.sku }}</code></td>
         <td>

@@ -5,6 +5,7 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
@@ -35,7 +36,7 @@ const ROLE_COLOR: Record<UserRole, string> = {
   imports: [
     RouterLink, FormsModule, DatePipe,
     NzTableModule, NzTagModule, NzButtonModule, NzIconModule,
-    NzInputModule, NzPopconfirmModule, NzSpinModule, NzDividerModule,
+    NzInputModule, NzAvatarModule, NzPopconfirmModule, NzSpinModule, NzDividerModule,
     PageHeaderComponent,
   ],
   template: `
@@ -64,6 +65,7 @@ const ROLE_COLOR: Record<UserRole, string> = {
     >
       <thead>
         <tr>
+          <th nzWidth="56px"></th>
           <th>Nombre</th>
           <th>Email</th>
           <th>Rol</th>
@@ -75,6 +77,14 @@ const ROLE_COLOR: Record<UserRole, string> = {
       <tbody>
         @for (user of filtered(); track user.user_id) {
           <tr>
+            <td>
+              @if (user.photo_url) {
+                <nz-avatar [nzSrc]="user.photo_url" [nzSize]="36" />
+              } @else {
+                <nz-avatar [nzText]="initials(user.full_name)" [nzSize]="36"
+                  style="background:#C85A1A;color:#fff;font-size:13px;font-weight:600" />
+              }
+            </td>
             <td style="font-weight:500">{{ user.full_name }}</td>
             <td>{{ user.email }}</td>
             <td>
@@ -142,6 +152,10 @@ export class UsersListComponent implements OnInit {
       },
       error: () => this.msg.error('Error al cambiar estado'),
     });
+  }
+
+  initials(name: string): string {
+    return name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
   }
 
   roleLabel(role: UserRole): string { return ROLE_LABEL[role] ?? role; }

@@ -40,6 +40,14 @@ export class UsersApiService {
       .pipe(map((res) => res.data));
   }
 
+  uploadPhoto(user_id: string, file: File): Observable<User> {
+    const fd = new FormData();
+    fd.append('file', file);
+    return this.http
+      .patch<ApiResponse<User>>(`${this.base}/${user_id}/photo`, fd)
+      .pipe(map((res) => res.data));
+  }
+
   toggleStatus(user_id: string): Observable<User> {
     return this.http
       .patch<ApiResponse<User>>(`${this.base}/${user_id}/status`, {})
