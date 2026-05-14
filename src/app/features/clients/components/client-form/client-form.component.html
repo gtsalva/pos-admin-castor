@@ -53,14 +53,26 @@
       <div nz-row [nzGutter]="16">
         <div nz-col [nzSpan]="12">
           <nz-form-item>
-            <nz-form-label>Ciudad</nz-form-label>
-            <nz-form-control><input nz-input formControlName="billing_city" placeholder="Guatemala" /></nz-form-control>
+            <nz-form-label>Departamento</nz-form-label>
+            <nz-form-control>
+              <nz-select formControlName="billing_department" nzShowSearch nzPlaceHolder="Seleccionar departamento">
+                @for (d of departamentos; track d.name) {
+                  <nz-option [nzValue]="d.name" [nzLabel]="d.name" />
+                }
+              </nz-select>
+            </nz-form-control>
           </nz-form-item>
         </div>
         <div nz-col [nzSpan]="12">
           <nz-form-item>
-            <nz-form-label>Departamento</nz-form-label>
-            <nz-form-control><input nz-input formControlName="billing_department" placeholder="Guatemala" /></nz-form-control>
+            <nz-form-label>Municipio</nz-form-label>
+            <nz-form-control>
+              <nz-select formControlName="billing_city" nzShowSearch nzPlaceHolder="Seleccionar municipio">
+                @for (m of currentMunicipios(); track m) {
+                  <nz-option [nzValue]="m" [nzLabel]="m" />
+                }
+              </nz-select>
+            </nz-form-control>
           </nz-form-item>
         </div>
       </div>
