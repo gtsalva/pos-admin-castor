@@ -48,6 +48,12 @@ export class UsersApiService {
       .pipe(map((res) => res.data));
   }
 
+  removePhoto(user_id: string): Observable<User> {
+    return this.http
+      .delete<ApiResponse<User>>(`${this.base}/${user_id}/photo`)
+      .pipe(map((res) => res.data));
+  }
+
   toggleStatus(user_id: string): Observable<User> {
     return this.http
       .patch<ApiResponse<User>>(`${this.base}/${user_id}/status`, {})

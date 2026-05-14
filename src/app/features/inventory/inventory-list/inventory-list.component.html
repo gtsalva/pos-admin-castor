@@ -22,6 +22,7 @@
   >
     <thead>
       <tr>
+        <th nzWidth="56px"></th>
         <th>SKU</th>
         <th>Producto</th>
         <th>Categoría</th>
@@ -35,6 +36,13 @@
     <tbody>
       @for (item of invTable.data; track item.product_id) {
         <tr>
+          <td>
+            @if (item.image_url) {
+              <nz-avatar [nzSrc]="item.image_url" nzShape="square" [nzSize]="40" />
+            } @else {
+              <nz-avatar nzShape="square" [nzSize]="40" nzIcon="shopping" style="background:#EDE0D4;color:#C85A1A" />
+            }
+          </td>
           <td>{{ item.sku }}</td>
           <td>{{ item.name }}</td>
           <td>{{ item.category?.name ?? '—' }}</td>

@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
@@ -11,6 +10,8 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzAutocompleteOptionComponent } from 'ng-zorro-antd/auto-complete';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { QuetzalesPipe } from '../../../shared/pipes/quetzales.pipe';
 import { debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs';
@@ -24,12 +25,14 @@ interface ProductOption {
   product_id: string;
   sku: string;
   name: string;
+  image_url: string | null;
 }
 
 interface OrderRow {
   product_id: string;
   product_sku: string;
   product_name: string;
+  product_image_url: string | null;
   quantity_ordered: number;
   unit_cost: number;
   min_sale_price: number | null;
@@ -45,9 +48,10 @@ function isProductOption(value: unknown): value is ProductOption {
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    NzStepsModule, NzFormModule, NzSelectModule,
+    NzStepsModule, NzFormModule,
     NzInputModule, NzButtonModule, NzInputNumberModule,
     NzTableModule, NzDividerModule, NzAutocompleteModule,
+    NzAvatarModule, NzModalModule,
     QuetzalesPipe,
   ],
   template: `
@@ -66,11 +70,58 @@ function isProductOption(value: unknown): value is ProductOption {
           <nz-form-item>
             <nz-form-label nzRequired>Proveedor</nz-form-label>
             <nz-form-control nzErrorTip="Selecciona un proveedor">
-              <nz-select formControlName="supplier_id" nzShowSearch nzPlaceHolder="Seleccionar proveedor" style="width:100%">
-                @for (s of suppliers(); track s.supplier_id) {
-                  <nz-option [nzValue]="s.supplier_id" [nzLabel]="s.name"></nz-option>
-                }
-              </nz-select>
+              @if (selectedSupplier()) {
+                <div style="display:flex;align-items:center;gap:12px;padding:12px;background:#FBF5EF;border-radius:8px;border:1px solid #EDE0D4;margin-bottom:8px">
+                  @if (selectedSupplier()!.photo_url) {
+                    <nz-avatar [nzSrc]="selectedSupplier()!.photo_url!" [nzSize]="48" />
+                  } @else {
+                    <nz-avatar [nzText]="selectedSupplier()!.name[0].toUpperCase()" [nzSize]="48"
+                      style="background:#C85A1A;color:#fff;font-weight:700" />
+                  }
+                  <div style="flex:1">
+                    <div style="font-weight:600">{{ selectedSupplier()!.name }}</div>
+                    @if (selectedSupplier()!.contact_name) {
+                      <div style="font-size:12px;color:#8C7B75">{{ selectedSupplier()!.contact_name }}</div>
+                    }
+                  </div>
+                  <button nz-button nzType="link" nzSize="small" (click)="clearSupplier()">Cambiar</button>
+                </div>
+              } @else {
+                <input nz-input
+                  [formControl]="supplierSearch"
+                  [nzAutocomplete]="supplierAuto"
+                  placeholder="Buscar proveedor por nombre..."
+                  style="width:100%" />
+                <nz-autocomplete #supplierAuto (selectionChange)="onSupplierSelect($event)">
+                  @if (isSearchingSuppliers()) {
+                    <nz-auto-option nzDisabled>Buscando...</nz-auto-option>
+                  }
+                  @for (s of supplierOptions(); track s.supplier_id) {
+                    <nz-auto-option [nzValue]="s" [nzLabel]="s.name">
+                      <div style="display:flex;align-items:center;gap:8px">
+                        @if (s.photo_url) {
+                          <nz-avatar [nzSrc]="s.photo_url" [nzSize]="24" />
+                        } @else {
+                          <nz-avatar [nzText]="s.name[0].toUpperCase()" [nzSize]="24"
+                            style="background:#C85A1A;color:#fff;font-size:10px" />
+                        }
+                        <span>{{ s.name }}</span>
+                        @if (s.contact_name) {
+                          <span style="color:#8C7B75;font-size:12px">· {{ s.contact_name }}</span>
+                        }
+                      </div>
+                    </nz-auto-option>
+                  }
+                  @if (supplierOptions().length === 0 && !isSearchingSuppliers() && supplierSearch.value && supplierSearch.value.length >= 2) {
+                    <nz-auto-option nzDisabled>No se encontraron proveedores</nz-auto-option>
+                  }
+                </nz-autocomplete>
+                <div style="margin-top:6px">
+                  <button nz-button nzType="dashed" nzSize="small" (click)="openCreateSupplier()">
+                    + Crear nuevo proveedor
+                  </button>
+                </div>
+              }
             </nz-form-control>
           </nz-form-item>
           <nz-form-item>
@@ -83,6 +134,42 @@ function isProductOption(value: unknown): value is ProductOption {
             Siguiente →
           </button>
         </form>
+
+        <!-- Modal: Crear proveedor -->
+        <nz-modal
+          [(nzVisible)]="createSupplierModal"
+          nzTitle="Nuevo proveedor"
+          [nzFooter]="null"
+          (nzOnCancel)="createSupplierModal = false">
+          <ng-container *nzModalContent>
+            <form nz-form [formGroup]="newSupplierForm" nzLayout="vertical" (ngSubmit)="saveNewSupplier()">
+              <nz-form-item>
+                <nz-form-label nzRequired>Nombre</nz-form-label>
+                <nz-form-control nzErrorTip="Requerido">
+                  <input nz-input formControlName="name" placeholder="Distribuidora El Roble" />
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-label>Contacto</nz-form-label>
+                <nz-form-control>
+                  <input nz-input formControlName="contact_name" />
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-label>Teléfono</nz-form-label>
+                <nz-form-control>
+                  <input nz-input formControlName="phone" />
+                </nz-form-control>
+              </nz-form-item>
+              <div style="display:flex;gap:8px;justify-content:flex-end">
+                <button nz-button type="button" (click)="createSupplierModal = false">Cancelar</button>
+                <button nz-button nzType="primary" [nzLoading]="isSavingSupplier()" [disabled]="newSupplierForm.invalid">
+                  Crear
+                </button>
+              </div>
+            </form>
+          </ng-container>
+        </nz-modal>
       }
 
       <!-- STEP 1: Productos -->
@@ -132,12 +219,19 @@ function isProductOption(value: unknown): value is ProductOption {
           <nz-table [nzData]="rows()" nzSize="small" [nzShowPagination]="false">
             <thead>
               <tr>
-                <th>SKU</th><th>Producto</th><th>Cantidad</th><th>Costo Unit.</th><th>P. Mínimo</th><th>P. Venta</th><th>Subtotal</th><th></th>
+                <th nzWidth="48px"></th><th>SKU</th><th>Producto</th><th>Cantidad</th><th>Costo Unit.</th><th>P. Mínimo</th><th>P. Venta</th><th>Subtotal</th><th></th>
               </tr>
             </thead>
             <tbody>
               @for (row of rows(); track row.product_id; let i = $index) {
                 <tr>
+                  <td>
+                    @if (row.product_image_url) {
+                      <nz-avatar [nzSrc]="row.product_image_url" nzShape="square" [nzSize]="36" />
+                    } @else {
+                      <nz-avatar nzShape="square" [nzSize]="36" nzIcon="shopping" style="background:#EDE0D4;color:#C85A1A" />
+                    }
+                  </td>
                   <td>{{ row.product_sku }}</td>
                   <td>{{ row.product_name }}</td>
                   <td>{{ row.quantity_ordered }}</td>
@@ -172,11 +266,18 @@ function isProductOption(value: unknown): value is ProductOption {
           }
           <nz-table [nzData]="rows()" nzSize="small" [nzShowPagination]="false" style="margin:16px 0">
             <thead>
-              <tr><th>SKU</th><th>Producto</th><th>Cantidad</th><th>Costo Unit.</th><th>P. Mínimo</th><th>P. Venta</th><th>Subtotal</th></tr>
+              <tr><th nzWidth="48px"></th><th>SKU</th><th>Producto</th><th>Cantidad</th><th>Costo Unit.</th><th>P. Mínimo</th><th>P. Venta</th><th>Subtotal</th></tr>
             </thead>
             <tbody>
               @for (row of rows(); track row.product_id) {
                 <tr>
+                  <td>
+                    @if (row.product_image_url) {
+                      <nz-avatar [nzSrc]="row.product_image_url" nzShape="square" [nzSize]="36" />
+                    } @else {
+                      <nz-avatar nzShape="square" [nzSize]="36" nzIcon="shopping" style="background:#EDE0D4;color:#C85A1A" />
+                    }
+                  </td>
                   <td>{{ row.product_sku }}</td>
                   <td>{{ row.product_name }}</td>
                   <td>{{ row.quantity_ordered }}</td>
@@ -210,16 +311,29 @@ export class PurchasesNewComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly currentStep = signal(0);
-  readonly suppliers = signal<Supplier[]>([]);
+  readonly supplierOptions = signal<Supplier[]>([]);
+  readonly selectedSupplier = signal<Supplier | null>(null);
+  readonly isSearchingSuppliers = signal(false);
   readonly productOptions = signal<ProductOption[]>([]);
   readonly rows = signal<OrderRow[]>([]);
   readonly isSaving = signal(false);
+  readonly isSavingSupplier = signal(false);
+
+  createSupplierModal = false;
+
+  readonly supplierSearch = this.fb.control('');
 
   private selectedProduct: ProductOption | null = null;
 
   step0 = this.fb.group({
     supplier_id: ['', Validators.required],
     notes:       [''],
+  });
+
+  newSupplierForm = this.fb.group({
+    name:         ['', [Validators.required, Validators.maxLength(150)]],
+    contact_name: [''],
+    phone:        [''],
   });
 
   step1Fields = this.fb.group({
@@ -231,9 +345,20 @@ export class PurchasesNewComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.suppliersApi.getAll({ is_active: true, limit: 100 }).subscribe((res) =>
-      this.suppliers.set(res.data),
-    );
+    this.supplierSearch.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap((q) => {
+        if (!q || q.length < 2) this.supplierOptions.set([]);
+      }),
+      filter((q): q is string => !!q && q.length >= 2),
+      tap(() => this.isSearchingSuppliers.set(true)),
+      switchMap((q) => this.suppliersApi.getAll({ search: q, is_active: true, limit: 10 })),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((res) => {
+      this.supplierOptions.set(res.data);
+      this.isSearchingSuppliers.set(false);
+    });
 
     this.step1Fields.controls.cost.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
@@ -256,9 +381,47 @@ export class PurchasesNewComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((res) =>
       this.productOptions.set(
-        res.data.map((p) => ({ product_id: p.product_id, sku: p.sku, name: p.name })),
+        res.data.map((p) => ({ product_id: p.product_id, sku: p.sku, name: p.name, image_url: p.image_url })),
       ),
     );
+  }
+
+  onSupplierSelect(option: NzAutocompleteOptionComponent): void {
+    const s = option.nzValue as Supplier;
+    this.selectedSupplier.set(s);
+    this.step0.patchValue({ supplier_id: s.supplier_id });
+    this.supplierOptions.set([]);
+  }
+
+  clearSupplier(): void {
+    this.selectedSupplier.set(null);
+    this.step0.patchValue({ supplier_id: '' });
+    this.supplierSearch.setValue('');
+  }
+
+  openCreateSupplier(): void {
+    this.newSupplierForm.reset({ name: '', contact_name: '', phone: '' });
+    this.createSupplierModal = true;
+  }
+
+  saveNewSupplier(): void {
+    if (this.newSupplierForm.invalid) return;
+    this.isSavingSupplier.set(true);
+    const raw = this.newSupplierForm.getRawValue();
+    this.suppliersApi.create({
+      name: raw.name!,
+      contact_name: raw.contact_name || undefined,
+      phone: raw.phone || undefined,
+    }).subscribe({
+      next: (s) => {
+        this.selectedSupplier.set(s);
+        this.step0.patchValue({ supplier_id: s.supplier_id });
+        this.createSupplierModal = false;
+        this.isSavingSupplier.set(false);
+        this.msg.success('Proveedor creado');
+      },
+      error: () => { this.msg.error('Error al crear proveedor'); this.isSavingSupplier.set(false); },
+    });
   }
 
   onSearchInput(): void {
@@ -290,11 +453,12 @@ export class PurchasesNewComponent implements OnInit {
     this.rows.update((list) => [
       ...list,
       {
-        product_id:       this.selectedProduct!.product_id,
-        product_sku:      this.selectedProduct!.sku,
-        product_name:     this.selectedProduct!.name,
-        quantity_ordered: qty,
-        unit_cost:        cost,
+        product_id:        this.selectedProduct!.product_id,
+        product_sku:       this.selectedProduct!.sku,
+        product_name:      this.selectedProduct!.name,
+        product_image_url: this.selectedProduct!.image_url,
+        quantity_ordered:  qty,
+        unit_cost:         cost,
         min_sale_price,
         unit_price,
       },
@@ -316,8 +480,7 @@ export class PurchasesNewComponent implements OnInit {
   }
 
   supplierName(): string {
-    const id = this.step0.value.supplier_id;
-    return this.suppliers().find((s) => s.supplier_id === id)?.name ?? '';
+    return this.selectedSupplier()?.name ?? '';
   }
 
   nextStep(): void { this.currentStep.update((s) => s + 1); }

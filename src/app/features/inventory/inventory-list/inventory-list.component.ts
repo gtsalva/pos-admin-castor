@@ -9,6 +9,7 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { InventoryStateService } from '../services/inventory-state.service';
 import { InventoryItem } from '../../../shared/models/inventory.model';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
@@ -26,6 +27,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     NzIconModule,
     NzSpaceModule,
     NzDividerModule,
+    NzAvatarModule,
     PageHeaderComponent,
   ],
   providers: [InventoryStateService],

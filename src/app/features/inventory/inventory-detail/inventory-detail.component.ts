@@ -110,6 +110,7 @@ export class InventoryDetailComponent implements OnInit {
           product_id: p.product_id,
           sku: p.sku,
           name: p.name,
+          image_url: p.image_url,
           stock: p.stock,
           min_stock: p.min_stock,
           unit_price: p.unit_price,

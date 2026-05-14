@@ -34,4 +34,14 @@ export class ClientsApiService {
   deactivateClient(client_id: string) {
     return this.http.delete(`${this.base}/${client_id}`);
   }
+
+  uploadPhoto(client_id: string, file: File) {
+    const fd = new FormData();
+    fd.append('file', file);
+    return this.http.patch<{ data: import('../models/client.model').Client; message: string; statusCode: number }>(`${this.base}/${client_id}/photo`, fd);
+  }
+
+  removePhoto(client_id: string) {
+    return this.http.delete<{ data: import('../models/client.model').Client; message: string; statusCode: number }>(`${this.base}/${client_id}/photo`);
+  }
 }

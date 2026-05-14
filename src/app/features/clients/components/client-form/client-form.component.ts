@@ -8,6 +8,9 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { ClientsApiService } from '../../services/clients-api.service';
 import { CreateClientPayload, UpdateClientPayload } from '../../models/client.model';
@@ -21,7 +24,7 @@ import {
 @Component({
   selector: 'app-client-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NzFormModule, NzInputModule, NzButtonModule, NzCardModule, NzGridModule, NzSelectModule],
+  imports: [CommonModule, ReactiveFormsModule, NzFormModule, NzInputModule, NzButtonModule, NzCardModule, NzGridModule, NzSelectModule, NzAvatarModule, NzIconModule, NzDividerModule],
   templateUrl: './client-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -33,6 +36,8 @@ export class ClientFormComponent implements OnInit {
 
   readonly isEdit = signal(false);
   readonly loading = signal(false);
+  readonly photoUrl = signal<string | null>(null);
+  readonly isUploadingPhoto = signal(false);
   private clientId: string | null = null;
 
   readonly departamentos = DEPARTAMENTOS_GUATEMALA;
@@ -66,6 +71,7 @@ export class ClientFormComponent implements OnInit {
           this.form.patchValue(res.data, { emitEvent: false });
           const dept = res.data.billing_department ?? DEFAULT_DEPARTAMENTO;
           this.currentMunicipios.set(getMunicipios(dept));
+          this.photoUrl.set(res.data.photo_url);
           this.loading.set(false);
         },
         error: () => this.loading.set(false),
@@ -89,6 +95,25 @@ export class ClientFormComponent implements OnInit {
     req.subscribe({
       next: () => { this.message.success(this.isEdit() ? 'Cliente actualizado' : 'Cliente creado'); this.router.navigate(['/clientes']); },
       error: () => this.loading.set(false),
+    });
+  }
+
+  onPhotoChange(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file || !this.clientId) return;
+    this.isUploadingPhoto.set(true);
+    this.api.uploadPhoto(this.clientId, file).subscribe({
+      next: (res) => { this.photoUrl.set(res.data.photo_url); this.isUploadingPhoto.set(false); },
+      error: () => { this.message.error('Error al subir la foto'); this.isUploadingPhoto.set(false); },
+    });
+  }
+
+  removePhoto(): void {
+    if (!this.clientId) return;
+    this.isUploadingPhoto.set(true);
+    this.api.removePhoto(this.clientId).subscribe({
+      next: () => { this.photoUrl.set(null); this.isUploadingPhoto.set(false); },
+      error: () => { this.message.error('Error al eliminar la foto'); this.isUploadingPhoto.set(false); },
     });
   }
 

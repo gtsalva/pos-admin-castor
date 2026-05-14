@@ -57,4 +57,18 @@ export class SuppliersApiService {
       .patch<ApiResponse<Supplier>>(`${this.base}/${supplier_id}`, payload)
       .pipe(map((res) => res.data));
   }
+
+  uploadPhoto(supplier_id: string, file: File): Observable<Supplier> {
+    const fd = new FormData();
+    fd.append('file', file);
+    return this.http
+      .patch<ApiResponse<Supplier>>(`${this.base}/${supplier_id}/photo`, fd)
+      .pipe(map((res) => res.data));
+  }
+
+  removePhoto(supplier_id: string): Observable<Supplier> {
+    return this.http
+      .delete<ApiResponse<Supplier>>(`${this.base}/${supplier_id}/photo`)
+      .pipe(map((res) => res.data));
+  }
 }

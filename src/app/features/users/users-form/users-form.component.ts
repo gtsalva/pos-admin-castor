@@ -52,7 +52,7 @@ import { PageHeaderComponent, Breadcrumb } from '../../../shared/components/page
             <button nz-button nzType="default" nzSize="small" type="button"
               [nzLoading]="isUploadingPhoto()"
               (click)="photoInput.click()">
-              <span nz-icon nzType="camera"></span>
+              <span nz-icon nzType="picture"></span>
               {{ currentUser()?.photo_url ? 'Cambiar foto' : 'Subir foto' }}
             </button>
             @if (currentUser()?.photo_url) {
@@ -190,7 +190,7 @@ export class UsersFormComponent implements OnInit {
 
   removePhoto(): void {
     this.isUploadingPhoto.set(true);
-    this.api.update(this.userId()!, { photo_url: null } as never).subscribe({
+    this.api.removePhoto(this.userId()!).subscribe({
       next: (updated) => {
         this.currentUser.set(updated);
         if (this.userId() === this.authService.currentUser()?.user_id) {

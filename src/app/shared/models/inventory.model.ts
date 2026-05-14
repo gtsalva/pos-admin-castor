@@ -4,6 +4,7 @@ export interface InventoryItem {
   product_id: string;
   sku: string;
   name: string;
+  image_url: string | null;
   stock: number;
   min_stock: number;
   unit_price: number;
