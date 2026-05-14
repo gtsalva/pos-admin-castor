@@ -52,7 +52,10 @@ import {
   DollarOutline,
   GiftOutline,
   SaveOutline,
-  ToolOutline
+  ToolOutline,
+  ShopOutline,
+  KeyOutline,
+  ContactsOutline
 } from '@ant-design/icons-angular/icons';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
@@ -114,7 +117,10 @@ export const appConfig: ApplicationConfig = {
       DollarOutline,
       GiftOutline,
       SaveOutline,
-      ToolOutline
+      ToolOutline,
+      ShopOutline,
+      KeyOutline,
+      ContactsOutline
     ]),
     { provide: NZ_I18N, useValue: es_ES },
     { provide: LOCALE_ID, useValue: 'es-GT' },
