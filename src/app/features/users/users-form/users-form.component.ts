@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal, input, computed } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -121,6 +122,7 @@ export class UsersFormComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly msg = inject(NzMessageService);
   private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
 
   readonly isSaving = signal(false);
   readonly isLoadingUser = signal(false);
@@ -171,6 +173,9 @@ export class UsersFormComponent implements OnInit {
     this.api.uploadPhoto(this.userId()!, file).subscribe({
       next: (updated) => {
         this.currentUser.set(updated);
+        if (this.userId() === this.authService.currentUser()?.user_id) {
+          this.authService.updatePhoto(updated.photo_url);
+        }
         this.msg.success('Fotografía actualizada');
         this.isUploadingPhoto.set(false);
         input.value = '';
@@ -188,6 +193,9 @@ export class UsersFormComponent implements OnInit {
     this.api.update(this.userId()!, { photo_url: null } as never).subscribe({
       next: (updated) => {
         this.currentUser.set(updated);
+        if (this.userId() === this.authService.currentUser()?.user_id) {
+          this.authService.updatePhoto(null);
+        }
         this.msg.success('Fotografía eliminada');
         this.isUploadingPhoto.set(false);
       },

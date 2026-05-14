@@ -11,7 +11,12 @@
     <nz-header class="shell-header">
       <div class="header-spacer"></div>
       <div class="header-user" nz-dropdown [nzDropdownMenu]="userMenu" nzPlacement="bottomRight">
-        <nz-avatar nzIcon="user" nzSize="small" />
+        @if (currentUser()?.photo_url) {
+          <nz-avatar [nzSrc]="currentUser()!.photo_url!" nzSize="small" />
+        } @else {
+          <nz-avatar [nzText]="avatarInitials()" nzSize="small"
+            style="background:#C85A1A;color:#fff;font-weight:600" />
+        }
         <span class="header-username">{{ currentUser()?.full_name }}</span>
         <span nz-icon nzType="down"></span>
       </div>

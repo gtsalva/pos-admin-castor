@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -28,6 +28,11 @@ export class AdminShellComponent {
   private readonly router = inject(Router);
 
   readonly currentUser = this.auth.currentUser;
+
+  readonly avatarInitials = computed(() => {
+    const name = this.currentUser()?.full_name ?? '';
+    return name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+  });
 
   readonly navGroups: NavGroup[] = [
     {
