@@ -7,6 +7,7 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { AuthService } from '../../core/services/auth.service';
 import { SidebarComponent, NavGroup } from '../sidebar/sidebar.component';
+import { StoreSettingsService } from '../../shared/services/store-settings.service';
 
 @Component({
   selector: 'app-admin-shell',
@@ -26,8 +27,10 @@ import { SidebarComponent, NavGroup } from '../sidebar/sidebar.component';
 export class AdminShellComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly storeSettings = inject(StoreSettingsService);
 
   readonly currentUser = this.auth.currentUser;
+  readonly store_name = this.storeSettings.store_name;
 
   readonly avatarInitials = computed(() => {
     const name = this.currentUser()?.full_name ?? '';
@@ -71,6 +74,7 @@ export class AdminShellComponent {
       items: [
         { label: 'Usuarios', icon: 'user', route: '/usuarios' },
         { label: 'Auditoría', icon: 'file-search', route: '/auditoria' },
+        { label: 'Configuración', icon: 'setting', route: '/configuracion' },
       ],
     },
   ];

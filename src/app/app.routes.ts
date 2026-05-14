@@ -90,6 +90,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/custom-orders/custom-orders.routes').then(m => m.customOrderRoutes),
       },
+      {
+        path: 'configuracion',
+        loadComponent: () =>
+          import('./features/settings/configuracion.component').then(m => m.ConfiguracionComponent),
+      },
     ],
   },
   { path: '**', redirectTo: 'reportes' },

@@ -1,4 +1,4 @@
-import { ApplicationConfig, LOCALE_ID, importProvidersFrom } from '@angular/core';
+import { ApplicationConfig, LOCALE_ID, importProvidersFrom, inject, provideAppInitializer } from '@angular/core';
 import { DATE_PIPE_DEFAULT_TIMEZONE } from '@angular/common';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -55,7 +55,8 @@ import {
   ToolOutline,
   ShopOutline,
   KeyOutline,
-  ContactsOutline
+  ContactsOutline,
+  SettingOutline
 } from '@ant-design/icons-angular/icons';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
@@ -63,6 +64,7 @@ import localeEsGT from '@angular/common/locales/es-GT';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
+import { StoreSettingsService } from './shared/services/store-settings.service';
 
 registerLocaleData(localeEs);
 registerLocaleData(localeEsGT);
@@ -120,8 +122,10 @@ export const appConfig: ApplicationConfig = {
       ToolOutline,
       ShopOutline,
       KeyOutline,
-      ContactsOutline
+      ContactsOutline,
+      SettingOutline,
     ]),
+    provideAppInitializer(() => inject(StoreSettingsService).load()),
     { provide: NZ_I18N, useValue: es_ES },
     { provide: LOCALE_ID, useValue: 'es-GT' },
     { provide: DATE_PIPE_DEFAULT_TIMEZONE, useValue: 'America/Guatemala' },

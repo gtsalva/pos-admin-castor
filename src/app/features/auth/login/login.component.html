@@ -1,8 +1,8 @@
 <div class="login-page">
   <nz-card class="login-card">
     <div class="login-logo">
-      <img src="assets/logo.jpeg" alt="Mueblería El Castor" onerror="this.style.display='none'" />
-      <h2>Mueblería El Castor</h2>
+      <img src="assets/logo.jpeg" [attr.alt]="store_name()" onerror="this.style.display='none'" />
+      <h2>{{ store_name() }}</h2>
       <p class="login-subtitle">Panel de Administración</p>
     </div>
 
