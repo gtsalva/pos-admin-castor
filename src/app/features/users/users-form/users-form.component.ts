@@ -80,7 +80,7 @@ import { PageHeaderComponent, Breadcrumb } from '../../../shared/components/page
         <nz-form-item>
           <nz-form-label nzRequired>Email</nz-form-label>
           <nz-form-control nzErrorTip="Email válido requerido">
-            <input nz-input formControlName="email" type="email" placeholder="juan@castor.gt" />
+            <input nz-input formControlName="email" type="email" placeholder="juan@muebleria.gt" />
           </nz-form-control>
         </nz-form-item>
 
