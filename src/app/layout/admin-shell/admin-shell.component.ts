@@ -40,17 +40,12 @@ export class AdminShellComponent {
       ],
     },
     {
-      label: 'Clientes',
-      items: [
-        { label: 'Clientes', icon: 'contacts', route: '/clientes' },
-      ],
-    },
-    {
       label: 'Catálogo',
       items: [
         { label: 'Productos', icon: 'shopping', route: '/productos' },
         { label: 'Categorías', icon: 'appstore', route: '/categorias' },
         { label: 'Inventario', icon: 'database', route: '/inventario' },
+        { label: 'Clientes', icon: 'contacts', route: '/clientes' },
       ],
     },
     {
