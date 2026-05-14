@@ -299,7 +299,7 @@ export class ReportFilterBarComponent implements OnInit {
     if (v.dateRange?.[1]) filters.date_to = this.toDateStr(v.dateRange[1] as Date);
     if (v.category_id) filters.category_id = v.category_id;
     if (v.limit) filters.limit = v.limit;
-    if (v.period) filters.period = v.period;
+    if (this.config().showPeriod && v.period) filters.period = v.period;
     if (v.payment_method) filters.payment_method = v.payment_method;
     if (v.min_margin_pct !== null) filters.min_margin_pct = v.min_margin_pct;
     this.filtersChange.emit(filters);
