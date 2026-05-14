@@ -71,4 +71,8 @@ export class ProductsApiService {
       .patch<ApiResponse<Product>>(`${this.base}/${product_id}`, payload)
       .pipe(map(res => res.data));
   }
+
+  delete(product_id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/${product_id}`);
+  }
 }

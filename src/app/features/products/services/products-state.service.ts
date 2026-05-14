@@ -43,4 +43,13 @@ export class ProductsStateService {
     this._params.update(p => ({ ...p, query: query || undefined, page: 1 }));
     this.load();
   }
+
+  delete(product_id: string): void {
+    this.api.delete(product_id).subscribe({
+      next: () => {
+        this._items.update(list => list.filter(p => p.product_id !== product_id));
+        this._total.update(t => t - 1);
+      },
+    });
+  }
 }

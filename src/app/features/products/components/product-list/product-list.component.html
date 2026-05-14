@@ -62,6 +62,18 @@
           <a nz-button nzType="link" [routerLink]="['/productos', row.product_id, 'editar']">
             Editar
           </a>
+          @if (isAdmin()) {
+            <nz-divider nzType="vertical" />
+            <button nz-button nzType="link" nzDanger
+              nz-popconfirm
+              nzPopconfirmTitle="¿Eliminar '{{ row.name }}'? Esta acción no se puede deshacer."
+              nzPopconfirmPlacement="left"
+              nzOkText="Sí, eliminar"
+              nzOkDanger
+              (nzOnConfirm)="delete.emit(row.product_id)">
+              Eliminar
+            </button>
+          }
         </td>
       </tr>
     }
