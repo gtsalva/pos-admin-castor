@@ -81,6 +81,11 @@ export const routes: Routes = [
           import('./features/audit/audit.routes').then(m => m.auditRoutes),
       },
       {
+        path: 'perfil',
+        loadComponent: () =>
+          import('./features/auth/change-password/change-password.component').then(m => m.ChangePasswordComponent),
+      },
+      {
         path: 'cotizaciones',
         loadChildren: () =>
           import('./features/custom-orders/custom-orders.routes').then(m => m.customOrderRoutes),

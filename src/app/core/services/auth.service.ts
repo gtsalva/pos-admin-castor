@@ -35,6 +35,13 @@ export class AuthService {
       );
   }
 
+  changePassword(current_password: string, new_password: string): Observable<void> {
+    return this.http.patch<void>(`${environment.apiUrl}/users/me/password`, {
+      current_password,
+      new_password,
+    });
+  }
+
   logout(): void {
     sessionStorage.removeItem(TOKEN_KEY);
     this._token.set(null);

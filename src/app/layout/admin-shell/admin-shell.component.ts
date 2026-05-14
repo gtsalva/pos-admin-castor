@@ -45,6 +45,10 @@ export class AdminShellComponent {
     { label: 'Auditoría', icon: 'file-search', route: '/auditoria' },
   ];
 
+  goToPerfil(): void {
+    this.router.navigate(['/perfil']);
+  }
+
   logout(): void {
     this.auth.logout();
     this.router.navigate(['/login']);
