@@ -25,8 +25,28 @@
           <nz-form-control nzErrorTip="SKU requerido (mínimo 2 caracteres)">
             <input nz-input formControlName="sku" placeholder="SOF-001"
               style="text-transform: uppercase"
-              (input)="form.controls.sku.setValue(form.controls.sku.value?.toUpperCase() ?? '', { emitEvent: false })" />
+              (input)="form.controls.sku.setValue(form.controls.sku.value?.toUpperCase() ?? '', { emitEvent: false }); skuStatus.set('idle')"
+              (blur)="onSkuBlur()" />
           </nz-form-control>
+          @if (skuStatus() === 'checking') {
+            <div style="font-size:12px;color:#8c8c8c;margin-top:4px">
+              <span nz-icon nzType="loading" nzTheme="outline"></span> Verificando SKU…
+            </div>
+          }
+          @if (skuStatus() === 'taken') {
+            <nz-alert nzType="error" nzShowIcon
+              nzMessage="Este SKU ya está en uso por otro producto activo" style="margin-top:4px" />
+          }
+          @if (skuStatus() === 'taken_deleted') {
+            <nz-alert nzType="warning" nzShowIcon
+              nzMessage="Este SKU pertenece a un producto eliminado. Restáuralo o elimínalo definitivamente desde Productos › Eliminados."
+              style="margin-top:4px" />
+          }
+          @if (skuStatus() === 'available') {
+            <div style="font-size:12px;color:#52c41a;margin-top:4px">
+              <span nz-icon nzType="check-circle" nzTheme="outline"></span> SKU disponible
+            </div>
+          }
         </nz-form-item>
         <nz-form-item class="form-field form-field--grow">
           <nz-form-label nzRequired>Nombre</nz-form-label>
@@ -179,7 +199,7 @@
     <div class="form-actions">
       <button nz-button type="button" (click)="cancel()">Cancelar</button>
       <button nz-button nzType="primary" type="submit" [nzLoading]="submitting()"
-        [disabled]="form.invalid || hasUploading()">
+        [disabled]="form.invalid || hasUploading() || skuStatus() === 'taken' || skuStatus() === 'taken_deleted'">
         {{ isEdit() ? 'Guardar cambios' : 'Crear producto' }}
       </button>
     </div>

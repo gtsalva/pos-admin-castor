@@ -13,6 +13,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { ProductsApiService } from '../services/products-api.service';
 import { CategoriesApiService, Category } from '../services/categories-api.service';
 import { ProductResourcesApiService } from '../services/product-resources-api.service';
@@ -36,7 +37,7 @@ interface QueuedFile {
     RouterLink, ReactiveFormsModule,
     NzFormModule, NzInputModule, NzInputNumberModule, NzSelectModule,
     NzButtonModule, NzBreadCrumbModule, NzSpinModule, NzIconModule,
-    NzPopconfirmModule,
+    NzPopconfirmModule, NzAlertModule,
   ],
   templateUrl: './product-form.component.html',
   styleUrl: './product-form.component.less',
@@ -61,6 +62,8 @@ export class ProductFormComponent implements OnInit {
   readonly queuedFiles = signal<QueuedFile[]>([]);
   readonly deletingId = signal<string | null>(null);
   private _autoCalcActive = false;
+  private _originalSku: string | null = null;
+  readonly skuStatus = signal<'idle' | 'checking' | 'taken' | 'taken_deleted' | 'available'>('idle');
 
   readonly defaultImage = computed(() =>
     this.existingResources().find(r => r.resource_type === 'image') ?? null
@@ -119,6 +122,7 @@ export class ProductFormComponent implements OnInit {
           category_id: p.category_id,
         });
         this._autoCalcActive = true;
+        this._originalSku = p.sku;
         this.isLoading.set(false);
       },
       error: () => { this.isLoading.set(false); this.router.navigate(['/productos']); },
@@ -237,6 +241,7 @@ export class ProductFormComponent implements OnInit {
       return;
     }
     if (this.form.invalid) return;
+    if (this.skuStatus() === 'taken' || this.skuStatus() === 'taken_deleted') return;
     const v = this.form.getRawValue();
     this.submitting.set(true);
 
@@ -284,4 +289,30 @@ export class ProductFormComponent implements OnInit {
   }
 
   onDragOver(event: DragEvent): void { event.preventDefault(); }
+
+  onSkuBlur(): void {
+    const sku = this.form.get('sku')!.value?.trim();
+    if (!sku || sku.length < 2) {
+      this.skuStatus.set('idle');
+      return;
+    }
+    if (this.isEdit() && sku.toUpperCase() === this._originalSku?.toUpperCase()) {
+      this.skuStatus.set('available');
+      return;
+    }
+    this.skuStatus.set('checking');
+    const exclude = this.isEdit() ? this.productId()! : undefined;
+    this.api.checkSku(sku, exclude).subscribe({
+      next: res => {
+        if (res.available) {
+          this.skuStatus.set('available');
+        } else if (res.used_by_deleted) {
+          this.skuStatus.set('taken_deleted');
+        } else {
+          this.skuStatus.set('taken');
+        }
+      },
+      error: () => this.skuStatus.set('idle'),
+    });
+  }
 }
