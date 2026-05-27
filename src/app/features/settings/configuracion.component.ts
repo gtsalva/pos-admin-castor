@@ -49,7 +49,7 @@ export class ConfiguracionComponent {
     }
     this.isSaving.set(true);
     try {
-      await this.storeSettings.update(this.form.getRawValue().store_name!);
+      await this.storeSettings.update({ store_name: this.form.getRawValue().store_name! });
       this.message.success('Nombre guardado correctamente');
     } catch {
       this.message.error('No se pudo guardar el nombre');
