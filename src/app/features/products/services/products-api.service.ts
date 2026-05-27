@@ -75,4 +75,35 @@ export class ProductsApiService {
   delete(product_id: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/${product_id}`);
   }
+
+  checkSku(sku: string, exclude_id?: string): Observable<{ available: boolean; used_by_deleted: boolean }> {
+    let params = new HttpParams().set('sku', sku);
+    if (exclude_id) params = params.set('exclude_id', exclude_id);
+    return this.http
+      .get<ApiResponse<{ available: boolean; used_by_deleted: boolean }>>(
+        `${this.base}/check-sku`,
+        { params },
+      )
+      .pipe(map(res => res.data));
+  }
+
+  getDeleted(params: TableParams): Observable<PaginatedResult<Product>> {
+    let httpParams = new HttpParams()
+      .set('page', String(params.page))
+      .set('limit', String(params.limit));
+    if (params.query) httpParams = httpParams.set('query', params.query);
+    return this.http
+      .get<ApiPaginatedResponse<Product>>(`${this.base}/deleted`, { params: httpParams })
+      .pipe(map(res => res.data));
+  }
+
+  restore(product_id: string): Observable<Product> {
+    return this.http
+      .post<ApiResponse<Product>>(`${this.base}/${product_id}/restore`, {})
+      .pipe(map(res => res.data));
+  }
+
+  permanentDelete(product_id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/${product_id}/permanent`);
+  }
 }
