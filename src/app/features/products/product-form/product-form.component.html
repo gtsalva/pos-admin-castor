@@ -66,14 +66,14 @@
         </nz-form-item>
         <nz-form-item class="form-field">
           <nz-form-label>Precio mínimo de venta</nz-form-label>
-          <nz-form-control nzExtra="Sugerido: costo +20%. Editable.">
+          <nz-form-control [nzExtra]="'Sugerido: costo +' + storeSettings.min_price_margin() + '%. Editable.'">
             <nz-input-number formControlName="min_sale_price" [nzMin]="0" [nzStep]="1" [nzPrecision]="2"
               nzPlaceHolder="Q 0.00" style="width:100%" />
           </nz-form-control>
         </nz-form-item>
         <nz-form-item class="form-field">
           <nz-form-label nzRequired>Precio de venta</nz-form-label>
-          <nz-form-control nzErrorTip="Mínimo Q 0" nzExtra="Sugerido: costo +35%. Editable.">
+          <nz-form-control nzErrorTip="Mínimo Q 0" [nzExtra]="'Sugerido: costo +' + storeSettings.sale_price_margin() + '%. Editable.'">
             <nz-input-number formControlName="unit_price" [nzMin]="0" [nzStep]="1" [nzPrecision]="2"
               nzPlaceHolder="Q 0.00" style="width:100%" />
           </nz-form-control>

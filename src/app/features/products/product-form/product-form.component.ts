@@ -17,6 +17,7 @@ import { ProductsApiService } from '../services/products-api.service';
 import { CategoriesApiService, Category } from '../services/categories-api.service';
 import { ProductResourcesApiService } from '../services/product-resources-api.service';
 import { ProductResource } from '../../../shared/models/product-resource.model';
+import { StoreSettingsService } from '../../../shared/services/store-settings.service';
 
 interface QueuedFile {
   id: string;
@@ -48,6 +49,7 @@ export class ProductFormComponent implements OnInit {
   private readonly resourcesApi = inject(ProductResourcesApiService);
   private readonly message = inject(NzMessageService);
   private readonly fb = inject(FormBuilder);
+  readonly storeSettings = inject(StoreSettingsService);
 
   readonly productId = signal<string | null>(null);
   readonly isEdit = signal(false);
@@ -85,9 +87,11 @@ export class ProductFormComponent implements OnInit {
 
     this.form.get('cost_price')!.valueChanges.subscribe(cost => {
       if (!this._autoCalcActive || cost == null) return;
+      const minMargin  = 1 + this.storeSettings.min_price_margin() / 100;
+      const saleMargin = 1 + this.storeSettings.sale_price_margin() / 100;
       this.form.patchValue({
-        min_sale_price: Math.round(cost * 1.2 * 100) / 100,
-        unit_price:     Math.round(cost * 1.35 * 100) / 100,
+        min_sale_price: Math.round(cost * minMargin  * 100) / 100,
+        unit_price:     Math.round(cost * saleMargin * 100) / 100,
       }, { emitEvent: false });
     });
 
