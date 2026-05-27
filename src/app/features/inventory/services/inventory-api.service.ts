@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
-import { InventoryItem, InventoryMovement, AdjustStockPayload } from '../../../shared/models/inventory.model';
+import { InventoryItem, InventoryMovement, AdjustStockPayload, InventorySummary } from '../../../shared/models/inventory.model';
 import { PaginatedResult } from '../../../shared/models/pagination.model';
 
 interface ApiResponse<T> {
@@ -50,6 +50,12 @@ export class InventoryApiService {
         `${environment.apiUrl}/inventory/${product_id}/movements`,
         { params }
       )
+      .pipe(map(res => res.data));
+  }
+
+  getSummary(): Observable<InventorySummary> {
+    return this.http
+      .get<ApiResponse<InventorySummary>>(`${environment.apiUrl}/inventory/summary`)
       .pipe(map(res => res.data));
   }
 

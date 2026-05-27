@@ -3,3 +3,47 @@
     margin-bottom: 16px;
   }
 }
+
+.inv-stats {
+  display: flex;
+  align-items: stretch;
+}
+
+.inv-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 0 18px;
+  gap: 3px;
+
+  &--sep {
+    border-left: 1px solid #EDE0D4;
+  }
+
+  &__label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #A8968D;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  &__value {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1A1614;
+    line-height: 1;
+    white-space: nowrap;
+
+    &--count {
+      font-size: 18px;
+    }
+  }
+
+  &--alert {
+    .inv-stat__label { color: #C85A1A; }
+    .inv-stat__value { color: #C85A1A; }
+  }
+}

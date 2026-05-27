@@ -23,6 +23,12 @@ export interface InventoryMovement {
   user: { user_id: string; full_name: string };
 }
 
+export interface InventorySummary {
+  total_cost_value: number;
+  total_sale_value: number;
+  low_stock_count: number;
+}
+
 export interface AdjustStockPayload {
   product_id: string;
   movement_type: MovementType;

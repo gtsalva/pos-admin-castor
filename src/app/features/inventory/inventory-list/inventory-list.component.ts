@@ -42,6 +42,7 @@ export class InventoryListComponent implements OnInit {
 
   ngOnInit(): void {
     this.state.load();
+    this.state.loadSummary();
     this.lowStockControl.valueChanges.subscribe(v => {
       this.state.toggleLowStock(v ?? false);
     });
