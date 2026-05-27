@@ -14,9 +14,11 @@
             {{ s.total_sale_value | currency:'Q ':'symbol':'1.2-2':'en-US' }}
           </span>
         </div>
-        <div class="inv-stat inv-stat--sep" [class.inv-stat--alert]="s.low_stock_count > 0">
-          <span class="inv-stat__label">Bajo mínimo</span>
-          <span class="inv-stat__value inv-stat__value--count">{{ s.low_stock_count }}</span>
+        <div class="inv-stat inv-stat--sep">
+          <span class="inv-stat__label">Ganancia potencial</span>
+          <span class="inv-stat__value">
+            {{ (s.total_sale_value - s.total_cost_value) | currency:'Q ':'symbol':'1.2-2':'en-US' }}
+          </span>
         </div>
       </div>
     }
