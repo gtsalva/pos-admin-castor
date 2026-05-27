@@ -7,6 +7,11 @@ export const productRoutes: Routes = [
       import('./products-shell/products-shell.component').then(m => m.ProductsShellComponent),
   },
   {
+    path: 'eliminados',
+    loadComponent: () =>
+      import('./products-deleted/products-deleted.component').then(m => m.ProductsDeletedComponent),
+  },
+  {
     path: 'nuevo',
     loadComponent: () =>
       import('./product-form/product-form.component').then(m => m.ProductFormComponent),

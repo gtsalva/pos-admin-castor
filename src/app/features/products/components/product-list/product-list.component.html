@@ -4,6 +4,11 @@
       (input)="onSearch(searchInput.value)" />
   </nz-input-group>
   <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+  @if (isAdmin()) {
+    <a nz-button [routerLink]="['/productos', 'eliminados']">
+      <span nz-icon nzType="delete"></span> Eliminados
+    </a>
+  }
   <a nz-button nzType="primary" [routerLink]="['/productos', 'nuevo']">
     <span nz-icon nzType="plus"></span> Nuevo producto
   </a>
