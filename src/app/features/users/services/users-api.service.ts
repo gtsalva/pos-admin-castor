@@ -59,4 +59,9 @@ export class UsersApiService {
       .patch<ApiResponse<User>>(`${this.base}/${user_id}/status`, {})
       .pipe(map((res) => res.data));
   }
+
+  resetPassword(user_id: string, new_password: string): Observable<void> {
+    return this.http
+      .patch<void>(`${this.base}/${user_id}/password`, { new_password });
+  }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -10,11 +11,14 @@ import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzFormModule } from 'ng-zorro-antd/form';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { UsersApiService } from '../services/users-api.service';
 import { User, UserRole } from '../models/user.model';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { AuthService } from '../../../core/services/auth.service';
 
 const ROLE_LABEL: Record<UserRole, string> = {
   ADMIN:       'Administrador',
@@ -30,13 +34,21 @@ const ROLE_COLOR: Record<UserRole, string> = {
   SALESPERSON: 'green',
 };
 
+function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+  const parent = control.parent;
+  if (!parent) return null;
+  const new_password = parent.get('new_password')?.value;
+  return control.value === new_password ? null : { mismatch: true };
+}
+
 @Component({
   selector: 'app-users-list',
   standalone: true,
   imports: [
-    RouterLink, FormsModule, DatePipe,
+    RouterLink, FormsModule, ReactiveFormsModule, DatePipe,
     NzTableModule, NzTagModule, NzButtonModule, NzIconModule,
-    NzInputModule, NzAvatarModule, NzPopconfirmModule, NzSpinModule, NzDividerModule,
+    NzInputModule, NzAvatarModule, NzPopconfirmModule, NzSpinModule,
+    NzDividerModule, NzModalModule, NzFormModule,
     PageHeaderComponent,
   ],
   template: `
@@ -99,6 +111,10 @@ const ROLE_COLOR: Record<UserRole, string> = {
             <td>
               <a nz-button nzType="link" [routerLink]="[user.user_id, 'editar']">Editar</a>
               <nz-divider nzType="vertical" />
+              <button nz-button nzType="link" (click)="openResetModal(user)">
+                <span nz-icon nzType="key"></span> Contraseña
+              </button>
+              <nz-divider nzType="vertical" />
               <button
                 nz-button nzType="link"
                 [nzDanger]="user.is_active"
@@ -114,11 +130,66 @@ const ROLE_COLOR: Record<UserRole, string> = {
         }
       </tbody>
     </nz-table>
+
+    <!-- Modal reset de contraseña -->
+    <nz-modal
+      [nzVisible]="resetModalVisible()"
+      [nzTitle]="'Resetear contraseña — ' + (resetTarget()?.full_name ?? '')"
+      nzOkText="Cambiar contraseña"
+      nzCancelText="Cancelar"
+      [nzOkLoading]="resetLoading()"
+      [nzOkDisabled]="resetForm.invalid"
+      (nzOnOk)="submitReset()"
+      (nzOnCancel)="closeResetModal()"
+      nzWidth="420px"
+    >
+      <ng-container *nzModalContent>
+        <form nz-form [formGroup]="resetForm" nzLayout="vertical">
+          <nz-form-item>
+            <nz-form-label nzRequired>Nueva contraseña</nz-form-label>
+            <nz-form-control nzErrorTip="Mínimo 8 caracteres">
+              <nz-input-group [nzSuffix]="toggleNew">
+                <input
+                  nz-input
+                  [type]="showNew() ? 'text' : 'password'"
+                  formControlName="new_password"
+                  placeholder="Mínimo 8 caracteres"
+                />
+              </nz-input-group>
+              <ng-template #toggleNew>
+                <span nz-icon [nzType]="showNew() ? 'eye-invisible' : 'eye'"
+                  style="cursor:pointer" (click)="showNew.set(!showNew())"></span>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzRequired>Confirmar contraseña</nz-form-label>
+            <nz-form-control nzErrorTip="Las contraseñas no coinciden">
+              <nz-input-group [nzSuffix]="toggleConfirm">
+                <input
+                  nz-input
+                  [type]="showConfirm() ? 'text' : 'password'"
+                  formControlName="confirm_password"
+                  placeholder="Repetir la nueva contraseña"
+                />
+              </nz-input-group>
+              <ng-template #toggleConfirm>
+                <span nz-icon [nzType]="showConfirm() ? 'eye-invisible' : 'eye'"
+                  style="cursor:pointer" (click)="showConfirm.set(!showConfirm())"></span>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+      </ng-container>
+    </nz-modal>
   `,
 })
 export class UsersListComponent implements OnInit {
   private readonly api = inject(UsersApiService);
   private readonly msg = inject(NzMessageService);
+  private readonly fb = inject(FormBuilder);
+  readonly auth = inject(AuthService);
 
   readonly all = signal<User[]>([]);
   readonly isLoading = signal(false);
@@ -132,8 +203,24 @@ export class UsersListComponent implements OnInit {
     );
   });
 
+  // Reset modal state
+  readonly resetModalVisible = signal(false);
+  readonly resetTarget = signal<User | null>(null);
+  readonly resetLoading = signal(false);
+  readonly showNew = signal(false);
+  readonly showConfirm = signal(false);
+
+  readonly resetForm = this.fb.group({
+    new_password:     ['', [Validators.required, Validators.minLength(8)]],
+    confirm_password: ['', [Validators.required, passwordMatchValidator]],
+  });
+
   ngOnInit(): void {
     this.load();
+    // Re-validate confirm when new_password changes
+    this.resetForm.get('new_password')?.valueChanges.subscribe(() => {
+      this.resetForm.get('confirm_password')?.updateValueAndValidity();
+    });
   }
 
   load(): void {
@@ -151,6 +238,39 @@ export class UsersListComponent implements OnInit {
         this.msg.success(`Usuario ${updated.is_active ? 'activado' : 'desactivado'}`);
       },
       error: () => this.msg.error('Error al cambiar estado'),
+    });
+  }
+
+  openResetModal(user: User): void {
+    this.resetTarget.set(user);
+    this.resetForm.reset();
+    this.showNew.set(false);
+    this.showConfirm.set(false);
+    this.resetModalVisible.set(true);
+  }
+
+  closeResetModal(): void {
+    this.resetModalVisible.set(false);
+    this.resetTarget.set(null);
+  }
+
+  submitReset(): void {
+    if (this.resetForm.invalid) return;
+    const target = this.resetTarget();
+    if (!target) return;
+
+    this.resetLoading.set(true);
+    const { new_password } = this.resetForm.getRawValue();
+    this.api.resetPassword(target.user_id, new_password!).subscribe({
+      next: () => {
+        this.msg.success(`Contraseña de ${target.full_name} actualizada`);
+        this.resetLoading.set(false);
+        this.closeResetModal();
+      },
+      error: () => {
+        this.msg.error('Error al resetear contraseña');
+        this.resetLoading.set(false);
+      },
     });
   }
 
