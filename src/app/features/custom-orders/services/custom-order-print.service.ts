@@ -1,11 +1,14 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import jsPDF from 'jspdf';
 import { CustomOrder } from '../models/custom-order.model';
+import { StoreSettingsService } from '../../../shared/services/store-settings.service';
 
 @Injectable({ providedIn: 'root' })
 export class CustomOrderPrintService {
+  private readonly storeSettings = inject(StoreSettingsService);
 
   generate(order: CustomOrder, printedAt: Date): Blob {
+    const storeName = this.storeSettings.store_name();
     const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
     const pW = doc.internal.pageSize.getWidth();   // 210
     const pH = doc.internal.pageSize.getHeight();  // 297
@@ -54,7 +57,7 @@ export class CustomOrderPrintService {
     doc.setFontSize(15);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(200, 90, 26);
-    doc.text('Mueblería El Castor', pW / 2, y, { align: 'center' });
+    doc.text(storeName, pW / 2, y, { align: 'center' });
     y += 6;
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
@@ -226,7 +229,7 @@ export class CustomOrderPrintService {
     const fmtDt = printedAt.toLocaleDateString('es-GT') + ' ' +
       printedAt.toLocaleTimeString('es-GT', { hour: '2-digit', minute: '2-digit' });
     doc.text(`Documento generado el ${fmtDt}`, pW / 2, footerY - 1, { align: 'center' });
-    doc.text('Mueblería El Castor — Este comprobante es informativo y no constituye factura oficial.',
+    doc.text(`${storeName} — Este comprobante es informativo y no constituye factura oficial.`,
       pW / 2, footerY + 3, { align: 'center' });
 
     return doc.output('blob');
