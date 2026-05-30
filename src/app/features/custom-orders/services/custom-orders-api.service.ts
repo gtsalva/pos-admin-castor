@@ -111,4 +111,12 @@ export class CustomOrdersApiService {
       .post<ApiResponse<CustomOrder>>(`${this.base}/${id}/commission-payments`, payload)
       .pipe(map(res => res.data));
   }
+
+  savePrintReceipt(id: string, file: File): Observable<CustomOrder> {
+    const form = new FormData();
+    form.append('file', file);
+    return this.http
+      .post<ApiResponse<CustomOrder>>(`${this.base}/${id}/print-receipts`, form)
+      .pipe(map(res => res.data));
+  }
 }

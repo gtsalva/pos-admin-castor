@@ -51,6 +51,7 @@ export interface CustomOrder {
   items: CustomOrderItem[];
   payments: CustomOrderPayment[];
   commission_payments: CustomOrderCommissionPayment[];
+  print_receipts:      CustomOrderPrintReceipt[];
   created_at: string;
   updated_at: string;
 }
@@ -89,6 +90,13 @@ export interface CustomOrderCommissionPayment {
   notes: string | null;
   paid_by: { user_id: string; full_name: string };
   created_at: string;
+}
+
+export interface CustomOrderPrintReceipt {
+  print_receipt_id: string;
+  printed_by:       { user_id: string; full_name: string };
+  pdf_url:          string | null;
+  created_at:       string;
 }
 
 export interface RegisterPaymentPayload {

@@ -1,5 +1,7 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ReactiveFormsModule, FormsModule, FormBuilder, Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
@@ -20,6 +22,7 @@ import { NzProgressModule }     from 'ng-zorro-antd/progress';
 import { NzMessageService }     from 'ng-zorro-antd/message';
 import { QuetzalesPipe }        from '../../../shared/pipes/quetzales.pipe';
 import { CustomOrdersApiService } from '../services/custom-orders-api.service';
+import { CustomOrderPrintService } from '../services/custom-order-print.service';
 import { CustomOrder, CustomOrderStatus, RegisterPaymentPayload, RegisterCommissionPaymentPayload, PaymentMethod } from '../models/custom-order.model';
 
 @Component({
@@ -35,12 +38,16 @@ import { CustomOrder, CustomOrderStatus, RegisterPaymentPayload, RegisterCommiss
   templateUrl: './custom-order-detail.component.html',
   styleUrl: './custom-order-detail.component.less',
 })
-export class CustomOrderDetailComponent implements OnInit {
-  private readonly route   = inject(ActivatedRoute);
-  private readonly router  = inject(Router);
-  private readonly api     = inject(CustomOrdersApiService);
-  private readonly message = inject(NzMessageService);
-  private readonly fb      = inject(FormBuilder);
+export class CustomOrderDetailComponent implements OnInit, OnDestroy {
+  private readonly route     = inject(ActivatedRoute);
+  private readonly router    = inject(Router);
+  private readonly api       = inject(CustomOrdersApiService);
+  private readonly message   = inject(NzMessageService);
+  private readonly fb        = inject(FormBuilder);
+  private readonly printer   = inject(CustomOrderPrintService);
+  private readonly http      = inject(HttpClient);
+  private readonly sanitizer = inject(DomSanitizer);
+  private readonly blobUrls: string[] = [];
 
   readonly order   = signal<CustomOrder | null>(null);
   readonly loading = signal(false);
@@ -85,17 +92,32 @@ export class CustomOrderDetailComponent implements OnInit {
 
   readonly paidPercent = computed(() => {
     const o = this.order();
-    if (!o || o.total === 0) return 0;
-    return Math.min(100, Math.round((o.total_paid / o.total) * 100));
+    if (!o) return 0;
+    const base = o.agreed_price ?? o.total;
+    if (base === 0) return 0;
+    return Math.min(100, Math.round((o.total_paid / base) * 100));
   });
 
   readonly balance = computed(() => {
     const o = this.order();
-    return o ? Math.max(0, o.total - o.total_paid) : 0;
+    if (!o) return 0;
+    return Math.max(0, (o.agreed_price ?? o.total) - o.total_paid);
   });
 
   readonly commissionValue = signal<number | null>(null);
   readonly savingCommission = signal(false);
+  readonly printing = signal(false);
+
+  readonly docViewerVisible = signal(false);
+  readonly docViewerTitle   = signal('');
+  readonly docViewerLoading = signal(false);
+  readonly docViewerBlobUrl = signal<string | null>(null);
+  readonly docViewerIsImage = signal(false);
+
+  readonly docViewerSafeUrl = computed((): SafeResourceUrl | null => {
+    const url = this.docViewerBlobUrl();
+    return url ? this.sanitizer.bypassSecurityTrustResourceUrl(url) : null;
+  });
 
   readonly commissionTotalPaid = computed(() =>
     (this.order()?.commission_payments ?? []).reduce((s, cp) => s + cp.amount, 0)
@@ -225,6 +247,65 @@ export class CustomOrderDetailComponent implements OnInit {
       next: (updated) => { this.order.set(updated); this.acting.set(false); },
       error: () => this.acting.set(false),
     });
+  }
+
+  printReceipt(): void {
+    const o = this.order();
+    if (!o) return;
+    this.printing.set(true);
+    let blob: Blob;
+    try {
+      blob = this.printer.generate(o, new Date());
+    } catch {
+      this.printing.set(false);
+      this.message.error('Error al generar el comprobante PDF');
+      return;
+    }
+    const blobUrl = URL.createObjectURL(blob);
+    this.blobUrls.push(blobUrl);
+    this.docViewerTitle.set('Comprobante de cotización');
+    this.docViewerBlobUrl.set(blobUrl);
+    this.docViewerIsImage.set(false);
+    this.docViewerLoading.set(false);
+    this.docViewerVisible.set(true);
+    const file = new File([blob], `comprobante-${o.order_number}.pdf`, { type: 'application/pdf' });
+    this.api.savePrintReceipt(o.custom_order_id, file).subscribe({
+      next: (updated) => { this.order.set(updated); this.printing.set(false); },
+      error: () => {
+        this.printing.set(false);
+        this.message.warning('PDF generado pero no se pudo guardar en el historial');
+      },
+    });
+  }
+
+  openDocViewer(url: string, title: string): void {
+    this.docViewerTitle.set(title);
+    this.docViewerLoading.set(true);
+    this.docViewerVisible.set(true);
+    this.docViewerBlobUrl.set(null);
+    this.http.get(url, { responseType: 'blob' }).subscribe({
+      next: (blob) => {
+        const blobUrl = URL.createObjectURL(blob);
+        this.blobUrls.push(blobUrl);
+        this.docViewerBlobUrl.set(blobUrl);
+        this.docViewerIsImage.set(blob.type.startsWith('image/'));
+        this.docViewerLoading.set(false);
+      },
+      error: () => {
+        this.docViewerLoading.set(false);
+        this.docViewerVisible.set(false);
+        this.message.error('No se pudo cargar el documento');
+      },
+    });
+  }
+
+  closeDocViewer(): void {
+    this.docViewerVisible.set(false);
+    this.docViewerBlobUrl.set(null);
+  }
+
+  ngOnDestroy(): void {
+    this.blobUrls.forEach(u => URL.revokeObjectURL(u));
   }
 
   openPaymentModal(): void {
