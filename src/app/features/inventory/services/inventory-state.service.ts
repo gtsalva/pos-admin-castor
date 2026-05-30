@@ -46,4 +46,14 @@ export class InventoryStateService {
     this._query.update(q => ({ ...q, low_stock: low_stock || undefined, page: 1 }));
     this.load();
   }
+
+  setSearch(search: string): void {
+    this._query.update(q => ({ ...q, search: search.trim() || undefined, page: 1 }));
+    this.load();
+  }
+
+  setCategoryFilter(category_id: string | null): void {
+    this._query.update(q => ({ ...q, category_id: category_id ?? undefined, page: 1 }));
+    this.load();
+  }
 }

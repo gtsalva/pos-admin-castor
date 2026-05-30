@@ -24,11 +24,37 @@
     }
   </app-page-header>
 
-  <div class="filter-bar">
-    <nz-space>
-      <label *nzSpaceItem>Solo stock bajo:</label>
-      <nz-switch *nzSpaceItem [formControl]="lowStockControl" />
-    </nz-space>
+  <div class="filter-bar" [formGroup]="filters">
+    <nz-input-group [nzPrefix]="searchIcon" class="filter-search">
+      <input
+        nz-input
+        formControlName="search"
+        placeholder="Buscar por nombre o SKU…"
+      />
+    </nz-input-group>
+    <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+
+    <nz-select
+      formControlName="category_id"
+      nzPlaceHolder="Todas las categorías"
+      nzAllowClear
+      class="filter-category"
+    >
+      @for (cat of categories; track cat.category_id) {
+        <nz-option [nzValue]="cat.category_id" [nzLabel]="cat.name" />
+      }
+    </nz-select>
+
+    <label class="filter-switch-label">
+      <nz-switch formControlName="low_stock" />
+      <span>Solo stock bajo</span>
+    </label>
+
+    @if (filters.controls.search.value || filters.controls.category_id.value || filters.controls.low_stock.value) {
+      <button nz-button nzType="link" (click)="clearFilters()">
+        <span nz-icon nzType="close-circle"></span> Limpiar
+      </button>
+    }
   </div>
 
   <nz-table

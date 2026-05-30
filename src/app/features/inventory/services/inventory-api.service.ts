@@ -22,6 +22,8 @@ export interface InventoryQuery {
   page?: number;
   limit?: number;
   low_stock?: boolean;
+  search?: string;
+  category_id?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -33,7 +35,9 @@ export class InventoryApiService {
       .set('page', String(query.page ?? 1))
       .set('limit', String(query.limit ?? 20));
 
-    if (query.low_stock) params = params.set('low_stock', 'true');
+    if (query.low_stock)    params = params.set('low_stock',    'true');
+    if (query.search)       params = params.set('search',       query.search);
+    if (query.category_id)  params = params.set('category_id',  query.category_id);
 
     return this.http
       .get<ApiPaginatedResponse<InventoryItem>>(`${environment.apiUrl}/inventory`, { params })
